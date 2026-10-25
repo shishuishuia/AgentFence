@@ -5,13 +5,20 @@ edition.workspace = true
 rust-version.workspace = true
 
 [dependencies]
+agentfence-core.workspace = true
 axum.workspace = true
 serde.workspace = true
+serde_json.workspace = true
 tokio.workspace = true
+chrono.workspace = true
+getrandom.workspace = true
+sha2.workspace = true
+subtle.workspace = true
+tempfile.workspace = true
+thiserror.workspace = true
 
 [dev-dependencies]
 http-body-util.workspace = true
-serde_json.workspace = true
 tower.workspace = true
 
 [lints]
