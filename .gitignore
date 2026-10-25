@@ -1,5 +1,9 @@
 /target/
-/results/
+/.agentfence/
+/results/audit.jsonl
+/results/local-*/
+node_modules/
+frontend/dist/
 .env
 *.token
 **/__pycache__/

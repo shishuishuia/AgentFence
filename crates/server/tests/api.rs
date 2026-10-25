@@ -1292,3 +1292,112 @@ async fn missing_or_unknown_lease_and_structural_errors_have_stable_priority() {
     f.unchanged();
     assert_eq!(f.remaining(&t).await, 1);
 }
+
+struct PausedWrite {
+    entered: Mutex<Option<std::sync::mpsc::Sender<()>>>,
+    release: Mutex<std::sync::mpsc::Receiver<()>>,
+}
+impl FileOperations for PausedWrite {
+    fn read(&self, path: &Path, limit: usize) -> Result<String, ReasonCode> {
+        LocalFiles.read(path, limit)
+    }
+    fn write(&self, path: &Path, content: &str) -> Result<usize, ReasonCode> {
+        if let Some(sender) = self.entered.lock().unwrap().take() {
+            sender.send(()).unwrap();
+        }
+        self.release
+            .lock()
+            .unwrap()
+            .recv_timeout(Duration::from_secs(5))
+            .map_err(|_| ReasonCode::IoError)?;
+        LocalFiles.write(path, content)
+    }
+}
+
+fn paused_fixture() -> (
+    Fixture,
+    std::sync::mpsc::Receiver<()>,
+    std::sync::mpsc::Sender<()>,
+) {
+    let mut f = Fixture::new();
+    let (entered_send, entered) = std::sync::mpsc::channel();
+    let (release, release_recv) = std::sync::mpsc::channel();
+    let files = Arc::new(PausedWrite {
+        entered: Mutex::new(Some(entered_send)),
+        release: Mutex::new(release_recv),
+    });
+    f.router = app(Broker::with_dependencies(
+        f.config.clone(),
+        ADMIN,
+        f.clock.clone(),
+        Box::new(MemorySink(f.sink.clone())),
+        files,
+    )
+    .unwrap());
+    (f, entered, release)
+}
+
+#[tokio::test]
+async fn in_progress_write_finishes_before_revoke_and_is_not_cancelled_by_expiry() {
+    let (f, entered, release) = paused_fixture();
+    let (task, gid) = f.edit(1, 10).await;
+    let router = f.router.clone();
+    let token = task.token.clone();
+    let id = task.id.clone();
+    let grant = gid.clone();
+    let write = tokio::spawn(async move {
+        send(router,"POST","/v1/tool/execute",Some(&token),Some(json!({"task_id":id,"tool":"write_file","path":"src/main.rs","grant_id":grant,"content":"in progress"}))).await
+    });
+    tokio::task::spawn_blocking(move || entered.recv_timeout(Duration::from_secs(5)).unwrap())
+        .await
+        .unwrap();
+    f.clock.nanos.store(2_000_000_000, Ordering::SeqCst);
+    let router = f.router.clone();
+    let url = format!("/v1/admin/tasks/{}/grants/{gid}", task.id);
+    let mut revoke =
+        tokio::spawn(async move { send(router, "DELETE", &url, Some(ADMIN), None).await });
+    assert!(
+        tokio::time::timeout(Duration::from_millis(30), &mut revoke)
+            .await
+            .is_err()
+    );
+    release.send(()).unwrap();
+    assert_eq!(write.await.unwrap().0, 200);
+    assert_eq!(revoke.await.unwrap().0, 200);
+    assert_eq!(f.remaining(&task).await, 9);
+    assert_eq!(fs::read_to_string(f.target()).unwrap(), "in progress");
+    rejected(
+        f.write(&task, "src/main.rs", Some(&gid), "after revoke")
+            .await,
+        403,
+        "LEASE_REVOKED",
+    );
+}
+
+#[tokio::test]
+async fn cancelled_http_waiter_does_not_cancel_an_entered_file_replacement() {
+    let (f, entered, release) = paused_fixture();
+    let (task, gid) = f.edit(60, 1).await;
+    let router = f.router.clone();
+    let token = task.token.clone();
+    let id = task.id.clone();
+    let write = tokio::spawn(async move {
+        send(router,"POST","/v1/tool/execute",Some(&token),Some(json!({"task_id":id,"tool":"write_file","path":"src/main.rs","grant_id":gid,"content":"completed after disconnect"}))).await
+    });
+    tokio::task::spawn_blocking(move || entered.recv_timeout(Duration::from_secs(5)).unwrap())
+        .await
+        .unwrap();
+    write.abort();
+    assert!(write.await.unwrap_err().is_cancelled());
+    release.send(()).unwrap();
+    assert_eq!(f.remaining(&task).await, 0);
+    assert_eq!(
+        fs::read_to_string(f.target()).unwrap(),
+        "completed after disconnect"
+    );
+    assert!(
+        f.logged().iter().any(|e| e["event_type"] == "result"
+            && e["reason_code"] == "OK"
+            && e["executed"] == true)
+    );
+}

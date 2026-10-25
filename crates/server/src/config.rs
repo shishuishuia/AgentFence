@@ -125,12 +125,12 @@ impl Configuration {
                 _ => absolute.push(component.as_os_str()),
             }
         }
-        if let Ok(meta) = fs::symlink_metadata(&absolute) {
-            if meta.file_type().is_symlink() || !meta.is_file() {
-                return Err(StartupError::Invalid(
-                    "audit must be a regular file outside all workspaces",
-                ));
-            }
+        if let Ok(meta) = fs::symlink_metadata(&absolute)
+            && (meta.file_type().is_symlink() || !meta.is_file())
+        {
+            return Err(StartupError::Invalid(
+                "audit must be a regular file outside all workspaces",
+            ));
         }
         let mut ancestor = absolute.as_path();
         let mut suffix = Vec::new();
