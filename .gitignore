@@ -1,0 +1,6 @@
+/target/
+/results/
+.env
+*.token
+**/__pycache__/
+
