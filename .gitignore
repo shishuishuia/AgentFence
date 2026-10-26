@@ -1,0 +1,7 @@
+# Local artifact working files and dependency caches
+/tmp/
+
+# Credentials stay local
+.env
+.env.*
+!.env.example
