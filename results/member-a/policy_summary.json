@@ -1,0 +1,67 @@
+{
+  "clock": "std::time::Instant",
+  "excludes": [
+    "http",
+    "filesystem_metadata",
+    "file_content_io",
+    "audit",
+    "task_lock"
+  ],
+  "iterations_per_round": 1000,
+  "measurement": "pure_policy",
+  "percentile_method": "nearest_rank",
+  "rounds": 3,
+  "warmup_per_scenario": 256,
+  "results": [
+    {
+      "p50_us": 0.093,
+      "p95_us": 0.094,
+      "p99_us": 0.105,
+      "round": 1,
+      "scenario": "allow_write_valid_lease"
+    },
+    {
+      "p50_us": 0.024,
+      "p95_us": 0.024999999999999998,
+      "p99_us": 0.026000000000000002,
+      "round": 1,
+      "scenario": "deny_write_verify"
+    },
+    {
+      "p50_us": 0.093,
+      "p95_us": 0.095,
+      "p99_us": 0.106,
+      "round": 2,
+      "scenario": "allow_write_valid_lease"
+    },
+    {
+      "p50_us": 0.024999999999999998,
+      "p95_us": 0.026000000000000002,
+      "p99_us": 0.026000000000000002,
+      "round": 2,
+      "scenario": "deny_write_verify"
+    },
+    {
+      "p50_us": 0.091,
+      "p95_us": 0.112,
+      "p99_us": 0.11499999999999999,
+      "round": 3,
+      "scenario": "allow_write_valid_lease"
+    },
+    {
+      "p50_us": 0.024,
+      "p95_us": 0.024999999999999998,
+      "p99_us": 0.026000000000000002,
+      "round": 3,
+      "scenario": "deny_write_verify"
+    }
+  ],
+  "source_commit": "cf502f8406ce0b9309654b176ef71d2c770c6c26",
+  "source_crates_tree": "20e6ce2b892d0f3347d82735eb6754fd304d4106",
+  "collected_at_utc": "2026-10-25T16:49:40.583851+00:00",
+  "os": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "cpu": "12th Gen Intel(R) Core(TM) i7-12700H",
+  "concurrency": 1,
+  "build": "release",
+  "command": "cargo run --release -p agentfence-core --example policy_bench --locked -- 1000"
+}

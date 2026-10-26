@@ -1,0 +1,176 @@
+Member A Windows GNU verification
+COMMAND: cargo fmt --all -- --check
+COMMAND: cargo clippy --workspace --all-targets --locked -- -D warnings
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 0.16s
+COMMAND: cargo test --workspace --locked
+   Compiling agentfence-server v0.1.0 (C:\Users\33740\Desktop\AgentFence\crates\server)
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 1.99s
+     Running unittests src\lib.rs (target\debug\deps\agentfence_core-c008f216c6d5a8f8.exe)
+
+running 3 tests
+test phase::tests::lifecycle_has_exactly_four_ordered_stages ... ok
+test phase::tests::json_uses_the_contract_stage_names ... ok
+test phase::tests::unknown_stages_cannot_be_deserialized ... ok
+
+test result: ok. 3 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\security.rs (target\debug\deps\security-d3809d881a37bdd0.exe)
+
+running 14 tests
+test snapshot_status_priority_matches_contract ... ok
+test grant_path_binding_is_checked_before_revocation_and_expiry ... ok
+test decision_does_not_consume_and_successful_use_does ... ok
+test path_membership_is_exact_and_never_url_decoded ... ok
+test policy_rejects_invalid_configuration ... ok
+test reads_are_allowed_only_before_done_without_a_lease ... ok
+test revoked_precedes_expired_and_expired_precedes_used_up ... ok
+test stage_denial_precedes_path_and_lease_errors ... ok
+test ttl_boundary_is_exact_and_independent_of_utc_changes ... ok
+test unknown_tools_never_default_to_read ... ok
+test writes_require_explicit_current_task_grant ... ok
+test grant_bounds_reject_zero_and_excessive_values ... ok
+test portable_path_grammar_denies_ambiguous_forms ... ok
+test physical_check_distinguishes_regular_missing_and_directory ... ok
+
+test result: ok. 14 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\lib.rs (target\debug\deps\agentfence_server-2de03b2d1ad90e4a.exe)
+
+running 1 test
+test files::tests::failure_after_temporary_write_cleans_up_without_truncation ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running unittests src\main.rs (target\debug\deps\agentfence_server-7fb98a7e19dba775.exe)
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+     Running tests\api.rs (target\debug\deps\api-4f8f2bdef63a6602.exe)
+
+running 50 tests
+test a01_registered_task_has_unique_256_bit_token_returned_once ... ok
+test a04_grant_has_exact_path_bounds_and_snapshot ... ok
+test a03_admin_advances_inspect_to_edit ... ok
+test c04_pre_replacement_io_failure_neither_truncates_nor_consumes ... ok
+test a09_admin_can_complete_the_task ... ok
+test c05c_failed_admin_audit_does_not_change_phase_grants_or_tasks ... ok
+test a10_event_pagination_is_ordered_complete_and_instance_scoped ... ok
+test bounds_extra_fields_and_method_errors_are_json ... ok
+test a07_leaving_edit_immediately_disables_all_leases ... ok
+test a02_inspect_read_returns_real_utf8_content ... ok
+test c05a_pre_execution_audit_failure_prevents_all_file_execution ... ok
+test a05_successful_write_changes_only_target_and_consumes_once ... ok
+test c06_invalid_json_unknown_fields_missing_file_and_empty_write ... ok
+test a06_edit_read_returns_current_content ... ok
+test cancelled_http_waiter_does_not_cancel_an_entered_file_replacement ... ok
+test c03_requests_after_successful_revoke_cannot_write ... ok
+test d01_invalid_token_precedes_json_and_logs_no_untrusted_resources ... ok
+test c02_monotonic_expiry_ignores_wall_clock_jumps ... ok
+test d02_agent_cannot_access_any_admin_route_and_admin_cannot_execute_tools ... ok
+test c01_ten_concurrent_single_use_writes_have_exactly_one_success ... ok
+test c05b_post_execution_audit_failure_reports_commit_and_latches_unavailable ... ok
+test d03_valid_agent_cannot_probe_another_or_nonexistent_task ... ok
+test d04_unknown_tool_is_400_before_task_binding ... ok
+test a08_verify_reads_the_actual_modified_file ... ok
+test d05_inspect_write_is_rejected_without_side_effects ... ok
+test d06_verify_write_denial_precedes_expired_lease ... ok
+test d07_done_read_is_denied ... ok
+test d09_edit_write_requires_explicit_grant_id ... ok
+test d08_repeated_backward_and_skipped_phase_changes_preserve_state ... ok
+test d10_exact_expiry_rejects_without_sleep ... ok
+test d11_revoked_lease_is_denied_and_revoke_is_idempotent ... ok
+test d16_parent_traversal_cannot_read_private_fixture ... ok
+test d15_absolute_path_is_denied_on_all_hosts ... ok
+test d19_string_prefix_cannot_expand_allowlist ... ok
+test d14_unlisted_path_does_not_return_content ... ok
+test d13_lease_for_another_allowed_path_is_denied ... ok
+test d23_restart_invalidates_tokens_and_instance_cursors ... ok
+test d12_exhausted_lease_cannot_replace_file_again ... ok
+test d20_backslash_null_and_dot_segments_are_denied ... ok
+test d21_content_limit_counts_utf8_bytes_and_body_limit_precedes_auth ... ok
+test denial_audit_failure_latches_health_without_execution ... ok
+test d22_non_utf8_is_allowed_but_unexecuted ... ok
+test expired_and_revoked_grants_can_be_reissued_with_new_ids ... ok
+test invalid_configuration_and_overlapping_audit_path_fail_startup ... ok
+test queries_redact_credentials_host_paths_and_content_and_stably_sort_tasks ... ok
+test d24_active_grant_conflicts_but_exhausted_grant_can_be_replaced ... ok
+test missing_or_unknown_lease_and_structural_errors_have_stable_priority ... ok
+test failed_grant_and_revocation_audits_do_not_commit_mutations ... ok
+test real_jsonl_is_appendable_redacted_and_current_instance_only ... ok
+test in_progress_write_finishes_before_revoke_and_is_not_cancelled_by_expiry ... ok
+
+test result: ok. 50 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.13s
+
+     Running tests\tcp.rs (target\debug\deps\tcp-ba38f8fe79ba128b.exe)
+
+running 1 test
+test minimal_backend_flow_uses_real_http_and_files ... ok
+
+test result: ok. 1 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.06s
+
+   Doc-tests agentfence_core
+
+running 4 tests
+test crates\core\src\phase.rs - phase::Phase::next (line 27) ... ok
+test crates\core\src\policy.rs - policy::Policy::evaluate (line 107) ... ok
+test crates\core\src\lib.rs - (line 6) ... ok
+test crates\core\src\policy.rs - policy::Policy::evaluate (line 122) ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.02s
+
+all doctests ran in 0.92s; merged doctests compilation took 0.52s
+   Doc-tests agentfence_server
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+COMMAND: cargo test --workspace --doc --locked
+    Finished `test` profile [unoptimized + debuginfo] target(s) in 0.11s
+   Doc-tests agentfence_core
+
+running 4 tests
+test crates\core\src\policy.rs - policy::Policy::evaluate (line 107) ... ok
+test crates\core\src\phase.rs - phase::Phase::next (line 27) ... ok
+test crates\core\src\policy.rs - policy::Policy::evaluate (line 122) ... ok
+test crates\core\src\lib.rs - (line 6) ... ok
+
+test result: ok. 4 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.01s
+
+all doctests ran in 0.92s; merged doctests compilation took 0.51s
+   Doc-tests agentfence_server
+
+running 0 tests
+
+test result: ok. 0 passed; 0 failed; 0 ignored; 0 measured; 0 filtered out; finished in 0.00s
+
+COMMAND: cargo doc --workspace --no-deps --locked
+ Documenting agentfence-core v0.1.0 (C:\Users\33740\Desktop\AgentFence\crates\core)
+ Documenting agentfence-server v0.1.0 (C:\Users\33740\Desktop\AgentFence\crates\server)
+    Finished `dev` profile [unoptimized + debuginfo] target(s) in 1.63s
+   Generated C:\Users\33740\Desktop\AgentFence\target\doc\agentfence_core\index.html and 1 other file
+COMMAND: cargo build --workspace --release --locked
+   Compiling version_check v0.9.5
+   Compiling autocfg v1.5.1
+   Compiling typenum v1.20.1
+   Compiling cfg-if v1.0.5
+   Compiling thiserror v2.0.21
+   Compiling getrandom v0.4.3
+   Compiling getrandom v0.3.4
+   Compiling fastrand v2.5.0
+   Compiling cpufeatures v0.2.17
+   Compiling subtle v2.6.1
+   Compiling thiserror-impl v2.0.21
+   Compiling generic-array v0.14.7
+   Compiling num-traits v0.2.19
+   Compiling tempfile v3.27.0
+   Compiling block-buffer v0.10.4
+   Compiling crypto-common v0.1.7
+   Compiling digest v0.10.7
+   Compiling chrono v0.4.45
+   Compiling sha2 v0.10.9
+   Compiling agentfence-core v0.1.0 (C:\Users\33740\Desktop\AgentFence\crates\core)
+   Compiling agentfence-server v0.1.0 (C:\Users\33740\Desktop\AgentFence\crates\server)
+    Finished `release` profile [optimized] target(s) in 11.10s

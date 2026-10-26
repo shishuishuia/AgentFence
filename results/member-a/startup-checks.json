@@ -1,0 +1,35 @@
+{
+  "source_commit": "cf502f8406ce0b9309654b176ef71d2c770c6c26",
+  "cases": [
+    {
+      "case": "missing_admin",
+      "exit_code": 1,
+      "expected": "startup failure",
+      "passed": true
+    },
+    {
+      "case": "non_loopback",
+      "exit_code": 1,
+      "expected": "startup failure",
+      "passed": true
+    },
+    {
+      "case": "invalid_policy",
+      "exit_code": 1,
+      "expected": "startup failure",
+      "passed": true
+    },
+    {
+      "case": "audit_inside_workspace",
+      "exit_code": 1,
+      "expected": "startup failure",
+      "passed": true
+    },
+    {
+      "case": "fixture_refuses_overwrite",
+      "exit_code": 1,
+      "expected": "existing directory preserved",
+      "passed": true
+    }
+  ]
+}
