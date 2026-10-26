@@ -9,12 +9,8 @@ export interface ErrorResponse {
 }
 
 export interface HealthResponse {
-  request_id: string
   instance_id: string
-  status: 'ok' | 'degraded'
-  audit_available: boolean
-  reason_code: string
-  message: string
+  status: 'ok'
 }
 
 export interface TaskSummary {
@@ -30,17 +26,13 @@ export interface Grant {
   task_id: string
   tool: 'write_file'
   path: string
-  created_at: string
   expires_at: string
-  ttl_seconds: number
-  max_uses: number
   remaining_uses: number
   revoked: boolean
   status: GrantStatus
 }
 
 export interface TaskListResponse {
-  request_id: string
   instance_id: string
   items: TaskSummary[]
   total: number
@@ -48,7 +40,6 @@ export interface TaskListResponse {
 }
 
 export interface TaskDetailResponse extends TaskSummary {
-  request_id: string
   instance_id: string
   server_time: string
   allowed_paths: string[]
@@ -56,7 +47,7 @@ export interface TaskDetailResponse extends TaskSummary {
 }
 
 export interface AuditEvent {
-  event_id: string
+  event_id: number
   instance_id: string
   request_id: string
   task_id: string | null
@@ -66,26 +57,23 @@ export interface AuditEvent {
     | 'phase_changed'
     | 'grant_issued'
     | 'grant_revoked'
-    | 'tool_intent'
-    | 'tool_result'
+    | 'intent'
+    | 'result'
   phase: Phase | null
   tool: string | null
   path: string | null
   grant_id: string | null
-  allowed: boolean | null
-  executed: boolean | null
-  reason_code: string | null
-  duration_us: number | null
-  decision_us: number | null
+  allowed: boolean
+  executed: boolean
+  reason_code: string
+  duration_us: number
+  decision_us: number
   remaining_uses: number | null
   expires_at: string | null
   revoked: boolean | null
-  from_phase: Phase | null
-  to_phase: Phase | null
 }
 
 export interface EventListResponse {
-  request_id: string
   instance_id: string
   events: AuditEvent[]
   next_cursor: string

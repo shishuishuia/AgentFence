@@ -34,7 +34,8 @@ export async function getJson<T>(path: string, signal?: AbortSignal): Promise<T>
   let payload: unknown
   try {
     payload = await response.json()
-  } catch {
+  } catch (error) {
+    if (signal?.aborted || (error instanceof Error && error.name === 'AbortError')) throw error
     throw new ApiError(response.status, 'INVALID_RESPONSE', '接口未返回有效 JSON，请检查只读代理。')
   }
   if (!response.ok) {
