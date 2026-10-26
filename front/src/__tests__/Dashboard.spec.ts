@@ -6,15 +6,14 @@ afterEach(() => vi.unstubAllGlobals())
 
 describe('真实健康接口契约', () => {
   it('仅有 status 和 instance_id 的正常响应也能显示已连接', async () => {
-    vi.stubGlobal(
-      'fetch',
-      vi.fn().mockResolvedValue(
-        new Response(JSON.stringify({ status: 'ok', instance_id: 'inst_real' })),
-      ),
+    const fetchHealth = vi.fn<typeof fetch>().mockResolvedValue(
+      new Response(JSON.stringify({ status: 'ok', instance_id: 'inst_real' })),
     )
+    vi.stubGlobal('fetch', fetchHealth)
     const wrapper = mount(DashboardView, { global: { stubs: { RouterLink: true } } })
     await wrapper.get('button').trigger('click')
     await flushPromises()
+    expect(fetchHealth).toHaveBeenCalledWith('/api/health', expect.objectContaining({ method: 'GET' }))
     expect(wrapper.find('.status-label').text()).toBe('已连接')
     expect(wrapper.get('[role="status"]').text()).toContain('inst_real')
     wrapper.unmount()

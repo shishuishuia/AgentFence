@@ -73,7 +73,19 @@ async fn envelope(State(broker): State<Broker>, request: Request, next: Next) ->
         Err(_) => return failure(broker, ctx, ReasonCode::PayloadTooLarge, is_tool).await,
     };
     if is_admin || is_tool {
-        match (broker.authenticate(bearer(&parts.headers)), is_admin) {
+        // Token lookup may wait for a task-creation lock. Keep even read-only
+        // lock acquisition off Tokio workers, just like the file/audit paths.
+        let token = bearer(&parts.headers).map(str::to_owned);
+        let worker = broker.clone();
+        let identity = match tokio::task::spawn_blocking(move || {
+            worker.authenticate(token.as_deref())
+        })
+        .await
+        {
+            Ok(identity) => identity,
+            Err(_) => return failure(broker, ctx, ReasonCode::IoError, is_tool).await,
+        };
+        match (identity, is_admin) {
             (Ok(Identity::Admin), true) => {}
             (Ok(Identity::Agent(task)), false) => ctx.agent_task = Some(task),
             (Ok(_), _) => return failure(broker, ctx, ReasonCode::RoleDenied, is_tool).await,
@@ -111,16 +123,20 @@ where
 }
 
 async fn health(State(broker): State<Broker>) -> Response {
-    if broker.healthy() {
-        Json(json!({"status":"ok","instance_id":broker.instance_id()})).into_response()
-    } else {
-        failure(
-            broker.clone(),
-            broker.context(),
-            ReasonCode::AuditUnavailable,
-            false,
-        )
-        .await
+    // Reading the latched state shares the audit mutex with durable appends.
+    let worker = broker.clone();
+    match tokio::task::spawn_blocking(move || worker.healthy()).await {
+        Ok(true) => Json(json!({"status":"ok","instance_id":broker.instance_id()})).into_response(),
+        Ok(false) => {
+            failure(
+                broker.clone(),
+                broker.context(),
+                ReasonCode::AuditUnavailable,
+                false,
+            )
+            .await
+        }
+        Err(_) => failure(broker.clone(), broker.context(), ReasonCode::IoError, false).await,
     }
 }
 

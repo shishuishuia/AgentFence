@@ -49,3 +49,7 @@ python -m demo.verify results/local-<本次运行编号>
 `run_manifest.json` 的 commit 指向采样时 HEAD；提交前采样会明确记录 `working_tree_dirty=true`，并保存实际源码逐文件哈希和二进制哈希，不能将其冒称为当时 HEAD 未修改的构建。提交后可在干净工作区重新运行，获取对应最终 commit 的清单。本轮保留一组脱敏样本在 `results/member-b/minimal/`；它不包含夹具，完整复核应使用本次本地运行目录或重新运行。
 
 当前 32 项 Python 测试及最小流程不是完整 A01～A10、D01～D24 黑盒 CSV，也不包含 HTTP 性能、公平基线、权限窗口和 RSS 实验；这些后续单独实施。Rust 源码本轮未修改，A 的后端测试记录保留独立归属。
+
+## 合并 A 后续提交的回归
+
+推送前同步到远端 main `b3b02ff`，合入 A 的后端异步阻塞修正、独立实验程序与前端取消处理。前端重叠修正保留实例显示、卸载取消和最简健康响应测试；新增保留 A 的响应体 AbortError 回归。合并后 9 项前端测试、lint、类型检查及生产构建均成功；Rust release 重新构建成功，13 项客户端和 19 项 demo 测试全部通过，真实最小演示再次输出 `MINIMAL_DEMO_PASS`。该集成验证没有重新运行 A 的全部 Rust 用例或性能实验。

@@ -4,6 +4,8 @@
 
 执行更新：本轮已完成并逐步验证接口修正、Python HTTP 客户端、独立最小流程，以及文件/租约/审计完整核验。验证范围与环境见 `docs/member-b-test-report.md`；下一批为只读代理及 Vue 真实数据页面。
 
+集成更新：后续同步的远端 main `b3b02ff` 已包含 A 的健康/事件修正、响应取消处理和独立实验入口。本次合并保留 B 的实例显示、请求取消测试及 A 的响应体 AbortError 修正，并通过 9 项前端测试、32 项 Python 测试及真实最小演示。实验入口的启动与模式约定现可按 `docs/http-experiment.md` 对接，采样脚本仍待 B 实现。
+
 依据：需求文档 v2.1、`docs/member-a-handoff.md`、`docs/api-contract.md`、当前前端及 Rust 源码。前端目录沿用已确定的 `front/`，文档中旧称 `frontend/` 后续统一修正。
 
 ## 1. 角色范围与当前状态

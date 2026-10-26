@@ -33,4 +33,21 @@ describe('只读API请求', () => {
     )
     await expect(getJson('/tasks')).rejects.toMatchObject({ reasonCode: 'INVALID_RESPONSE' })
   })
+
+  it('保留读取响应体期间的取消错误', async () => {
+    const controller = new AbortController()
+    const cancelled = new DOMException('请求已取消', 'AbortError')
+    vi.stubGlobal(
+      'fetch',
+      vi.fn().mockResolvedValue({
+        ok: true,
+        status: 200,
+        json: async () => {
+          controller.abort()
+          throw cancelled
+        },
+      }),
+    )
+    await expect(getJson('/health', controller.signal)).rejects.toBe(cancelled)
+  })
 })

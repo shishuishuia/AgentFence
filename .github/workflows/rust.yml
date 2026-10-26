@@ -26,3 +26,9 @@ jobs:
       - run: cargo test --workspace --doc --locked
       - run: cargo doc --workspace --no-deps --locked
       - run: cargo build --workspace --release --locked
+      - name: Lint isolated HTTP experiment
+        run: cargo clippy --workspace --all-targets --all-features --locked -- -D warnings
+      - name: Test isolated HTTP experiment
+        run: cargo test --workspace --all-features --locked
+      - name: Build isolated HTTP experiment
+        run: cargo build --release --locked -p agentfence-server --features bench-harness --example http_experiment
