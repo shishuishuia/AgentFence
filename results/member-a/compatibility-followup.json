@@ -1,0 +1,80 @@
+{
+  "date": "2026-10-26",
+  "timezone": "Asia/Shanghai",
+  "source_commit": "a3f334b747e055b418e3675080acc0b3420f32fc",
+  "crates_tree": "0f34e6290f7819a0a8ebd2086e1c5a0675be60c6",
+  "scope": "Interface compatibility, async lock regression and isolated static-ACL HTTP experiment entry",
+  "verification_source": "Commands executed in the development session; historical performance samples remain tied to their original source commit",
+  "rust_cargo_version": "1.98.1",
+  "windows_gnu": {
+    "default_tests_including_4_doctests": 77,
+    "all_feature_tests_including_4_doctests": 81,
+    "commands_passed": [
+      "cargo fmt --all -- --check",
+      "cargo clippy --workspace --all-targets --locked -- -D warnings",
+      "cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+      "cargo test --workspace --locked",
+      "cargo test --workspace --all-features --locked",
+      "cargo doc --workspace --all-features --no-deps --locked",
+      "cargo build --workspace --release --locked",
+      "cargo build --release --locked -p agentfence-server --features bench-harness --example http_experiment"
+    ]
+  },
+  "ubuntu_24_04_wsl2": {
+    "all_feature_tests_including_4_doctests": 85,
+    "commands_passed": [
+      "cargo fmt --all -- --check",
+      "cargo clippy --workspace --all-targets --all-features --locked -- -D warnings",
+      "cargo test --workspace --all-features --locked",
+      "cargo test --workspace --doc --all-features --locked",
+      "cargo doc --workspace --all-features --no-deps --locked",
+      "cargo build --workspace --release --locked",
+      "cargo build --release --locked -p agentfence-server --features bench-harness --example http_experiment"
+    ]
+  },
+  "frontend": {
+    "node_version": "24.16.0",
+    "npm_version": "11.13.0",
+    "unit_tests": 8,
+    "commands_passed": [
+      "npm --prefix front run test:unit",
+      "npm --prefix front run lint",
+      "npm --prefix front run build"
+    ],
+    "covered_regressions": [
+      "status/instance_id-only healthy response is connected",
+      "AUDIT_UNAVAILABLE 503 displays the backend error",
+      "response-body cancellation preserves AbortError"
+    ]
+  },
+  "release_example_real_tcp_smoke": {
+    "enforced": {
+      "health": 200,
+      "read": 200,
+      "inspect_write": 403,
+      "paired_write": 200,
+      "repeat_write": 403,
+      "unlisted_read": 403,
+      "audit_event_count": 11,
+      "file_and_audit_verified": true
+    },
+    "baseline": {
+      "health": 200,
+      "read": 200,
+      "inspect_write": 200,
+      "paired_write": 200,
+      "repeat_write": 200,
+      "unlisted_read": 403,
+      "audit_event_count": 12,
+      "file_and_audit_verified": true
+    },
+    "non_loopback_rejected_before_fixture_creation": true,
+    "performance_samples": false
+  },
+  "remaining_member_b_work": [
+    "read-only proxy and business-page integration",
+    "three-round HTTP timing samples and permission-window experiments",
+    "adapter, team demo and independent black-box results"
+  ],
+  "remote_ci_verified": false
+}

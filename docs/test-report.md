@@ -1,8 +1,22 @@
 # 成员 A 验证报告
 
-日期：2026-10-26（Asia/Shanghai）。本报告只覆盖成员 A 的后端，不声称 Vue、只读代理、Python 适配器或团队完整 Demo 已验收。
+日期：2026-10-26（Asia/Shanghai）。本报告以成员 A 的后端为主，另记录本次获用户授权的前端接口修复；只读代理、Python 适配器和团队完整 Demo 仍未验收。
 
-受测源码提交为 `cf502f8406ce0b9309654b176ef71d2c770c6c26`，crates 树为 `20e6ce2b892d0f3347d82735eb6754fd304d4106`。后续文档/结果提交不改这棵源码树；可用 `git rev-parse HEAD:crates` 核对，原始数据清单也保留这两个引用。
+## 接口与实验入口补充验证
+
+本次新增健康/审计契约回归、认证与健康锁等待的异步调度回归，以及 feature 隔离的 HTTP 静态基线。Windows 默认模式 77 项、启用 bench-harness 后 81 项；WSL2 启用该 feature 后 85 项，均含 4 项文档测试，全部通过。
+
+Windows 的默认/全 feature Clippy 和测试、WSL2 的全 feature Clippy 和测试通过（Clippy 均为 -D warnings）；两环境的 fmt、全 feature 文档构建、产品与实验例程 release 构建通过。WSL2 另显式执行全 feature 文档测试。默认产品的真实 TCP 测试也在全 feature 构建下通过，确认没有因实验 feature 放开授权。CI 已增加实验门禁，远程结果仍须实际推送运行后查看。
+
+独立 release 例程用真实 TCP 分别启动 enforced/baseline，验证健康、读取、inspect 写入、一次租约写入、重复写、白名单外拒绝、文件内容和 intent/result 落盘。动态模式 inspect/重复写均 403，基线均 200，两者白名单外读取均 403；另验证非回环绑定在创建夹具前被拒绝。这些是启动与正确性检查，没有生成或冒充三轮性能采样。
+
+前端用 Node.js 24.16.0、npm 11.13.0 运行 8 项单元测试、lint 与包含类型检查的构建，全部通过。健康测试只提供真实后端的 status/instance_id，并覆盖 AUDIT_UNAVAILABLE 503；API 测试保留响应体取消错误。
+
+B 仍需按 [HTTP 实验约定](http-experiment.md) 完成采样与统计。补充验证源码引用见 results/member-a/compatibility-followup.json。
+
+## 原始后端交付验证（历史记录）
+
+以下原始样本和日志的受测源码为 `cf502f8406ce0b9309654b176ef71d2c770c6c26`，crates 树为 `20e6ce2b892d0f3347d82735eb6754fd304d4106`。它们保持原始引用，不能当作本次改动后的重测性能结果。core 策略算法本次未改，HTTP 服务代码已有后续变更。
 
 ## 环境和质量门禁
 

@@ -35,7 +35,7 @@ npm run dev
 
 `src/api/` 提供 getHealth、getTasks、getTask、getEvents；`src/types/api.ts` 定义对应类型。调用方可以传入 AbortSignal，在页面卸载或路由切换时取消请求。封装没有写操作，也不自动重试。
 
-当前客户端类型来自 [前期接口设计稿](../docs/api-design.md)。新合入后端的健康响应、事件 ID 类型、事件名称等存在差异，接入业务数据前需要按后端契约对齐。
+客户端类型已按 [Rust 接口契约](../docs/api-contract.md) 对齐：健康成功只含 status/instance_id，审计使用 intent/result 和数字 event_id，查询及租约快照不要求后端未返回的字段。健康检测含最简成功响应与审计 503 的回归测试；响应体读取期间的取消保留 AbortError。只读代理及业务页面仍待接入。
 
 ## 检查与构建
 
