@@ -16,9 +16,12 @@ async function checkConnection() {
   const timeout = setTimeout(() => current.abort(), 6000)
   try {
     const health = await getHealth(current.signal)
-    if (current.signal.aborted) return
-    state.value = health.status === 'ok' && health.audit_available ? 'connected' : 'failed'
-    message.value = health.message
+    if (controller !== current || current.signal.aborted) return
+    state.value = health.status === 'ok' ? 'connected' : 'failed'
+    message.value =
+      health.status === 'ok'
+        ? `Rust 服务可用，实例：${health.instance_id}`
+        : '服务返回了未知的健康状态，请检查只读代理。'
   } catch (error) {
     if (controller !== current) return
     state.value = 'failed'
