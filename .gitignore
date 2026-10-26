@@ -5,3 +5,11 @@
 .env
 .env.*
 !.env.example
+/target/
+/.agentfence/
+/results/audit.jsonl
+/results/local-*/
+node_modules/
+front/dist/
+*.token
+**/__pycache__/

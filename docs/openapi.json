@@ -4,7 +4,7 @@
   "info": {
     "title": "AgentFence Lite HTTP API",
     "version": "1.0.0",
-    "description": "待实现的五天竞赛 v2.1 HTTP 契约；不表示服务已实现或通过测试。Markdown 为 docs/api-contract.md。包含 9 个 Rust 操作和 4 个本地只读代理操作。未知请求字段、重复 JSON 键、未知/重复 query、非法 null 均拒绝；这些规则需要运行时执行。所有 API 响应为 JSON 且 Cache-Control: no-store。"
+    "description": "五天竞赛 v2.1 的前期 HTTP 设计稿，对应 docs/api-design.md，尚待与后端实现联调对齐。已实现的 Rust 契约以 docs/api-contract.md 为准；本文件的部分字段和错误行为与实现存在差异。包含 9 个 Rust 操作和 4 个本地只读代理操作。未知请求字段、重复 JSON 键、未知/重复 query、非法 null 均拒绝；这些设计规则需要运行时执行。所有 API 响应设计为 JSON 且 Cache-Control: no-store。"
   },
   "servers": [
     {

@@ -1,0 +1,36 @@
+{
+  "source_commit": "cf502f8406ce0b9309654b176ef71d2c770c6c26",
+  "source_crates_tree": "20e6ce2b892d0f3347d82735eb6754fd304d4106",
+  "collected_at_utc": "2026-10-25T16:52:15.810514+00:00",
+  "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)\nbinary: rustc\ncommit-hash: 48a229ceaefd4985c50990b14116b6d856af0985\ncommit-date: 2026-09-01\nhost: x86_64-unknown-linux-gnu\nrelease: 1.98.1\nLLVM version: 22.1.8",
+  "cargo": "cargo 1.98.1 (797e8a9bc 2026-08-05)",
+  "os": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+  "distribution": "PRETTY_NAME=\"Ubuntu 24.04 LTS\"\nNAME=\"Ubuntu\"\nVERSION_ID=\"24.04\"\nVERSION=\"24.04 LTS (Noble Numbat)\"\nVERSION_CODENAME=noble\nID=ubuntu\nID_LIKE=debian\nHOME_URL=\"https://www.ubuntu.com/\"\nSUPPORT_URL=\"https://help.ubuntu.com/\"\nBUG_REPORT_URL=\"https://bugs.launchpad.net/ubuntu/\"\nPRIVACY_POLICY_URL=\"https://www.ubuntu.com/legal/terms-and-policies/privacy-policy\"\nUBUNTU_CODENAME=noble\nLOGO=ubuntu-logo\n",
+  "target_directory": "Linux persistent user cache",
+  "steps": [
+    {
+      "command": "cargo fmt --all -- --check",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo clippy --workspace --all-targets --locked -- -D warnings",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo test --workspace --locked",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo test --workspace --doc --locked",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo doc --workspace --no-deps --locked",
+      "exit_code": 0
+    },
+    {
+      "command": "cargo build --workspace --release --locked",
+      "exit_code": 0
+    }
+  ]
+}

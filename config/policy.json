@@ -1,0 +1,9 @@
+{
+  "workspaces": {
+    "demo": {
+      "root": "../.agentfence/workspace",
+      "allowed_paths": ["src/main.rs", "Cargo.toml"],
+      "max_content_bytes": 65536
+    }
+  }
+}
