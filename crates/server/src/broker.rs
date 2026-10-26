@@ -2,13 +2,13 @@
 
 use crate::{
     audit::{AuditSink, AuditStore, Event, FileSink},
+    authorization::Authorization,
     clock::{Clock, SystemClock},
     config::{Configuration, StartupError},
     files::{FileOperations, LocalFiles},
 };
 use agentfence_core::{
-    Grant, GrantSpec, GrantStatus, Phase, ReasonCode, TimePoint, Tool, ToolCall,
-    policy::check_lease, resolve_existing,
+    Grant, GrantSpec, GrantStatus, Phase, ReasonCode, TimePoint, Tool, ToolCall, resolve_existing,
 };
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
@@ -94,6 +94,7 @@ struct Shared {
     audit: Mutex<AuditStore>,
     clock: Arc<dyn Clock>,
     files: Arc<dyn FileOperations>,
+    authorization: Authorization,
     instance_id: String,
     request_sequence: AtomicU64,
 }
@@ -133,14 +134,24 @@ impl Broker {
         admin_token: &str,
         audit_path: &Path,
     ) -> Result<Self, StartupError> {
+        Self::open_with_authorization(config, admin_token, audit_path, Authorization::Enforced)
+    }
+
+    pub(crate) fn open_with_authorization(
+        config: Configuration,
+        admin_token: &str,
+        audit_path: &Path,
+        authorization: Authorization,
+    ) -> Result<Self, StartupError> {
         let path = config.audit_path(audit_path)?;
         let sink = FileSink::open(&path)?;
-        Self::with_dependencies(
+        Self::build(
             config,
             admin_token,
             Arc::new(SystemClock::default()),
             Box::new(sink),
             Arc::new(LocalFiles),
+            authorization,
         )
     }
 
@@ -154,6 +165,24 @@ impl Broker {
         clock: Arc<dyn Clock>,
         sink: Box<dyn AuditSink>,
         files: Arc<dyn FileOperations>,
+    ) -> Result<Self, StartupError> {
+        Self::build(
+            config,
+            admin_token,
+            clock,
+            sink,
+            files,
+            Authorization::Enforced,
+        )
+    }
+
+    fn build(
+        config: Configuration,
+        admin_token: &str,
+        clock: Arc<dyn Clock>,
+        sink: Box<dyn AuditSink>,
+        files: Arc<dyn FileOperations>,
+        authorization: Authorization,
     ) -> Result<Self, StartupError> {
         if !(32..=256).contains(&admin_token.len())
             || !admin_token.bytes().all(|b| b.is_ascii_graphic())
@@ -178,6 +207,7 @@ impl Broker {
                 audit: Mutex::new(AuditStore::new(instance_id.clone(), sink)),
                 clock,
                 files,
+                authorization,
                 instance_id,
                 request_sequence: AtomicU64::new(0),
             }),
@@ -589,7 +619,10 @@ impl Broker {
                 return Err(ReasonCode::PayloadTooLarge);
             }
             let start = Instant::now();
-            let resource = workspace.policy.check_resource(task.phase, call);
+            let resource =
+                self.shared
+                    .authorization
+                    .check_resource(&workspace.policy, task.phase, call);
             decision_us += micros(start);
             resource?;
             // Intent is pending, not an authorization success. It precedes even
@@ -606,9 +639,15 @@ impl Broker {
                 return Err(ReasonCode::PathDenied);
             }
             let start = Instant::now();
-            let selected = check_lease(&task.task_id, &task.grants, call, now.monotonic);
+            let selected = self.shared.authorization.check_lease(
+                &task.task_id,
+                &task.grants,
+                call,
+                now.monotonic,
+            );
             decision_us += micros(start);
-            granted_index = selected?;
+            let permit = selected?;
+            granted_index = permit.grant_index();
             event.allowed = true;
             let path = resolved.map_err(|e| e.reason())?;
             match tool {
@@ -625,14 +664,23 @@ impl Broker {
                         .content
                         .as_deref()
                         .ok_or(ReasonCode::InvalidRequest)?;
-                    let index = granted_index.ok_or(ReasonCode::LeaseRequired)?;
+                    let index = permit.write_grant()?;
                     let count = self.shared.files.write(&path, content)?;
                     event.executed = true;
                     // No operation that can ordinarily fail is placed between
                     // successful replacement and consumption under this lock.
-                    task.grants[index].consume()?;
+                    if let Some(index) = index {
+                        task.grants[index].consume()?;
+                    }
                     task.updated_at = self.shared.clock.sample().utc;
-                    data = json!({"bytes_written":count,"grant_id":task.grants[index].grant_id,"remaining_uses":task.grants[index].remaining_uses});
+                    data = match index {
+                        Some(index) => {
+                            json!({"bytes_written":count,"grant_id":task.grants[index].grant_id,"remaining_uses":task.grants[index].remaining_uses})
+                        }
+                        None => {
+                            json!({"bytes_written":count,"grant_id":null,"remaining_uses":null})
+                        }
+                    };
                 }
             }
             Ok(())

@@ -5,9 +5,12 @@
 //! tool gateway, not an operating-system sandbox.
 
 pub mod audit;
+mod authorization;
 pub mod broker;
 pub mod clock;
 pub mod config;
+#[cfg(feature = "bench-harness")]
+pub mod experiment;
 pub mod files;
 mod http;
 
