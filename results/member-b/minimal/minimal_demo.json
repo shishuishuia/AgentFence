@@ -1,0 +1,451 @@
+{
+  "run_id": "local-20261026T140726Z-e753ef23",
+  "status": "passed",
+  "checks": [
+    {
+      "case": "create_task",
+      "http_status": 201,
+      "expected_status": 201,
+      "reason_code": null,
+      "expected_reason": null,
+      "request_id": "req_inst_9746ab53f3e52b78dad47dda3655bc4e_2",
+      "pass": true,
+      "allowed": null,
+      "executed": null
+    },
+    {
+      "case": "inspect_read",
+      "http_status": 200,
+      "expected_status": 200,
+      "reason_code": "OK",
+      "expected_reason": "OK",
+      "request_id": "req_inst_9746ab53f3e52b78dad47dda3655bc4e_3",
+      "pass": true,
+      "allowed": true,
+      "executed": true,
+      "data_summary": {
+        "bytes_read": 34,
+        "content_sha256": "ca666a48385e535040e226e0d3b42ad5372fbb173f09731bff1051c4d0f012d3"
+      }
+    },
+    {
+      "case": "inspect_write_denied",
+      "http_status": 403,
+      "expected_status": 403,
+      "reason_code": "INVALID_STAGE",
+      "expected_reason": "INVALID_STAGE",
+      "request_id": "req_inst_9746ab53f3e52b78dad47dda3655bc4e_5",
+      "pass": true,
+      "allowed": false,
+      "executed": false,
+      "denial_evidence": {
+        "before": {
+          "files": {
+            "workspace/Cargo.toml": "f105cee4bf0bfea96265a52a4aaaf549c8d244d335dc2ea6b2d23242cab5daea",
+            "workspace/src/main.rs": "ca666a48385e535040e226e0d3b42ad5372fbb173f09731bff1051c4d0f012d3",
+            "simulated-private.txt": "89a676840ed53a7fae5e5de5512d133678c3fefd201755e6a675b9a1e9f05ba2"
+          },
+          "phase": "inspect",
+          "updated_at": "2026-10-26T14:07:27.753193500Z",
+          "grants": []
+        },
+        "after": {
+          "files": {
+            "workspace/Cargo.toml": "f105cee4bf0bfea96265a52a4aaaf549c8d244d335dc2ea6b2d23242cab5daea",
+            "workspace/src/main.rs": "ca666a48385e535040e226e0d3b42ad5372fbb173f09731bff1051c4d0f012d3",
+            "simulated-private.txt": "89a676840ed53a7fae5e5de5512d133678c3fefd201755e6a675b9a1e9f05ba2"
+          },
+          "phase": "inspect",
+          "updated_at": "2026-10-26T14:07:27.753193500Z",
+          "grants": []
+        }
+      }
+    },
+    {
+      "case": "advance_edit",
+      "http_status": 200,
+      "expected_status": 200,
+      "reason_code": null,
+      "expected_reason": null,
+      "request_id": "req_inst_9746ab53f3e52b78dad47dda3655bc4e_7",
+      "pass": true,
+      "allowed": null,
+      "executed": null
+    },
+    {
+      "case": "issue_grant",
+      "http_status": 201,
+      "expected_status": 201,
+      "reason_code": null,
+      "expected_reason": null,
+      "request_id": "req_inst_9746ab53f3e52b78dad47dda3655bc4e_8",
+      "pass": true,
+      "allowed": null,
+      "executed": null
+    },
+    {
+      "case": "edit_write",
+      "http_status": 200,
+      "expected_status": 200,
+      "reason_code": "OK",
+      "expected_reason": "OK",
+      "request_id": "req_inst_9746ab53f3e52b78dad47dda3655bc4e_10",
+      "pass": true,
+      "allowed": true,
+      "executed": true,
+      "data_summary": {
+        "bytes_written": 40,
+        "grant_id": "grant_9cd073b4999b090e5eaaea4d782f54c3",
+        "remaining_uses": 0
+      },
+      "write_evidence": {
+        "before": {
+          "files": {
+            "workspace/Cargo.toml": "f105cee4bf0bfea96265a52a4aaaf549c8d244d335dc2ea6b2d23242cab5daea",
+            "workspace/src/main.rs": "ca666a48385e535040e226e0d3b42ad5372fbb173f09731bff1051c4d0f012d3",
+            "simulated-private.txt": "89a676840ed53a7fae5e5de5512d133678c3fefd201755e6a675b9a1e9f05ba2"
+          },
+          "phase": "edit",
+          "updated_at": "2026-10-26T14:07:27.817557200Z",
+          "grants": [
+            {
+              "expires_at": "2026-10-26T14:08:27.817557200Z",
+              "grant_id": "grant_9cd073b4999b090e5eaaea4d782f54c3",
+              "path": "src/main.rs",
+              "remaining_uses": 1,
+              "revoked": false,
+              "status": "active",
+              "task_id": "task_9a90ae64d4e41b558adf5574531b8748",
+              "tool": "write_file"
+            }
+          ]
+        },
+        "after": {
+          "files": {
+            "workspace/Cargo.toml": "f105cee4bf0bfea96265a52a4aaaf549c8d244d335dc2ea6b2d23242cab5daea",
+            "workspace/src/main.rs": "183a5123f37c1a5ba24704b67970d8377a204cc5377613bf62d02e6747d367ba",
+            "simulated-private.txt": "89a676840ed53a7fae5e5de5512d133678c3fefd201755e6a675b9a1e9f05ba2"
+          },
+          "phase": "edit",
+          "updated_at": "2026-10-26T14:07:27.826632400Z",
+          "grants": [
+            {
+              "expires_at": "2026-10-26T14:08:27.817557200Z",
+              "grant_id": "grant_9cd073b4999b090e5eaaea4d782f54c3",
+              "path": "src/main.rs",
+              "remaining_uses": 0,
+              "revoked": false,
+              "status": "used_up",
+              "task_id": "task_9a90ae64d4e41b558adf5574531b8748",
+              "tool": "write_file"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "case": "reuse_denied",
+      "http_status": 403,
+      "expected_status": 403,
+      "reason_code": "LEASE_USED_UP",
+      "expected_reason": "LEASE_USED_UP",
+      "request_id": "req_inst_9746ab53f3e52b78dad47dda3655bc4e_13",
+      "pass": true,
+      "allowed": false,
+      "executed": false,
+      "denial_evidence": {
+        "before": {
+          "files": {
+            "workspace/Cargo.toml": "f105cee4bf0bfea96265a52a4aaaf549c8d244d335dc2ea6b2d23242cab5daea",
+            "workspace/src/main.rs": "183a5123f37c1a5ba24704b67970d8377a204cc5377613bf62d02e6747d367ba",
+            "simulated-private.txt": "89a676840ed53a7fae5e5de5512d133678c3fefd201755e6a675b9a1e9f05ba2"
+          },
+          "phase": "edit",
+          "updated_at": "2026-10-26T14:07:27.826632400Z",
+          "grants": [
+            {
+              "expires_at": "2026-10-26T14:08:27.817557200Z",
+              "grant_id": "grant_9cd073b4999b090e5eaaea4d782f54c3",
+              "path": "src/main.rs",
+              "remaining_uses": 0,
+              "revoked": false,
+              "status": "used_up",
+              "task_id": "task_9a90ae64d4e41b558adf5574531b8748",
+              "tool": "write_file"
+            }
+          ]
+        },
+        "after": {
+          "files": {
+            "workspace/Cargo.toml": "f105cee4bf0bfea96265a52a4aaaf549c8d244d335dc2ea6b2d23242cab5daea",
+            "workspace/src/main.rs": "183a5123f37c1a5ba24704b67970d8377a204cc5377613bf62d02e6747d367ba",
+            "simulated-private.txt": "89a676840ed53a7fae5e5de5512d133678c3fefd201755e6a675b9a1e9f05ba2"
+          },
+          "phase": "edit",
+          "updated_at": "2026-10-26T14:07:27.826632400Z",
+          "grants": [
+            {
+              "expires_at": "2026-10-26T14:08:27.817557200Z",
+              "grant_id": "grant_9cd073b4999b090e5eaaea4d782f54c3",
+              "path": "src/main.rs",
+              "remaining_uses": 0,
+              "revoked": false,
+              "status": "used_up",
+              "task_id": "task_9a90ae64d4e41b558adf5574531b8748",
+              "tool": "write_file"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "case": "outside_read_denied",
+      "http_status": 403,
+      "expected_status": 403,
+      "reason_code": "PATH_DENIED",
+      "expected_reason": "PATH_DENIED",
+      "request_id": "req_inst_9746ab53f3e52b78dad47dda3655bc4e_16",
+      "pass": true,
+      "allowed": false,
+      "executed": false,
+      "denial_evidence": {
+        "before": {
+          "files": {
+            "workspace/Cargo.toml": "f105cee4bf0bfea96265a52a4aaaf549c8d244d335dc2ea6b2d23242cab5daea",
+            "workspace/src/main.rs": "183a5123f37c1a5ba24704b67970d8377a204cc5377613bf62d02e6747d367ba",
+            "simulated-private.txt": "89a676840ed53a7fae5e5de5512d133678c3fefd201755e6a675b9a1e9f05ba2"
+          },
+          "phase": "edit",
+          "updated_at": "2026-10-26T14:07:27.826632400Z",
+          "grants": [
+            {
+              "expires_at": "2026-10-26T14:08:27.817557200Z",
+              "grant_id": "grant_9cd073b4999b090e5eaaea4d782f54c3",
+              "path": "src/main.rs",
+              "remaining_uses": 0,
+              "revoked": false,
+              "status": "used_up",
+              "task_id": "task_9a90ae64d4e41b558adf5574531b8748",
+              "tool": "write_file"
+            }
+          ]
+        },
+        "after": {
+          "files": {
+            "workspace/Cargo.toml": "f105cee4bf0bfea96265a52a4aaaf549c8d244d335dc2ea6b2d23242cab5daea",
+            "workspace/src/main.rs": "183a5123f37c1a5ba24704b67970d8377a204cc5377613bf62d02e6747d367ba",
+            "simulated-private.txt": "89a676840ed53a7fae5e5de5512d133678c3fefd201755e6a675b9a1e9f05ba2"
+          },
+          "phase": "edit",
+          "updated_at": "2026-10-26T14:07:27.826632400Z",
+          "grants": [
+            {
+              "expires_at": "2026-10-26T14:08:27.817557200Z",
+              "grant_id": "grant_9cd073b4999b090e5eaaea4d782f54c3",
+              "path": "src/main.rs",
+              "remaining_uses": 0,
+              "revoked": false,
+              "status": "used_up",
+              "task_id": "task_9a90ae64d4e41b558adf5574531b8748",
+              "tool": "write_file"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "case": "advance_verify",
+      "http_status": 200,
+      "expected_status": 200,
+      "reason_code": null,
+      "expected_reason": null,
+      "request_id": "req_inst_9746ab53f3e52b78dad47dda3655bc4e_18",
+      "pass": true,
+      "allowed": null,
+      "executed": null
+    },
+    {
+      "case": "verify_read",
+      "http_status": 200,
+      "expected_status": 200,
+      "reason_code": "OK",
+      "expected_reason": "OK",
+      "request_id": "req_inst_9746ab53f3e52b78dad47dda3655bc4e_19",
+      "pass": true,
+      "allowed": true,
+      "executed": true,
+      "data_summary": {
+        "bytes_read": 40,
+        "content_sha256": "183a5123f37c1a5ba24704b67970d8377a204cc5377613bf62d02e6747d367ba"
+      }
+    },
+    {
+      "case": "verify_write_denied",
+      "http_status": 403,
+      "expected_status": 403,
+      "reason_code": "INVALID_STAGE",
+      "expected_reason": "INVALID_STAGE",
+      "request_id": "req_inst_9746ab53f3e52b78dad47dda3655bc4e_21",
+      "pass": true,
+      "allowed": false,
+      "executed": false,
+      "denial_evidence": {
+        "before": {
+          "files": {
+            "workspace/Cargo.toml": "f105cee4bf0bfea96265a52a4aaaf549c8d244d335dc2ea6b2d23242cab5daea",
+            "workspace/src/main.rs": "183a5123f37c1a5ba24704b67970d8377a204cc5377613bf62d02e6747d367ba",
+            "simulated-private.txt": "89a676840ed53a7fae5e5de5512d133678c3fefd201755e6a675b9a1e9f05ba2"
+          },
+          "phase": "verify",
+          "updated_at": "2026-10-26T14:07:27.879022800Z",
+          "grants": [
+            {
+              "expires_at": "2026-10-26T14:08:27.817557200Z",
+              "grant_id": "grant_9cd073b4999b090e5eaaea4d782f54c3",
+              "path": "src/main.rs",
+              "remaining_uses": 0,
+              "revoked": false,
+              "status": "stage_inactive",
+              "task_id": "task_9a90ae64d4e41b558adf5574531b8748",
+              "tool": "write_file"
+            }
+          ]
+        },
+        "after": {
+          "files": {
+            "workspace/Cargo.toml": "f105cee4bf0bfea96265a52a4aaaf549c8d244d335dc2ea6b2d23242cab5daea",
+            "workspace/src/main.rs": "183a5123f37c1a5ba24704b67970d8377a204cc5377613bf62d02e6747d367ba",
+            "simulated-private.txt": "89a676840ed53a7fae5e5de5512d133678c3fefd201755e6a675b9a1e9f05ba2"
+          },
+          "phase": "verify",
+          "updated_at": "2026-10-26T14:07:27.879022800Z",
+          "grants": [
+            {
+              "expires_at": "2026-10-26T14:08:27.817557200Z",
+              "grant_id": "grant_9cd073b4999b090e5eaaea4d782f54c3",
+              "path": "src/main.rs",
+              "remaining_uses": 0,
+              "revoked": false,
+              "status": "stage_inactive",
+              "task_id": "task_9a90ae64d4e41b558adf5574531b8748",
+              "tool": "write_file"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "case": "advance_done",
+      "http_status": 200,
+      "expected_status": 200,
+      "reason_code": null,
+      "expected_reason": null,
+      "request_id": "req_inst_9746ab53f3e52b78dad47dda3655bc4e_23",
+      "pass": true,
+      "allowed": null,
+      "executed": null
+    },
+    {
+      "case": "done_read_denied",
+      "http_status": 403,
+      "expected_status": 403,
+      "reason_code": "INVALID_STAGE",
+      "expected_reason": "INVALID_STAGE",
+      "request_id": "req_inst_9746ab53f3e52b78dad47dda3655bc4e_25",
+      "pass": true,
+      "allowed": false,
+      "executed": false,
+      "denial_evidence": {
+        "before": {
+          "files": {
+            "workspace/Cargo.toml": "f105cee4bf0bfea96265a52a4aaaf549c8d244d335dc2ea6b2d23242cab5daea",
+            "workspace/src/main.rs": "183a5123f37c1a5ba24704b67970d8377a204cc5377613bf62d02e6747d367ba",
+            "simulated-private.txt": "89a676840ed53a7fae5e5de5512d133678c3fefd201755e6a675b9a1e9f05ba2"
+          },
+          "phase": "done",
+          "updated_at": "2026-10-26T14:07:27.892105500Z",
+          "grants": [
+            {
+              "expires_at": "2026-10-26T14:08:27.817557200Z",
+              "grant_id": "grant_9cd073b4999b090e5eaaea4d782f54c3",
+              "path": "src/main.rs",
+              "remaining_uses": 0,
+              "revoked": false,
+              "status": "stage_inactive",
+              "task_id": "task_9a90ae64d4e41b558adf5574531b8748",
+              "tool": "write_file"
+            }
+          ]
+        },
+        "after": {
+          "files": {
+            "workspace/Cargo.toml": "f105cee4bf0bfea96265a52a4aaaf549c8d244d335dc2ea6b2d23242cab5daea",
+            "workspace/src/main.rs": "183a5123f37c1a5ba24704b67970d8377a204cc5377613bf62d02e6747d367ba",
+            "simulated-private.txt": "89a676840ed53a7fae5e5de5512d133678c3fefd201755e6a675b9a1e9f05ba2"
+          },
+          "phase": "done",
+          "updated_at": "2026-10-26T14:07:27.892105500Z",
+          "grants": [
+            {
+              "expires_at": "2026-10-26T14:08:27.817557200Z",
+              "grant_id": "grant_9cd073b4999b090e5eaaea4d782f54c3",
+              "path": "src/main.rs",
+              "remaining_uses": 0,
+              "revoked": false,
+              "status": "stage_inactive",
+              "task_id": "task_9a90ae64d4e41b558adf5574531b8748",
+              "tool": "write_file"
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "started_at": "2026-10-26T14:07:26.862399+00:00",
+  "initial_files": {
+    "workspace/src/main.rs": "ca666a48385e535040e226e0d3b42ad5372fbb173f09731bff1051c4d0f012d3",
+    "workspace/Cargo.toml": "f105cee4bf0bfea96265a52a4aaaf549c8d244d335dc2ea6b2d23242cab5daea",
+    "simulated-private.txt": "89a676840ed53a7fae5e5de5512d133678c3fefd201755e6a675b9a1e9f05ba2"
+  },
+  "instance_id": "inst_9746ab53f3e52b78dad47dda3655bc4e",
+  "task_id": "task_9a90ae64d4e41b558adf5574531b8748",
+  "final_detail": {
+    "allowed_paths": [
+      "Cargo.toml",
+      "src/main.rs"
+    ],
+    "created_at": "2026-10-26T14:07:27.753193500Z",
+    "grants": [
+      {
+        "expires_at": "2026-10-26T14:08:27.817557200Z",
+        "grant_id": "grant_9cd073b4999b090e5eaaea4d782f54c3",
+        "path": "src/main.rs",
+        "remaining_uses": 0,
+        "revoked": false,
+        "status": "stage_inactive",
+        "task_id": "task_9a90ae64d4e41b558adf5574531b8748",
+        "tool": "write_file"
+      }
+    ],
+    "instance_id": "inst_9746ab53f3e52b78dad47dda3655bc4e",
+    "phase": "done",
+    "server_time": "2026-10-26T14:07:27.927314300Z",
+    "task_id": "task_9a90ae64d4e41b558adf5574531b8748",
+    "updated_at": "2026-10-26T14:07:27.892105500Z",
+    "workspace_id": "demo"
+  },
+  "event_pages": 9,
+  "server_stopped": true,
+  "target_sha256": "183a5123f37c1a5ba24704b67970d8377a204cc5377613bf62d02e6747d367ba",
+  "verification": {
+    "passed": true,
+    "workflow_checks": 13,
+    "denials_checked": 5,
+    "tool_results": 8,
+    "audit_events": 17,
+    "audit_sha256": "ae59ed3b34f0ec875aae5aec9248279228db8b08325142e8077ad0054fe02b76",
+    "api_matches_disk": true,
+    "no_sensitive_data": true
+  },
+  "finished_at": "2026-10-26T14:07:27.975804+00:00"
+}

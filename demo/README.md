@@ -16,4 +16,30 @@ setup 检查工具版本并创建一个全新示例夹具，不覆盖已有目�
 
 演示覆盖 inspect 可读不可写、edit 一次性授权/写入/用尽、区外文件读取拒绝、verify 读回与拒写、done 拒读。服务使用操作系统分配的回环端口，Admin/Agent Token 仅保存在本次进程内存和子进程环境；结束时仅停止自身创建的服务。结果目录保留，便于核查。
 
-本步骤产物为 `minimal_demo.json` 和 `demo_events.jsonl`。当前流程检查成功标志为 `MINIMAL_FLOW_PASS`；完整审计一致性验证与最终 `MINIMAL_DEMO_PASS` 在后续验收步骤加入。任何失败均返回非零并保存已完成的检查。
+全部检查通过时输出 `MINIMAL_DEMO_PASS`，退出 0。任何失败均返回非零并保存已完成的检查。13 个流程检查覆盖 8 次工具请求；其中 5 次拒绝均保存调用前后的文件哈希、任务和租约快照，必须保持不变。成功写入必须只改变目标文件且恰好消费一次租约。
+
+事件使用每页 2 条实际分页导出，校验顺序、去重、实例、任务和 request_id，并逐条与磁盘 JSONL 比较。成功工具调用必须有先 intent 后 result；intent 的 PENDING 不能算完成。导出前检查本次临时 Token、授权头和文件内容未泄漏到报告或审计。
+
+每次运行保存：
+
+- `minimal_demo.json`：逐步状态、拒绝前后快照、文件哈希、最终租约及校验汇总。
+- `demo_events.jsonl`：经核对和敏感信息检查的 API 审计导出。
+- `run_manifest.json`：采样时 Git commit、工作区是否有修改、实际源码文件哈希、二进制哈希、Python/Rust/Cargo 版本、操作系统和配置摘要。
+- `fixture/`：本次独立文件、policy 和磁盘原始审计，便于本地复核；不包含 Token。
+
+结果与夹具保留后，可独立复核：
+
+```sh
+python -m demo.verify results/local-<本次运行编号>
+```
+
+成功输出 `MINIMAL_VERIFY_PASS`。它检查已有证据，不重新调用服务；它不是签名或防篡改存证。真实凭证的泄漏检查在初次演示的进程内完成，复核不需要也不保存凭证。
+
+回归测试：
+
+```sh
+python -m unittest discover -s integrations/tests -v
+python -m unittest discover -s demo/tests -v
+```
+
+后者在 release 二进制存在时实际启动 Rust，检查失败清理和重复运行，并对真实产物进行故意篡改测试。无二进制时相关测试明确跳过；正式验收必须先构建，且不能把跳过记为通过。32 项 Python 测试不替代后续 A01～A10、D01～D24 的完整 HTTP 黑盒 CSV 报告。

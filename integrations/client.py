@@ -120,6 +120,7 @@ class BrokerHttp:
                 response = error
             with response:
                 status = response.code
+                content_length = response.headers.get("Content-Length")
                 raw = response.read(MAX_RESPONSE_BYTES + 1)
         except (TimeoutError, socket.timeout):
             raise ClientError("broker request timed out; write execution may be unknown; do not retry automatically") from None
@@ -127,6 +128,9 @@ class BrokerHttp:
             raise ClientError("broker connection failed; write execution may be unknown; do not retry automatically") from None
         if len(raw) > MAX_RESPONSE_BYTES:
             raise ClientError("broker response exceeds the client size limit")
+        if content_length is not None:
+            if not content_length.isdecimal() or int(content_length) != len(raw):
+                raise ClientError("broker response was incomplete or had an invalid Content-Length")
         try:
             payload = json.loads(raw.decode("utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError):

@@ -10,7 +10,7 @@
 
 成员 A 的后端已实现：管理员/任务 Token 隔离、四阶段状态机、工作区配置、精确路径限制、UTF-8 文件读写、单调时钟写租约、原子替换和消费、intent/result 审计，以及 v2.1 的任务列表/详情/事件查询。
 
-已合入成员 A 的 `crates/`、`config/`、Rust 测试及接口说明，并在 `front/` 创建 Vue/Vite/Router 前端骨架。只读代理、业务数据联调、Agent 适配器及团队 demo/bench 脚本仍待实现。对接入口见 [成员 A 交接](docs/member-a-handoff.md) 和 [API 契约](docs/api-contract.md)。
+已合入成员 A 的 `crates/`、`config/`、Rust 测试及接口说明；`front/` 已有 Vue/Vite/Router 前端骨架及契约类型修正，`integrations/` 和 `demo/` 已实现 HTTP 客户端与独立最小演示。只读代理、页面业务数据、完整黑盒回归及实验采样仍待实现。对接入口见 [成员 A 交接](docs/member-a-handoff.md)、[API 契约](docs/api-contract.md) 和 [B 的验证记录](docs/member-b-test-report.md)。
 
 ## 环境依赖
 
@@ -28,7 +28,7 @@ rustc -Vv
 cargo -V
 ```
 
-本机默认的 MSVC 工具链缺少 `link.exe`，但已有 GNU 工具链和 MSYS2 GCC，因此已仅对此项目设置 GNU 工具链覆盖：
+成员 A 的 Windows 辅助验证环境中，默认 MSVC 缺少 `link.exe`，改用已安装的 GNU 工具链和 MSYS2 GCC，并仅为其本地项目设置了覆盖：
 
 ```powershell
 rustup override set 1.98.1-x86_64-pc-windows-gnu
@@ -47,7 +47,15 @@ cargo test -p agentfence-server --test tcp --locked -- --nocapture
 
 成功会打印 `BACKEND_TCP_MINIMAL_PASS`。测试启动真实 Rust 子进程，通过 TCP 完成读取、阶段外拒写、一次性租约写入、再次拒写、区外路径拒绝、verify 读回、done 拒读，并核对文件与 JSONL。夹具和 Token 临时生成，仅停止测试自身进程；不修改仓库源码。
 
-这提供 A 端独立可运行证据。v2.1 要求的 `demo/setup.sh`、`demo/run_minimal.sh` 及 `MINIMAL_DEMO_PASS` 属于 B 的集成交付，尚未实现。
+这提供 A 端独立可运行证据。B 的独立最小演示入口如下，详细行为见 [demo 说明](demo/README.md)：
+
+```sh
+bash demo/setup.sh
+cargo build --release --locked -p agentfence-server
+bash demo/run_minimal.sh
+```
+
+要求 Python 3.10+，仅使用标准库。全部断言通过输出 `MINIMAL_DEMO_PASS`；结果保存在 `results/local-<run_id>/`，包括文件/租约证据、审计导出和源码/环境清单。脚本使用新夹具和随机端口，仅停止自身子进程。也可执行 `python -m demo.setup`、`python -m demo.run_minimal`。
 
 ## 单独启动服务
 
@@ -150,7 +158,7 @@ results/member-a/          脱敏验证日志与纯策略样本
 
 ## 第三方依赖
 
-本项目采用 [MIT](LICENSE)。第三方依赖声明与引用/AI 辅助说明见 [来源说明](docs/provenance.md) 和 [依赖许可证索引](docs/dependency-licenses.json)；依赖版本由 Cargo.lock 固定。最终前端/代理环境、Node.js/npm/Python 版本与运行脚本由 B 接入后补充。
+本项目采用 [MIT](LICENSE)。第三方依赖声明与引用/AI 辅助说明见 [来源说明](docs/provenance.md) 和 [依赖许可证索引](docs/dependency-licenses.json)；Rust 依赖由 Cargo.lock 固定，前端依赖由 front/package-lock.json 固定。B 已验证 Node.js 24.14.1、npm 11.11.0、Python 3.12.14；Python 客户端与演示仅用标准库。代理运行环境和实验入口将在后续接入时补充。
 
 ## 运行前端
 

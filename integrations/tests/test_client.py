@@ -34,7 +34,8 @@ class WireTests(unittest.TestCase):
                 self.send_response(status)
                 for key, value in headers.items():
                     self.send_header(key, value)
-                self.send_header("Content-Length", str(len(data)))
+                if "Content-Length" not in headers:
+                    self.send_header("Content-Length", str(len(data)))
                 self.end_headers()
                 try:
                     self.wfile.write(data)
@@ -133,6 +134,11 @@ class WireTests(unittest.TestCase):
         with self.assertRaisesRegex(ClientError, "timed out"):
             http.request("POST", "/slow", body={"content": "private"})
         self.assertEqual(len(self.requests), 1)
+
+    def test_truncated_response_cannot_be_mistaken_for_success(self):
+        type(self).reply = (200, b'{"status":"ok"}', {"Content-Length": "1000"})
+        with self.assertRaisesRegex(ClientError, "incomplete"):
+            self.http.health()
 
     def test_bad_origins_timeouts_and_route_ids_are_rejected_before_request(self):
         for url in ("https://127.0.0.1", "http://example.com", "http://user:pass@127.0.0.1", "http://127.0.0.1/path", "http://127.0.0.1?url=x"):
