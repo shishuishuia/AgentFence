@@ -283,7 +283,6 @@ impl Broker {
         let token = random_hex::<32>().map_err(|_| ReasonCode::IoError)?;
         let now = self.shared.clock.sample();
         let mut tasks = lock(&self.shared.tasks)?;
-        let mut agents = lock(&self.shared.agent_hashes)?;
         let task = Task {
             task_id: task_id.clone(),
             workspace_id: workspace_id.into(),
@@ -301,6 +300,8 @@ impl Broker {
         event.reason_code = ReasonCode::Ok;
         event.duration_us = micros(ctx.started);
         self.append(event)?; // Commit memory only after the management event is confirmed.
+        // Token lookups must not wait for this management event's disk flush.
+        let mut agents = lock(&self.shared.agent_hashes)?;
         let summary = summary(&task);
         agents.insert(hash(&token), task_id.clone());
         tasks.insert(task_id, Arc::new(Mutex::new(task)));
