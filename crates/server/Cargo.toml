@@ -5,6 +5,15 @@ edition.workspace = true
 rust-version.workspace = true
 license.workspace = true
 
+[features]
+default = []
+# Isolated fixture experiments only; the product binary always uses enforcement.
+bench-harness = []
+
+[[example]]
+name = "http_experiment"
+required-features = ["bench-harness"]
+
 [dependencies]
 agentfence-core.workspace = true
 axum.workspace = true

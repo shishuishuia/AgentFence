@@ -124,6 +124,14 @@ cargo run --release -p agentfence-core --example policy_bench --locked -- 1000 >
 
 三轮、每轮允许/拒绝各 1000 次，先排除 256 次预热，输出原始样本与 nearest-rank P50/P95/P99。排除 HTTP、文件元数据、内容 I/O、日志和锁。真实采样见 [成员 A 数据](results/member-a/policy_summary.json)，不将此结果代替成员 B 的端到端、公平基线或权限窗口实验。
 
+HTTP 静态/动态对照已有独立 Rust 入口，复用正式 HTTP、文件、审计实现：
+
+```sh
+cargo build --release --locked -p agentfence-server --features bench-harness --example http_experiment
+```
+
+启动参数、固定夹具、基线语义和 B 的采样约定见 [HTTP 公平对照入口](docs/http-experiment.md)。产品服务没有关闭阶段/租约授权的开关。
+
 ## 目录与交接
 
 ```text

@@ -2,6 +2,22 @@
 
 状态：成员 A 已实现的对接候选，待成员 B 联调确认。日期：2026-10-26。尚不声称已经获得成员 B 确认。以下示例 ID、时间和耗时用于说明格式，非实验数据。
 
+## 联调已确认的实现形状
+
+以本文和真实 Rust 响应为准。`api-design.md`、`openapi.json` 是前期设计稿，前端或代理不能据此添加 Rust 未返回的必填字段。
+
+| 对接点 | 实际响应与消费规则 |
+| --- | --- |
+| 健康成功 | HTTP 200，只有 `status:"ok"`、`instance_id`；不要依赖 `audit_available` 或成功响应的 `message` |
+| 审计故障 | HTTP 503，统一错误结构，`reason_code:"AUDIT_UNAVAILABLE"`；由 HTTP 错误分支展示 `message` |
+| 工具事件 | `intent` / `result`；只对 `result` 统计完成结果 |
+| 事件标识 | `event_id` 是整数；`next_cursor` 是字符串，原样传回 |
+| 查询成功 | 列表、详情、事件查询不保证 `request_id`；错误响应仍有 `request_id` |
+| 租约快照 | 没有 `created_at`、`ttl_seconds`、`max_uses`；使用 `expires_at`、`remaining_uses`、`status` |
+| 阶段事件 | `phase` 是变更后阶段，没有 `from_phase` / `to_phase` |
+
+只读代理的 `/api/health` 应保留上游状态码及 JSON 语义。健康响应格式与 `intent/result`/JSONL 一致性由 `crates/server/tests/contract.rs` 固定；前端健康回归直接使用上述两个字段的最简响应。
+
 ## 公共约定
 
 - Broker 默认 `http://127.0.0.1:8080`，仅允许回环地址；不托管 Vue，不提供任意来源 CORS。

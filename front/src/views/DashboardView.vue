@@ -17,8 +17,8 @@ async function checkConnection() {
   try {
     const health = await getHealth(current.signal)
     if (current.signal.aborted) return
-    state.value = health.status === 'ok' && health.audit_available ? 'connected' : 'failed'
-    message.value = health.message
+    state.value = health.status === 'ok' ? 'connected' : 'failed'
+    message.value = health.status === 'ok' ? 'Rust 服务正常，审计可用。' : 'Rust 服务状态异常。'
   } catch (error) {
     if (controller !== current) return
     state.value = 'failed'

@@ -27,3 +27,11 @@ WSL 会话间临时构建目录的产物未保留，最终复现使用 Linux 主
 后续交接：B 确认 API、完成代理/前端/适配器/最小脚本/HTTP 实验。当前未联系或代替 B 作确认，也未自动创建 PR 或推送分支。
 
 每步完成实际验证后单独提交。依赖安全性和真实的文件系统边界必须随实现检查，不把接口存活等同于权限系统完成。
+
+## 2026-10-26 接口联调与公平基线
+
+- beafef4：缩小任务创建时 Token map 锁范围；认证和健康审计锁查询移至 blocking pool，增加可控审计闸门回归，避免阻塞 Tokio worker。
+- 5743b68：按用户明确授权修前端健康检测与接口类型，审计名改为 intent/result，数字事件 ID 与查询/租约字段对齐；取消响应体读取保留 AbortError。Rust 契约测试核对 HTTP 与真实 JSONL 一致性。前端 8 项测试、lint/build 通过。
+- a3f334b：增加 bench-harness 编译隔离和 http_experiment 独立入口。静态 ACL 与动态阶段/租约只在授权步骤不同，复用同一 app、锁、LocalFiles、FileSink；只创建新的固定模拟夹具。产品构造始终执行动态策略。
+
+Windows 默认 77 项、全 feature 81 项、WSL 全 feature 85 项测试通过；两环境的格式、Clippy、文档及 release 检查通过。独立例程以 release/真实 TCP 验证两种策略差异、共同路径保护和审计；没有执行 B 的正式三轮 HTTP 性能/权限窗口采样。入口与批次/计时约定已写入 docs/http-experiment.md，并在 A 交接文档引用。
