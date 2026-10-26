@@ -1,0 +1,36 @@
+<script setup lang="ts">
+import { RouterLink, RouterView, useRoute } from 'vue-router'
+import './assets/main.css'
+
+const route = useRoute()
+const logoUrl = `${import.meta.env.BASE_URL}favicon.svg`
+</script>
+
+<template>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <RouterLink class="brand" to="/dashboard" aria-label="AgentFence 首页">
+        <img :src="logoUrl" alt="" width="36" height="36" />
+        <span>AgentFence<small>LITE CONSOLE</small></span>
+      </RouterLink>
+      <p class="nav-label">工作空间</p>
+      <nav aria-label="主导航">
+        <RouterLink to="/dashboard"><span class="nav-icon">◈</span>项目总览</RouterLink>
+        <RouterLink to="/tasks"><span class="nav-icon">▤</span>任务列表</RouterLink>
+        <RouterLink to="/audit"><span class="nav-icon">◎</span>审计事件</RouterLink>
+      </nav>
+      <div class="sidebar-note">
+        <span class="status-dot"></span> 只读控制台
+        <p>任务授权与阶段变更由管理员执行。</p>
+      </div>
+    </aside>
+    <div class="workspace">
+      <header class="topbar">
+        <div class="breadcrumb">工作空间 <span>/</span> {{ route.meta.title }}</div>
+        <span class="environment">LOCAL</span>
+      </header>
+      <main id="main-content"><RouterView /></main>
+      <footer>AgentFence Lite <span>任务感知的工具权限控制</span></footer>
+    </div>
+  </div>
+</template>
