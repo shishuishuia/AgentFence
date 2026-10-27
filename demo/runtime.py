@@ -26,11 +26,14 @@ def default_binary() -> Path:
 class ManagedBroker:
     """No process-name matching, arbitrary ports, or changes to a user's service."""
 
-    def __init__(self, binary: Path, fixture: Path, admin_token: str, *, startup_timeout: float = 15):
+    def __init__(self, binary: Path, fixture: Path, admin_token: str, *, startup_timeout: float = 15, monitor_factory=None):
         self.binary = binary.resolve()
         self.fixture = fixture.resolve()
         self._token = admin_token
         self.startup_timeout = startup_timeout
+        # Trusted experiment-only observation; never selected by an HTTP request.
+        self.monitor_factory = monitor_factory
+        self.memory_monitor = None
         self.process: subprocess.Popen | None = None
         self.base_url: str | None = None
         self._reader: threading.Thread | None = None
@@ -59,6 +62,9 @@ class ManagedBroker:
             stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.PIPE,
             creationflags=getattr(subprocess, "CREATE_NO_WINDOW", 0),
         )
+        if self.monitor_factory is not None:
+            self.memory_monitor = self.monitor_factory(self.process, self.fixture.name)
+            self.memory_monitor.start()
 
         def read_stderr():
             try:
@@ -104,6 +110,14 @@ class ManagedBroker:
 
     def stop(self):
         """Only terminate the process created by this instance, then reap it."""
+        monitor, self.memory_monitor = self.memory_monitor, None
+        try:
+            if monitor is not None:
+                monitor.close()
+        finally:
+            self._stop_owned_process()
+
+    def _stop_owned_process(self):
         if self.process is not None:
             if self.process.poll() is None:
                 self.process.terminate()
