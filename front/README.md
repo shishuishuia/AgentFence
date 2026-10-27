@@ -14,6 +14,8 @@ npm --prefix front run dev
 
 访问 http://127.0.0.1:5173，端口固定并启用 strictPort。Vite 将同源 /api 转给 4173；代理地址和凭证只在服务端配置。默认浏览器请求 /api，VITE_API_BASE 仅用于公开 API 前缀，严禁加入 Token。
 
+真实模型模式将终端一改为 `python -m demo.run_live_dashboard --mode dev --agent deepseek --step-delay 0`，并预先在服务端配置 DEEPSEEK_API_KEY。总览会出现任务输入框，显示实际 DeepSeek 工具调用与动态记录数；不使用固定 13 步百分比。模型调用和凭证均在服务端，页面只提交任务文字。详见 [DeepSeek Agent](../docs/deepseek-agent.md)。
+
 ```sh
 npm --prefix front run lint
 npm --prefix front run test:unit

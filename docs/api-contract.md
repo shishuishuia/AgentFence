@@ -235,6 +235,8 @@ TTL 在进入受控临界区时采样，`now >= deadline` 为过期。已进入�
 
 ## 错误码汇总
 
+模型模式补充：显式使用 `--agent deepseek` 时，start JSON 可多一个 task 字符串（最多 1000 字符/4000 UTF-8 字节），控制体上限 8192 字节；pause/resume 不可带 task。重复 request_id 必须绑定同一个任务文字。状态增加 mode=llm、provider/model、model_configured、task_prompt、model_round/max_rounds、activity、model_messages、summary 和累计 usage；total_steps=null 表示模型实际步骤数未知，completed_steps 是已记录的真实 Rust 请求数。公开回复可能引用演示文件内容；不含密钥或隐藏推理。缺少服务端密钥时拒绝启动，接口/模型失败不回退为固定脚本。默认代理和固定演示的接口限制保持原样。见 [DeepSeek Agent](deepseek-agent.md)。
+
 | HTTP | reason_code |
 | --- | --- |
 | 400 | INVALID_REQUEST、UNKNOWN_TOOL |

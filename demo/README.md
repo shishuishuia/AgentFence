@@ -1,5 +1,9 @@
 # 确定性最小演示
 
+## 真实 DeepSeek Agent
+
+已支持服务端环境变量 DEEPSEEK_API_KEY / DEEPSEEK_MODEL（默认 deepseek-flash）。配置后运行 `python -m demo.run_live_dashboard --mode dev --agent deepseek --step-delay 0`，在总览输入任务，模型自行选择工具并通过 Rust 执行。真实 API 实跑、密钥输入方法、工具权限和验证限制见 [DeepSeek Agent](../docs/deepseek-agent.md)。下面的固定 13 步流程仍作为离线模式保留，不混同于模型模式。
+
 ## 网页交互任务演示
 
 推荐现场展示使用交互入口：先构建 release Rust，再在两个终端分别运行：

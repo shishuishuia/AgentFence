@@ -21,6 +21,7 @@
 | 健康/审计响应形状及异步锁回归 | crates/server/tests/contract.rs、runtime_liveness.rs |
 | 三轮四场景权限窗口、完整 34 场景 Rust RSS | bench/run_windows.py、bench/run_resources.py、[实测报告](member-a-permission-rss-report.md) |
 | 用户追加的网页现场固定 Agent 任务 | demo/run_live_dashboard.py、总览执行面板；启动/暂停/继续、实时 13 步及文件/审计核验，见 [演示说明](../demo/README.md) |
+| 用户追加的真实 DeepSeek Agent | demo/llm_live.py、integrations/deepseek.py；自定义任务/动态工具记录，固定临时权限边界，见 [模型说明](deepseek-agent.md) |
 
 运行 `cargo test -p agentfence-server --test tcp --locked -- --nocapture` 可独立验证 A 的真实 HTTP 链路，成功打印 BACKEND_TCP_MINIMAL_PASS。B 已实现独立的 `demo/run_minimal.sh` / `python -m demo.run_minimal`，成功打印 MINIMAL_DEMO_PASS，并核对 13 个流程检查、5 次拒绝及 17 条审计事件。两种入口均可复现；最小流程尚不覆盖全部 34 条 HTTP 黑盒场景。
 
