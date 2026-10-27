@@ -1,5 +1,22 @@
 # 确定性最小演示
 
+## 持续运行的 Vue 展示
+
+先构建 release Rust。开发模式在两个终端运行：
+
+```sh
+python -m demo.run_dashboard --mode dev
+npm --prefix front run dev
+```
+
+浏览器访问 `http://127.0.0.1:5173`。dist 展示先执行 `npm --prefix front run build`，再运行 `python -m demo.run_dashboard --mode dist`，访问 `http://127.0.0.1:4173`。也可用 `bash demo/run_dashboard.sh`，支持与最小演示相同的 `PYTHON` 环境变量。
+
+入口创建独立夹具和临时凭证，启动自己的 Rust 和代理，在终端输出任务 ID。打开页面后回车播放；检查点默认停留 3 秒，能观察有效租约、次数耗尽、阶段退出及审计。完成后服务保持运行，Ctrl+C 退出并清理自有进程。重新演示请重新启动入口，得到新夹具；4173 被占用时明确失败，不结束已有服务。
+
+自动检查可用 `--auto --step-delay 0 --hold-seconds 0`，正常展示省略这些选项。等待输入或保持期间会检查子进程是否存活。强制终止父进程（例如 Windows taskkill /F）不能保证执行 Python finally，应使用终端 Ctrl+C。
+
+结果保存在 `results/local-dashboard-*`，包含脱敏流程报告、事件及夹具。它与自动退出的最小演示职责不同；以下最小演示命令继续可独立使用。
+
 使用真实 release Rust 服务，不依赖在线模型或浏览器。Python 3.10+，仅使用标准库；Rust/Cargo 固定 1.98.1。正式验收目标为 Ubuntu/WSL2，Windows 可直接运行 Python 模块或使用 Git Bash。
 
 在仓库根目录运行：
