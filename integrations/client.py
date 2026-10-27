@@ -27,6 +27,18 @@ class ClientError(RuntimeError):
     """A safe transport/protocol error; never includes credentials or contents."""
 
 
+class BrokerTimeout(ClientError):
+    """The request timed out; a write must not be retried automatically."""
+
+
+class BrokerUnavailable(ClientError):
+    """No complete HTTP response could be obtained."""
+
+
+class BrokerInvalidResponse(ClientError):
+    """The upstream response is not bounded, complete JSON."""
+
+
 class _NoRedirect(HTTPRedirectHandler):
     def redirect_request(self, req, fp, code, msg, headers, newurl):
         return None
@@ -38,6 +50,7 @@ class ApiResponse:
 
     status: int
     payload: dict[str, Any] = field(repr=False)
+    request_id: str | None = None
 
     @property
     def ok(self) -> bool:
@@ -121,23 +134,31 @@ class BrokerHttp:
             with response:
                 status = response.code
                 content_length = response.headers.get("Content-Length")
+                request_id = response.headers.get("X-Request-Id")
                 raw = response.read(MAX_RESPONSE_BYTES + 1)
         except (TimeoutError, socket.timeout):
-            raise ClientError("broker request timed out; write execution may be unknown; do not retry automatically") from None
-        except (URLError, OSError, HTTPException):
-            raise ClientError("broker connection failed; write execution may be unknown; do not retry automatically") from None
+            raise BrokerTimeout("broker request timed out; write execution may be unknown; do not retry automatically") from None
+        except URLError as error:
+            if isinstance(error.reason, (TimeoutError, socket.timeout)):
+                raise BrokerTimeout("broker request timed out; do not retry automatically") from None
+            raise BrokerUnavailable("broker connection failed; do not retry automatically") from None
+        except HTTPException:
+            raise BrokerInvalidResponse("broker returned an incomplete HTTP response") from None
+        except OSError:
+            raise BrokerUnavailable("broker connection failed; write execution may be unknown; do not retry automatically") from None
         if len(raw) > MAX_RESPONSE_BYTES:
-            raise ClientError("broker response exceeds the client size limit")
+            raise BrokerInvalidResponse("broker response exceeds the client size limit")
         if content_length is not None:
             if not content_length.isdecimal() or int(content_length) != len(raw):
-                raise ClientError("broker response was incomplete or had an invalid Content-Length")
+                raise BrokerInvalidResponse("broker response was incomplete or had an invalid Content-Length")
         try:
             payload = json.loads(raw.decode("utf-8"))
         except (UnicodeDecodeError, json.JSONDecodeError):
-            raise ClientError("broker response is not valid UTF-8 JSON") from None
+            raise BrokerInvalidResponse("broker response is not valid UTF-8 JSON") from None
         if not isinstance(payload, dict):
-            raise ClientError("broker response must be a JSON object")
-        return ApiResponse(status, payload)
+            raise BrokerInvalidResponse("broker response must be a JSON object")
+        safe_id = request_id if isinstance(request_id, str) and _ID.fullmatch(request_id) else None
+        return ApiResponse(status, payload, safe_id)
 
     def health(self) -> ApiResponse:
         """Health is intentionally unauthenticated."""
