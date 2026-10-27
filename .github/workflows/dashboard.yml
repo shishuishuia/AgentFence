@@ -55,3 +55,16 @@ jobs:
           name: http-benchmark-${{ github.sha }}-ubuntu
           path: results/local-bench-ci/local-bench-*/public/
           if-no-files-found: warn
+      - name: Observe three-round static and dynamic permission windows
+        run: python -m bench.run_windows --results-dir results/local-permission-ci
+      - name: Observe Rust RSS during all 34 HTTP cases
+        run: python -m bench.run_resources --results-dir results/local-rss-ci
+      - name: Upload sanitized permission and RSS evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: permission-rss-${{ github.sha }}-ubuntu
+          path: |
+            results/local-permission-ci/local-permission-*/public/
+            results/local-rss-ci/local-rss-*/public/
+          if-no-files-found: warn
