@@ -75,7 +75,7 @@ describe('真实健康接口契约', () => {
     )
     const wrapper = mount(DashboardView, { global: { stubs: { RouterLink: true } } })
     wrapper.unmount()
-    expect(signals.length).toBe(3)
+    expect(signals.length).toBe(4)
     expect(signals.every((signal) => signal.aborted)).toBe(true)
     await flushPromises()
   })

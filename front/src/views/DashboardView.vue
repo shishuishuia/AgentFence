@@ -8,6 +8,7 @@ import { useBrokerSession } from '@/composables/useBrokerSession'
 import { statistics } from '@/utils/audit'
 import RequestState from '@/components/RequestState.vue'
 import TaskTable from '@/components/TaskTable.vue'
+import LiveDemoPanel from '@/components/LiveDemoPanel.vue'
 const session = useBrokerSession()
 const health = usePolling((context) => getHealth(context.signal))
 const tasks = usePolling((context) => getTasks(5, context.signal))
@@ -39,6 +40,7 @@ const counts = computed(() => statistics(feed.events.value))
       />
       <p v-if="health.error.value">健康异常时，仍可查询已有任务与审计以排查问题。</p>
     </section>
+    <LiveDemoPanel />
     <div class="metric-grid">
       <section class="panel">
         <span>执行成功</span><strong>{{ counts.allowed }}</strong>
