@@ -1,6 +1,6 @@
 # Rust HTTP 公平对照入口
 
-此入口供 B 的 `bench/` 性能与权限窗口脚本调用，完成需求 10.2/10.3 中“共享 HTTP、文件和日志，仅改变授权策略”的 A 端依赖。B 已完成 [HTTP 采样与统计](../bench/README.md)，真实结果见 [HTTP 性能报告](member-b-http-bench-report.md)；权限窗口 CSV 待后续实现。入口测试与性能实验结果分开报告。
+此入口供 `bench/` 性能与权限窗口脚本调用，完成需求 10.2/10.3 中“共享 HTTP、文件和日志，仅改变授权策略”的 A 端依赖。B 已完成 [HTTP 采样与统计](../bench/README.md)，真实结果见 [HTTP 性能报告](member-b-http-bench-report.md)；A 已补齐三轮权限窗口 CSV 和完整负载 RSS，见 [实验方法](permission-rss-experiments.md) 与 [实测报告](member-a-permission-rss-report.md)。入口测试与性能实验结果分开报告。
 
 ## 构建和启动
 

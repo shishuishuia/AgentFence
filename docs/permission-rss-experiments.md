@@ -2,6 +2,8 @@
 
 这两个入口复用现有 Rust 实验程序和 B 的完整 HTTP 黑盒套件。权限时长来自实际授权过程及客户端单调时钟，RSS 来自自有 Rust 进程的 procfs 计数器；均独立于 HTTP 延迟样本。原有 B 的 34 场景与配对 HTTP 结果保留自己的受测版本。
 
+2026-10-27 已在 `44489cb` 完成本地 WSL2 正式采样，两项验证均通过。数据和限制见 [实测报告](member-a-permission-rss-report.md) 及 [归档索引](../results/member-a/permission-rss/wsl2-44489cb/README.md)。
+
 ## 环境与构建
 
 正式运行目标是 Ubuntu 24.04 / WSL2，Python 3.10+ 标准库、Rust/Cargo 1.98.1。需要 Linux procfs 和真实符号链接能力。RSS 入口在其他系统明确失败；不会用 Windows 跳过的场景充当完整资源验收。

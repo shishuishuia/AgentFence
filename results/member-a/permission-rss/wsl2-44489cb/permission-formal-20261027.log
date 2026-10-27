@@ -1,0 +1,26 @@
+r01-ttl-enforced OBSERVED
+r01-ttl-baseline OBSERVED
+r01-phase-enforced OBSERVED
+r01-phase-baseline OBSERVED
+r01-revoke-enforced OBSERVED
+r01-revoke-baseline OBSERVED
+r01-uses-enforced OBSERVED
+r01-uses-baseline OBSERVED
+r02-phase-baseline OBSERVED
+r02-phase-enforced OBSERVED
+r02-revoke-baseline OBSERVED
+r02-revoke-enforced OBSERVED
+r02-uses-baseline OBSERVED
+r02-uses-enforced OBSERVED
+r02-ttl-baseline OBSERVED
+r02-ttl-enforced OBSERVED
+r03-revoke-enforced OBSERVED
+r03-revoke-baseline OBSERVED
+r03-uses-enforced OBSERVED
+r03-uses-baseline OBSERVED
+r03-ttl-enforced OBSERVED
+r03-ttl-baseline OBSERVED
+r03-phase-enforced OBSERVED
+r03-phase-baseline OBSERVED
+Results: [REPO]/results/local-permission-20261027T110416Z-926566e9
+PERMISSION_PASS

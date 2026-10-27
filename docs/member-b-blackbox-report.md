@@ -65,4 +65,4 @@ python -m demo.e2e_verify /path/to/public --evidence-only
 - [metrics_summary.json](../results/member-b/blackbox/linux-fd73fbe/metrics_summary.json)：分子/分母及分类范围。
 - responses/、events/：脱敏请求/响应和审计；run_manifest.json：受测版本与环境；provenance.json：真实 CI 和下载 artifact 来源及哈希。
 
-提交的结果保留原始受测 commit，后续仅整理结果和文档不改写该引用。后续已完成 [HTTP 性能与公平基线采样](member-b-http-bench-report.md)，权限窗口和服务 RSS 仍待实施。
+提交的结果保留原始受测 commit，后续仅整理结果和文档不改写该引用。后续已完成 [HTTP 性能与公平基线采样](member-b-http-bench-report.md)；A 于 2026-10-27 另行完成 [权限窗口和服务 RSS](member-a-permission-rss-report.md)，两批保留各自受测版本。

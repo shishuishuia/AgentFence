@@ -1,8 +1,8 @@
 # 成员 A 后端交接
 
-更新日期：2026-10-27（Asia/Shanghai）。本次核对的集成代码为 `41a2357`，后端按需求前后端分离版 v2.1 实现。
+更新日期：2026-10-27（Asia/Shanghai）。早期集成复核基点为 `41a2357`；现已合入 B 的黑盒和 HTTP 实验交付，并在 `44489cb` 补齐 A 的权限窗口/RSS 实测。后端按需求前后端分离版 v2.1 实现。
 
-[HTTP 契约](api-contract.md) 已记录 B 于 2026-10-27 通过真实 Rust 客户端、只读代理和页面确认本批消费的响应形状。后续联调以该契约及实际响应为准；接口变更应同步文档、客户端和回归。当前已完成查询与展示链路，完整安全黑盒、性能和最终交付仍待验收。
+[HTTP 契约](api-contract.md) 已记录 B 于 2026-10-27 通过真实 Rust 客户端、只读代理和页面确认本批消费的响应形状。后续联调以该契约及实际响应为准；接口变更应同步文档、客户端和回归。查询展示、34 场景黑盒、三轮 HTTP 配对实验及权限窗口/RSS 已有实际证据，最终交付验收仍待完成。
 
 当前 `crates/` 树为 `0f34e6290f7819a0a8ebd2086e1c5a0675be60c6`，与 A 的 `a3f334b` 补充验证版本一致。历史测试和纯策略数据保留各自原始版本；本次集成复核见 [验证报告](test-report.md) 和 [结果索引](../results/member-a/integration-20261027/README.md)。
 
@@ -19,6 +19,7 @@
 | 三轮纯策略计时及原始样本 | crates/core/examples/policy_bench.rs |
 | 共用 HTTP/文件/审计的独立静态对照入口 | crates/server/examples/http_experiment.rs、docs/http-experiment.md |
 | 健康/审计响应形状及异步锁回归 | crates/server/tests/contract.rs、runtime_liveness.rs |
+| 三轮四场景权限窗口、完整 34 场景 Rust RSS | bench/run_windows.py、bench/run_resources.py、[实测报告](member-a-permission-rss-report.md) |
 
 运行 `cargo test -p agentfence-server --test tcp --locked -- --nocapture` 可独立验证 A 的真实 HTTP 链路，成功打印 BACKEND_TCP_MINIMAL_PASS。B 已实现独立的 `demo/run_minimal.sh` / `python -m demo.run_minimal`，成功打印 MINIMAL_DEMO_PASS，并核对 13 个流程检查、5 次拒绝及 17 条审计事件。两种入口均可复现；最小流程尚不覆盖全部 34 条 HTTP 黑盒场景。
 
@@ -73,10 +74,11 @@ npm --prefix front run dev
 | 责任 | 下一步及验收条件 |
 | --- | --- |
 | A | 接收 B 的最小复现，修复 Rust 问题并补受影响回归；集成版本确定后执行六项 Rust 质量门禁，保存源码引用及日志 |
-| B | 完成独立 A01～A10、D01～D24 HTTP 黑盒，导出 security_cases.csv 及脱敏响应和副作用/租约/审计证据 |
-| B，A 配合核对 | 完成至少三轮 HTTP 读/写/拒绝、公平基线、权限窗口及完整服务 RSS 采样，保留原始样本和运行清单 |
+| B（已交付） | 独立 34 场景黑盒及 Ubuntu CI 原始证据，见 [黑盒报告](member-b-blackbox-report.md)；最终版本仍需复验 |
+| B（已交付） | 三轮 HTTP 配对采样，1800 正式样本/360 预热样本，见 [HTTP 报告](member-b-http-bench-report.md) |
+| A（已交付） | WSL2 三轮权限窗口（24 实例）及完整黑盒 RSS（34/34、35 进程、4806 样本、5372 KiB 峰值），见 [实测报告](member-a-permission-rss-report.md)；本批远程 CI 未核验 |
 | 双方 | 干净环境复现，核对同一交付版本的源码、文档、数据及 Git 历史；补录屏和最终材料，确认远程 CI 实际结果 |
 
-Rust API 用例已覆盖固定场景及补充故障/并发行为，B 的最小演示也已验证 13 个流程检查；二者均不能替代尚未交付的完整黑盒 CSV。端到端读/写/拒绝每轮各至少 100 次，公平基线保持同样本量、文件大小、连接、并发和审计条件。
+Rust API 用例、13 个流程检查的最小演示和独立 34 场景 HTTP 黑盒分别保留证据，不混用测试范围。B 已按每轮读/写/拒绝各 100 次完成配对 HTTP 实验，保持样本量、文件大小、连接、并发和审计条件。A 的权限窗口与 RSS 使用独立样本，不由 HTTP 延迟推算；本轮 WSL2 实测不等于干净环境最终验收。
 
 A 的纯策略 benchmark 已排除 HTTP、元数据和文件 I/O、日志、任务锁，返回三轮各允许/拒绝 1000 个样本及 nearest-rank P50/P95/P99。不能将它与 HTTP 耗时混算。HTTP 公平对照依赖已补齐：启用 bench-harness 后，用 http_experiment 的 enforced/baseline 模式在新建夹具中启动同一 Rust HTTP、文件和审计实现，仅改变阶段/租约策略；生产服务始终执行动态授权。B 的构建、启动、请求及采样约定见 [HTTP 实验入口](http-experiment.md)。
