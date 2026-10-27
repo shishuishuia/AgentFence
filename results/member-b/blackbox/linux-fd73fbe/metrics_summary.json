@@ -1,0 +1,24 @@
+{
+  "source_commit": "fd73fbe9e10a53dfa58143596134dd8deb372bd6",
+  "normal_cases": {
+    "correct": 10,
+    "required": 10
+  },
+  "abnormal_cases": {
+    "correct": 24,
+    "required": 24
+  },
+  "measured_http_variants": 41,
+  "tool_policy_denial_requests": {
+    "correct": 16,
+    "observed": 16
+  },
+  "excluded_from_policy_rate": [
+    "identity/authentication errors",
+    "unknown tool/input size errors",
+    "non-UTF8 I/O outcome",
+    "management transition/grant conflicts",
+    "management and query success"
+  ],
+  "claim_scope": "Only these fixed cases and request variants; no absence-of-vulnerabilities or performance claim."
+}

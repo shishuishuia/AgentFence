@@ -1,0 +1,12 @@
+{
+  "artifact_id": 12712053750,
+  "archive_sha256": "4db4592002524ce77ca00c4c74a5b071492d0ba8ea2a7ce9f36bc86ac13e3dc3",
+  "bytes": 77264,
+  "source": "GitHub Actions sanitized public artifact",
+  "source_commit": "fd73fbe9e10a53dfa58143596134dd8deb372bd6",
+  "run_id": 40455050957,
+  "job_id": 122026318849,
+  "run_url": "https://github.com/shishuishuia/AgentFence/actions/runs/40455050957",
+  "downloaded_at": "2026-10-27T05:29:25.115778+00:00",
+  "fixture_files_included": false
+}

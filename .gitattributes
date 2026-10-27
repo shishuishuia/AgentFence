@@ -6,3 +6,7 @@
 *.sh text eol=lf
 *.py text eol=lf
 
+# Preserve downloaded experiment bytes so artifact SHA-256 values survive checkout.
+/results/member-b/http-bench/** -text
+/results/member-b/http-bench/**/*.csv whitespace=cr-at-eol
+

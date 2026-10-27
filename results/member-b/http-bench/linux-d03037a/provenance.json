@@ -1,0 +1,39 @@
+{
+  "artifact_id": 12713182584,
+  "archive_sha256": "805e271c87b2326b10e4dc41249cc98bc0cb1cb0261cd50ed0aad20e0a814346",
+  "bytes": 282215,
+  "source": "GitHub Actions sanitized public artifact",
+  "source_commit": "d03037a0fb8ad3b93031f2adedd19e794a1fea0d",
+  "run_id": 40458268772,
+  "job_id": 122036574834,
+  "run_url": "https://github.com/shishuishuia/AgentFence/actions/runs/40458268772",
+  "downloaded_at": "2026-10-27T06:01:41.995665+00:00",
+  "fixture_files_included": false,
+  "archived_verification": {
+    "formal": true,
+    "measured": 1800,
+    "warmup": 360,
+    "runs": 6,
+    "files_checked": false
+  },
+  "source_files_match_git_blobs": true,
+  "artifact_files_sha256": {
+    "bench_samples.csv": "5dd613e5deb19c1a73a42fff405f9e90997e67bd3ca3b4349f06ccc055d99030",
+    "bench_summary.json": "60aa7d0744d0d953217db023ee400b421786c98f2136cde9093c944e6939fac7",
+    "events/r01-baseline.jsonl": "6d34235ae66ada6aeef56949b50730b8cce6023d380a1dd31b8a80f010572754",
+    "events/r01-enforced.jsonl": "a404ddca812c22ea642e5ddb3a8b6d176213fd960536c09a74c03a0f23e24fca",
+    "events/r02-baseline.jsonl": "3d556c4863f6681df2d41ec37abb834b7773428cb162df315c033a6b536ebcb9",
+    "events/r02-enforced.jsonl": "1f4ce5d1190d8adcb3d64f34dd03ca18e1ecdff847fd81bc787dd285c70f3db5",
+    "events/r03-baseline.jsonl": "59fbd273aacb03780aa5c74fb0a5eb934c40cb5dd6fd29822feb09d6e5df9f6a",
+    "events/r03-enforced.jsonl": "7f484390c7b4b3c40503a0c6fc9ede48f3d0f07a700bc891e755f41ba7d03328",
+    "responses/r01-baseline.jsonl": "8cf6099a2788c2795666c4ee83f4b6cc3d5741736e0c9ae20f0852775b8d805f",
+    "responses/r01-enforced.jsonl": "861c5d3fd845cac30c8090ab844e5670c05ca236a12f28f1cbd066df47c836d7",
+    "responses/r02-baseline.jsonl": "093509d180651906591ea9ee72356e9553b76002405c15214c1947cc0826400e",
+    "responses/r02-enforced.jsonl": "4324f5916929194cad109a2a334a759ef04b538f1843e9711645d311858913be",
+    "responses/r03-baseline.jsonl": "17f7e7cce09f1778f9de38ecc6464dcdb26c1f595bea08afd437105abfe4b3f3",
+    "responses/r03-enforced.jsonl": "3b96f329769f28b3f080dbde27ec759c76a4a8f740f600bffa61395bbd4250c8",
+    "run_manifest.json": "f22aad0cc108b2ad4d24186110e6b4da388fa66a71beca284404e91cdd591455",
+    "runs.json": "41ae7ca029b25df70a6c1a53823c23683bd5e90ab7a57e836ffc9ab280f73df3",
+    "warmup_samples.csv": "2cea77bec3c33a3a244c8fcec990992594c42b8457db785c1a40c9a7cb732617"
+  }
+}

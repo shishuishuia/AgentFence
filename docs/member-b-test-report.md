@@ -92,3 +92,9 @@ API 错误保留 instance_id，并校验四类成功响应的必要字段。共�
 验收清单及实际源码/二进制/构建哈希见 [browser_acceptance.json](../results/member-b/dashboard/browser_acceptance.json)，凭证边界汇总见 [credential_check.json](../results/member-b/dashboard/credential_check.json)。该记录来自提交前工作区，明确标记 dirty 并保留源码哈希。四张主要截图：[总览](../results/member-b/dashboard/dist-dashboard.png)、[任务列表](../results/member-b/dashboard/dist-tasks.png)、[任务详情](../results/member-b/dashboard/dist-task.png)、[审计](../results/member-b/dashboard/dist-audit.png)；另保留开发、空实例、断线及重启截图。
 
 可复现浏览器夹具：`python -m demo.tests.browser_fixture --mode dist`，向终端打印的 control.txt 写入单个 `seed`、`play`、`restart` 或 `stop` 指令。它是验收辅助程序；`play` 每个新夹具仅执行一次，不增加浏览器写接口或在页面放入凭证。通常使用者直接运行 `demo.run_dashboard` 即可。
+
+## 独立 34 场景 HTTP 黑盒（2026-10-27）
+
+后续在 fd73fbe 实现独立 TCP 黑盒驱动和证据核验，Ubuntu CI 34/34 通过、0 跳过，包含 D17/D18 真正符号链接。每条检查状态/原因、文件及租约副作用、适用审计与 API/磁盘一致性；多输入变体共 41 次实测请求。新增 9 项反向/完整流程测试，本机 demo 回归总数 33 项通过；Windows 黑盒自身仍如实为 32 通过、2 平台跳过。
+
+实际 CI、逐条 CSV、脱敏响应、审计、源码和二进制哈希见 [独立黑盒报告](member-b-blackbox-report.md)。该交付完成固定安全场景，不包括后续 HTTP 性能、权限窗口和完整服务 RSS 实验。
