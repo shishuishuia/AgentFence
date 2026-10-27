@@ -149,7 +149,7 @@ rust-toolchain.toml         固定 Rust 与组件
 crates/core/               阶段、策略、路径、租约、纯策略计时
 crates/server/             HTTP、认证、文件、审计、集成与 TCP 测试
 config/policy.json         不含密钥的工作区配置
-docs/api-contract.md       A 端契约候选，待 B 联调确认
+docs/api-contract.md       Rust HTTP 契约，B 已确认本批响应形状
 docs/member-a-handoff.md   前端与适配器对接说明
 docs/development-log.md    真实开发及验证记录
 results/member-a/          脱敏验证日志与纯策略样本
@@ -162,7 +162,7 @@ results/member-a/          脱敏验证日志与纯策略样本
 - AUDIT_UNAVAILABLE 会关闭后续工具执行。若响应 executed=true，文件已经变化且次数已扣减；管理员检查文件和 intent/result，修复日志后重启。写入超时或断连不能推断“未写入”，不要自动重试。
 - 缺少 Admin Token、错误配置或工作区不存在会阻止启动；先运行 prepare_fixture 并检查环境变量。审计文件尾行不完整时启动失败，保留故障文件供检查并指定新的专用日志路径。
 - Windows 报 link.exe 缺失时使用已配好的 GNU 工具链/MinGW，或改在 WSL2 中开发。端口占用时设置其他回环端口；服务不接受非回环 IP。
-- [测试报告](docs/test-report.md) 区分后端验证与 B 尚待完成的黑盒、前端及实验验收。远程 GitHub CI 只有推送并实际运行后才能确认，本地通过不等于远程已通过。
+- [测试报告](docs/test-report.md) 区分历史后端验证、当前前端/代理/演示集成复核，以及仍待完成的完整黑盒和实验验收。远程 GitHub CI 须查看实际运行结果，本地通过不等于远程已通过。
 
 ## 第三方依赖
 
@@ -184,8 +184,8 @@ npm run dev
 
 - [需求与实施方案](docs/AgentFence_Lite_5Day_Requirements_Detailed_v2.docx)
 - [HTTP 接口文档](docs/api-contract.md)：业务接口、字段、鉴权、错误码、事件分页和联调示例。
-- [前期接口设计稿](docs/api-design.md)：保留详细设计和代理方案；与后端实现有差异，联调以 HTTP 接口文档为准。
-- [OpenAPI 设计稿](docs/openapi.json)：对应前期设计稿，可导入支持 OpenAPI 3.1 的接口工具，尚待与后端契约对齐。
+- [接口设计说明](docs/api-design.md)：已随本批联调同步 Rust/代理查询与边界；发生差异以 HTTP 接口文档及实际响应为准。
+- [OpenAPI 文档](docs/openapi.json)：已按当前接口同步，本地引用和代表性响应检查通过；尚未声称完成全量 JSON Schema 标准验证。
 
 
 ### 启动真实看板

@@ -1,0 +1,163 @@
+{
+  "date": "2026-10-27",
+  "timezone": "Asia/Shanghai",
+  "archived_at_utc": "2026-10-27T07:23:56.210958+00:00",
+  "source_commit": "41a2357e6155f34997dd627b3225714f723bde20",
+  "crates_tree": "0f34e6290f7819a0a8ebd2086e1c5a0675be60c6",
+  "record_kind": "Archive of prior actual integration runs; documentation-only follow-up",
+  "historical_rust_evidence": {
+    "manifest": "../compatibility-followup.json",
+    "source_commit": "a3f334b747e055b418e3675080acc0b3420f32fc",
+    "same_crates_tree": true,
+    "full_rust_gates_rerun_during_archival": false,
+    "windows_default_tests_including_doctests": 77,
+    "windows_all_feature_tests_including_doctests": 81,
+    "wsl2_all_feature_tests_including_doctests": 85
+  },
+  "prior_session_checks": {
+    "evidence_type": "Development-session command outputs; full command logs were not saved in this archive",
+    "frontend": {
+      "node": "24.16.0",
+      "npm": "11.13.0",
+      "unit_tests_passed": 25,
+      "commands_passed": [
+        "npm --prefix front run test:unit",
+        "npm --prefix front run lint",
+        "npm --prefix front run build"
+      ]
+    },
+    "python": {
+      "windows": {
+        "client_passed": 13,
+        "proxy_passed": 12,
+        "demo_and_docs_passed": 24,
+        "total_passed": 49,
+        "skipped": 1,
+        "skip_reason": "OS does not permit creating symlinks"
+      },
+      "wsl2": {
+        "client_passed": 13,
+        "proxy_passed": 13,
+        "demo_and_docs_passed": 24,
+        "total_passed": 50,
+        "skipped": 0
+      },
+      "commands_passed": [
+        "python -m unittest discover -s integrations/tests -v",
+        "python -m unittest discover -s web_proxy/tests -v",
+        "python -m unittest discover -s demo/tests -v"
+      ],
+      "wsl_command_name": "python3"
+    },
+    "release_build_passed": [
+      "windows",
+      "wsl2"
+    ],
+    "minimal_demo_passed": [
+      "windows",
+      "wsl2"
+    ],
+    "dashboard_flow_passed": true
+  },
+  "retained_runs": {
+    "windows": {
+      "run_id": "local-20261027T070734Z-183d9430",
+      "manifest": "windows/run_manifest.json",
+      "report": "windows/minimal_demo.json",
+      "events": "windows/demo_events.jsonl",
+      "original_working_tree_dirty": false,
+      "python": "3.14.5",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "verification": {
+        "passed": true,
+        "workflow_checks": 13,
+        "denials_checked": 5,
+        "tool_results": 8,
+        "audit_events": 17,
+        "audit_sha256": "e75022b71bf93cf62885c312a32d6f9e22cb396450e3db6188d6b98815bb5c4f",
+        "api_matches_disk": true,
+        "no_sensitive_data": true
+      },
+      "independent_verification_during_archival": "MINIMAL_VERIFY_PASS"
+    },
+    "wsl2": {
+      "run_id": "local-20261027T070851Z-620f487b",
+      "manifest": "wsl2/run_manifest.json",
+      "report": "wsl2/minimal_demo.json",
+      "events": "wsl2/demo_events.jsonl",
+      "original_working_tree_dirty": false,
+      "python": "3.12.3",
+      "platform": "Linux-6.18.33.2-microsoft-standard-WSL2-x86_64-with-glibc2.39",
+      "verification": {
+        "passed": true,
+        "workflow_checks": 13,
+        "denials_checked": 5,
+        "tool_results": 8,
+        "audit_events": 17,
+        "audit_sha256": "62cb89e1ab569866fb1ce0a238196eecb313b8f0716bd2735d03795aaf7a795b",
+        "api_matches_disk": true,
+        "no_sensitive_data": true
+      },
+      "independent_verification_during_archival": "MINIMAL_VERIFY_PASS"
+    }
+  },
+  "dashboard_snapshot": {
+    "observation_type": "Read-only HTTP check during archival; current overview also viewed in preceding browser session",
+    "instance_id": "inst_50cc33b748237b747d07ccf3a327180a",
+    "task_id": "task_2fdeaba93af2056cec7d1a5e4bc3d252",
+    "proxy_health_http": 200,
+    "vite_health_http": 200,
+    "task_count": 1,
+    "audit_events": 17,
+    "successful_tools": 3,
+    "denied_tools": 5,
+    "failed_tools": 0,
+    "api_events_match_saved_events": true,
+    "full_browser_matrix_repeated_by_a": false
+  },
+  "artifacts": [
+    {
+      "path": "windows/minimal_demo.json",
+      "sha256_utf8_lf": "fc4e1294d5e33584aa2bb787bbe9d34d83737dee3de28ff0cbb38d3d7c602d82"
+    },
+    {
+      "path": "windows/demo_events.jsonl",
+      "sha256_utf8_lf": "9cebdf83e3898449eb97db82e81323f633f490de8645a64514b9758ba0cb91aa"
+    },
+    {
+      "path": "windows/run_manifest.json",
+      "sha256_utf8_lf": "0474fbddefb36b2fb75dc68d1318a2de402000c15d584336adc7d717750f40fb"
+    },
+    {
+      "path": "wsl2/minimal_demo.json",
+      "sha256_utf8_lf": "156ea1c373ae84d8e7616874224fb55012a4db0a8cc0407b361db400ded2dc66"
+    },
+    {
+      "path": "wsl2/demo_events.jsonl",
+      "sha256_utf8_lf": "f7fae25c34e2e65ec401a2399153060a54ecf0400fd54027d0c36cb3b741a4f8"
+    },
+    {
+      "path": "wsl2/run_manifest.json",
+      "sha256_utf8_lf": "bc12d9d8864f4d58d8617dd6681a60d7f348e97646a93f4c7d65f3afc3bfb655"
+    },
+    {
+      "path": "dashboard/dashboard_demo.json",
+      "sha256_utf8_lf": "728a2f569af12a466a130aa2f71c8e4f0f334c82ea790fa2439b10b1c426a9bc"
+    },
+    {
+      "path": "dashboard/dashboard_events.jsonl",
+      "sha256_utf8_lf": "c15155f291a61cbd3af8f618fa686556e2f929ddeaec1b9978665b7dab58ebed"
+    }
+  ],
+  "artifact_hash_rule": "SHA-256 of UTF-8 text after CRLF-to-LF normalization; values and original run metadata are preserved",
+  "performance_samples_generated": false,
+  "clean_environment_acceptance_completed": false,
+  "remote_ci_verified": false,
+  "pending": [
+    "34-case independent HTTP CSV and responses",
+    "HTTP static/dynamic timings",
+    "permission windows and service RSS",
+    "final Rust gates and clean-environment acceptance",
+    "recording and final delivery"
+  ]
+}
