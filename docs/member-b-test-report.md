@@ -69,3 +69,26 @@ API 错误保留 instance_id，并校验四类成功响应的必要字段。共�
 ## 看板第三步页面：真实数据接入（2026-10-27）
 
 总览、最近任务、任务详情及审计接入真实查询，支持服务端租约状态、结果筛选、请求关联、截断范围及刷新失败保留数据。23 项前端测试通过，新增覆盖健康 503 不阻断其他资源、业务 404、本地筛选不重取、任务列表截断及文本渲染。lint、类型检查和生产构建通过。已通过浏览器实际查看 Rust 的 17 条事件、3 次成功和 5 次拒绝，详情深链接刷新正常；完整双模式记录随后补齐。
+
+## 看板第四步：双模式验收与接口同步（2026-10-27）
+
+使用 Codex 内置浏览器分别访问 Vite 5173 和 Python 托管 dist 4173，后端为真实 release Rust、独立夹具及随机回环端口。浏览器接口未提供版本号，未将结果表述为某特定 Chrome 版本通过。
+
+| 项目 | 实际验证及证据 |
+| --- | --- |
+| F01 | 两种模式的页面导航、详情直接访问和刷新、前进后退恢复审计筛选、根路由和页面 404；任务不存在保持任务详情及返回入口 |
+| F02 | 真实浏览器观察空实例、初次失败、断线保留数据及更新时间、任务不存在；受控 HTTP 测试覆盖 502/504、坏 JSON 和 POST 405，Vue 测试覆盖审计 503 不阻断其他查询 |
+| F03 | 两种模式观察实例重启后清空旧任务/事件，重复轮询保持 17/18 条真实事件无重复；假计时器及可控 Promise 验证慢请求、取消、迟到响应/错误/finally 和分页 |
+| F04 | 代理边界保留的最近最多 5000 条实际请求中，API 方法只有 GET，Authorization/Cookie 均未出现；实际临时凭证不在构建产物中；生产源码没有浏览器存储写入 |
+
+浏览器未通过存储面板逐项读取已有用户存储；F04 的存储判断来自本项目生产源码无写入路径，配合真实凭证构建扫描和实际请求边界检查。503、超时等受控故障没有冒称为真实 Rust 的磁盘故障注入。
+
+验收期间修复：旧任务审计 404 停止自动重试、网络断线中文错误、异常 instance_id 形状、非有限数 JSON 拒绝、未知 HTTP 方法统一 405、静态根页面及回退入口的路径检查、Windows 浏览器取消连接产生的 ConnectionAbortedError。Rust 源码未修改。
+
+最终检查：25 项前端测试通过，lint、类型检查和生产构建通过；Python 客户端 13 项、代理 12 项、demo/文档 24 项通过，合计 49 项通过、1 项 Windows 外部符号链接测试跳过。真实最小演示输出 `MINIMAL_DEMO_PASS`，公开 dist 展示命令输出 `DASHBOARD_FLOW_PASS`。OpenAPI 本地引用及代表性真实 Rust 响应形状已验证，未声称运行完整 JSON Schema 标准验证器。
+
+接口设计、OpenAPI、根 README 及前端/代理/演示说明已同步；新增 Dashboard CI，远端结果须以实际推送运行记录为准。本轮未执行完整 Linux 干净环境验收、34 场景黑盒或性能实验。
+
+验收清单及实际源码/二进制/构建哈希见 [browser_acceptance.json](../results/member-b/dashboard/browser_acceptance.json)，凭证边界汇总见 [credential_check.json](../results/member-b/dashboard/credential_check.json)。该记录来自提交前工作区，明确标记 dirty 并保留源码哈希。四张主要截图：[总览](../results/member-b/dashboard/dist-dashboard.png)、[任务列表](../results/member-b/dashboard/dist-tasks.png)、[任务详情](../results/member-b/dashboard/dist-task.png)、[审计](../results/member-b/dashboard/dist-audit.png)；另保留开发、空实例、断线及重启截图。
+
+可复现浏览器夹具：`python -m demo.tests.browser_fixture --mode dist`，向终端打印的 control.txt 写入单个 `seed`、`play`、`restart` 或 `stop` 指令。它是验收辅助程序；`play` 每个新夹具仅执行一次，不增加浏览器写接口或在页面放入凭证。通常使用者直接运行 `demo.run_dashboard` 即可。

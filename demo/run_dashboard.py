@@ -17,7 +17,7 @@ import threading
 import time
 import uuid
 
-from integrations import BrokerHttp, ClientError
+from integrations import BrokerHttp
 from .fixture import prepare_fixture
 from .runtime import ManagedBroker, REPO, default_binary
 from .verify import check_no_sensitive_data

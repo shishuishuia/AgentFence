@@ -10,7 +10,7 @@
 
 成员 A 的后端已实现：管理员/任务 Token 隔离、四阶段状态机、工作区配置、精确路径限制、UTF-8 文件读写、单调时钟写租约、原子替换和消费、intent/result 审计，以及 v2.1 的任务列表/详情/事件查询。
 
-已合入成员 A 的 `crates/`、`config/`、Rust 测试及接口说明；`front/` 已有 Vue/Vite/Router 前端骨架及契约类型修正，`integrations/` 和 `demo/` 已实现 HTTP 客户端与独立最小演示。只读代理、页面业务数据、完整黑盒回归及实验采样仍待实现。对接入口见 [成员 A 交接](docs/member-a-handoff.md)、[API 契约](docs/api-contract.md) 和 [B 的验证记录](docs/member-b-test-report.md)。
+已合入成员 A 的 `crates/`、`config/`、Rust 测试及接口说明；`front/` 已接入真实任务与审计、轮询和实例恢复，`web_proxy/` 提供四条只读查询及 dist 托管，`integrations/` 和 `demo/` 提供 HTTP 客户端、独立最小演示和持续展示入口。完整黑盒回归及实验采样仍待实现。对接入口见 [成员 A 交接](docs/member-a-handoff.md)、[API 契约](docs/api-contract.md) 和 [B 的验证记录](docs/member-b-test-report.md)。
 
 ## 环境依赖
 
@@ -166,11 +166,11 @@ results/member-a/          脱敏验证日志与纯策略样本
 
 ## 第三方依赖
 
-本项目采用 [MIT](LICENSE)。第三方依赖声明与引用/AI 辅助说明见 [来源说明](docs/provenance.md) 和 [依赖许可证索引](docs/dependency-licenses.json)；Rust 依赖由 Cargo.lock 固定，前端依赖由 front/package-lock.json 固定。B 已验证 Node.js 24.14.1、npm 11.11.0、Python 3.12.14；Python 客户端与演示仅用标准库。实验入口见 [HTTP 公平对照入口](docs/http-experiment.md)；代理运行环境将在后续接入时补充。
+本项目采用 [MIT](LICENSE)。第三方依赖声明与引用/AI 辅助说明见 [来源说明](docs/provenance.md) 和 [依赖许可证索引](docs/dependency-licenses.json)；Rust 依赖由 Cargo.lock 固定，前端依赖由 front/package-lock.json 固定。B 已验证 Node.js 24.14.1、npm 11.11.0、Python 3.12.14；Python 客户端与演示仅用标准库。实验入口见 [HTTP 公平对照入口](docs/http-experiment.md)；代理使用 Python 3.10+ 标准库，本轮实际验证 Python 3.12.14。
 
 ## 运行前端
 
-验证环境为 Node.js 24.14.1、npm 11.11.0。当前提供路由、页面骨架和 API 客户端；只读代理及业务数据联调待实现。
+验证环境为 Node.js 24.14.1、npm 11.11.0。已接入总览、任务列表、任务详情和审计查询；页面每轮请求完成后等待 1 秒更新，断线保留快照、实例变化清空旧数据。
 
 ```bash
 cd front
@@ -187,3 +187,38 @@ npm run dev
 - [前期接口设计稿](docs/api-design.md)：保留详细设计和代理方案；与后端实现有差异，联调以 HTTP 接口文档为准。
 - [OpenAPI 设计稿](docs/openapi.json)：对应前期设计稿，可导入支持 OpenAPI 3.1 的接口工具，尚待与后端契约对齐。
 
+
+### 启动真实看板
+
+先按上述命令构建 release Rust。在仓库根目录：
+
+```sh
+# 开发：终端一
+python -m demo.run_dashboard --mode dev
+# 开发：终端二
+npm --prefix front run dev
+```
+
+访问 http://127.0.0.1:5173。任务出现后，在展示终端回车播放权限流程；每个检查点停留 3 秒，完成后继续提供查询，Ctrl+C 关闭自有 Rust 与代理。重新演示重新启动入口，使用新夹具。浏览器始终只读，Token 不需要手动复制。
+
+正式构建展示：停止上一套展示入口，执行：
+
+```sh
+npm --prefix front run build
+python -m demo.run_dashboard --mode dist
+```
+
+访问 http://127.0.0.1:4173，支持详情深链接刷新。5173/4173 被占用时检查已有服务，不要盲目结束其他进程。代理独立启动、环境变量与错误排查见 [代理说明](web_proxy/README.md)，演示参数见 [演示说明](demo/README.md)。原 `python -m demo.run_minimal` 继续负责自动核验并退出。
+
+B 的回归命令：
+
+```sh
+python -m unittest discover -s integrations/tests -v
+python -m unittest discover -s web_proxy/tests -v
+python -m unittest discover -s demo/tests -v
+npm --prefix front run lint
+npm --prefix front run test:unit
+npm --prefix front run build
+```
+
+新增 Dashboard CI 执行相同检查及真实 dist 演示；是否远程通过须以推送后的实际运行结果为准。本机 Windows 无创建符号链接权限，相关代理测试明确跳过，Linux CI 补充覆盖。

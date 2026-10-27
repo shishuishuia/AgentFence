@@ -21,17 +21,24 @@ function isErrorResponse(value: unknown): value is ErrorResponse {
   return (
     typeof candidate.reason_code === 'string' &&
     typeof candidate.message === 'string' &&
-    typeof candidate.request_id === 'string'
+    typeof candidate.request_id === 'string' &&
+    (candidate.instance_id === null || typeof candidate.instance_id === 'string')
   )
 }
 
 /** 只调用同源只读代理，不注入管理员令牌，也不自动重试。 */
 export async function getJson<T>(path: string, signal?: AbortSignal): Promise<T> {
-  const response = await fetch(`${baseUrl}${path}`, {
-    method: 'GET',
-    headers: { Accept: 'application/json' },
-    signal,
-  })
+  let response: Response
+  try {
+    response = await fetch(`${baseUrl}${path}`, {
+      method: 'GET',
+      headers: { Accept: 'application/json' },
+      signal,
+    })
+  } catch (error) {
+    if (signal?.aborted || (error instanceof Error && error.name === 'AbortError')) throw error
+    throw new ApiError(0, 'NETWORK_ERROR', '无法连接本地只读代理，请检查服务是否运行。')
+  }
   let payload: unknown
   try {
     payload = await response.json()

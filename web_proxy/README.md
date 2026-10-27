@@ -15,7 +15,7 @@ python -m web_proxy --mode dist
 
 已知 API 非 GET 返回 405，未知 API 返回 404，参数错误 400。Rust 错误保持原状态与 JSON；连接失败 502 BROKER_UNAVAILABLE，5 秒超时 504 BROKER_TIMEOUT，异常响应 502 BROKER_INVALID_RESPONSE。API 不缓存，不自动重试，不跟随重定向。
 
-dist 模式支持 HTML 页面深链接；缺失静态资源和 API 错误不回退首页。Ctrl+C 关闭本服务。自动启动真实服务及展示夹具见 `demo/run_dashboard`（实现进度见 B 方案）。
+dist 模式支持 HTML 页面深链接；缺失静态资源和 API 错误不回退首页。Ctrl+C 关闭本服务。自动启动真实服务及展示夹具见 `python -m demo.run_dashboard` 和 `demo/README.md`。默认固定 4173；`--port 0` 仅供隔离测试，Vite 仍指向 4173。
 
 ```sh
 python -m unittest discover -s web_proxy/tests -v

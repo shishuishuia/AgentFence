@@ -4,6 +4,16 @@ import { getJson } from '../client'
 afterEach(() => vi.unstubAllGlobals())
 
 describe('只读API请求', () => {
+  it('网络断线显示可读错误且不注入浏览器凭证', async () => {
+    const request = vi.fn<typeof fetch>().mockRejectedValue(new TypeError('Failed to fetch'))
+    vi.stubGlobal('fetch', request)
+    await expect(getJson('/tasks')).rejects.toMatchObject({ reasonCode: 'NETWORK_ERROR' })
+    expect(request).toHaveBeenCalledWith(
+      '/api/tasks',
+      expect.objectContaining({ method: 'GET', headers: { Accept: 'application/json' } }),
+    )
+    expect(request.mock.calls[0]?.[1]).not.toHaveProperty('body')
+  })
   it('保留后端错误码和请求ID', async () => {
     vi.stubGlobal(
       'fetch',

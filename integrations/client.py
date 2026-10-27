@@ -44,6 +44,10 @@ class _NoRedirect(HTTPRedirectHandler):
         return None
 
 
+def _reject_constant(_value):
+    raise ValueError("non-finite numbers are not JSON")
+
+
 @dataclass(frozen=True)
 class ApiResponse:
     """Keep HTTP status and JSON together, including denied/executed outcomes."""
@@ -152,8 +156,8 @@ class BrokerHttp:
             if not content_length.isdecimal() or int(content_length) != len(raw):
                 raise BrokerInvalidResponse("broker response was incomplete or had an invalid Content-Length")
         try:
-            payload = json.loads(raw.decode("utf-8"))
-        except (UnicodeDecodeError, json.JSONDecodeError):
+            payload = json.loads(raw.decode("utf-8"), parse_constant=_reject_constant)
+        except (UnicodeDecodeError, ValueError):
             raise BrokerInvalidResponse("broker response is not valid UTF-8 JSON") from None
         if not isinstance(payload, dict):
             raise BrokerInvalidResponse("broker response must be a JSON object")

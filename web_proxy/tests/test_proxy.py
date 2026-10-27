@@ -98,7 +98,7 @@ class ProxyTests(unittest.TestCase):
         self.assertEqual(self.requests, [])
 
     def test_methods_and_unknown_routes(self):
-        for method in ("POST", "PUT", "DELETE", "OPTIONS", "TRACE"):
+        for method in ("POST", "PUT", "DELETE", "OPTIONS", "TRACE", "BREW"):
             self.reason("/api/tasks", 405, "METHOD_NOT_ALLOWED", method=method)
         status, headers, raw = self.request("/api/tasks", method="HEAD")
         self.assertEqual((status, headers["Allow"], raw), (405, "GET", b""))
@@ -120,7 +120,7 @@ class ProxyTests(unittest.TestCase):
             self.assertEqual(headers["X-Request-Id"], "req_test")
 
     def test_invalid_json_shape_and_redirect(self):
-        for payload in (b"<html>oops</html>", {}, {"status": "ok"}):
+        for payload in (b"<html>oops</html>", b'{"status":"ok","instance_id":"inst_test","value":NaN}', {}, {"status": "ok"}):
             self.response = 200, payload
             self.reason("/api/health", 502, "BROKER_INVALID_RESPONSE")
         self.response = 302, HEALTH
@@ -144,6 +144,7 @@ class ProxyTests(unittest.TestCase):
         self.reason("/api/health", 502, "BROKER_UNAVAILABLE")
 
     def test_static_and_history_fallback(self):
+        self.assertEqual(self.request("/")[2], b"<html>frontend</html>")
         self.assertEqual(self.request("/tasks/task_123", headers={"Accept": "text/html"})[2], b"<html>frontend</html>")
         self.assertEqual(self.request("/app.js")[0], 200)
         self.reason("/missing.js", 404, "NOT_FOUND", headers={"Accept": "text/html"})

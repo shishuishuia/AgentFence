@@ -1,0 +1,35 @@
+name: Dashboard checks
+
+on:
+  push:
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  dashboard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+          cache-dependency-path: front/package-lock.json
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: '1.98.1'
+      - run: cargo build --release --locked -p agentfence-server
+      - run: npm --prefix front ci
+      - run: npm --prefix front run lint
+      - run: npm --prefix front run test:unit
+      - run: npm --prefix front run build
+      - run: python -m unittest discover -s integrations/tests -v
+      - run: python -m unittest discover -s web_proxy/tests -v
+      - run: python -m unittest discover -s demo/tests -v
+      - run: python -m demo.run_minimal
+      - run: python -m demo.run_dashboard --mode dist --auto --step-delay 0 --hold-seconds 0

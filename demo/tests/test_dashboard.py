@@ -1,7 +1,6 @@
 """Use real Rust and proxy children to verify display and ownership cleanup."""
 
 from http.server import ThreadingHTTPServer, BaseHTTPRequestHandler
-import json
 from pathlib import Path
 import tempfile
 import unittest

@@ -46,6 +46,8 @@ export function useAuditEvents() {
 
   const fatal = (error: Error) =>
     error instanceof ApiError &&
-    (error.reasonCode === 'INVALID_REQUEST' || error.reasonCode === 'INVALID_RESPONSE')
+    (error.reasonCode === 'INVALID_REQUEST' ||
+      error.reasonCode === 'INVALID_RESPONSE' ||
+      error.reasonCode === 'TASK_NOT_FOUND')
   return { events, truncated, hasMore, reset, load, fatal }
 }

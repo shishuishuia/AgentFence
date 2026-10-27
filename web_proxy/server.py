@@ -3,7 +3,7 @@
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 import mimetypes
-from pathlib import Path, PurePosixPath
+from pathlib import PurePosixPath
 import re
 from urllib.parse import parse_qsl, unquote, urlsplit
 import uuid
@@ -37,6 +37,11 @@ def create_server(config: Config) -> ThreadingHTTPServer:
 
         def log_message(self, *_args):
             pass  # No URLs, credentials, response contents or host paths in logs.
+
+        def __getattr__(self, name):
+            if name.startswith("do_"):
+                return self.do_GET
+            raise AttributeError(name)
 
         def reply(self, status, data, content_type="application/json; charset=utf-8", request_id=None, allow=None):
             raw = json.dumps(data, ensure_ascii=False, allow_nan=False).encode() if isinstance(data, dict) else data
@@ -131,13 +136,15 @@ def create_server(config: Config) -> ThreadingHTTPServer:
             if config.dist is None:
                 return self.error(404, "NOT_FOUND", "Frontend hosting is disabled in dev mode")
             root = config.dist.resolve()
-            target = (root / path.lstrip("/")).resolve()
+            target = (root / ("index.html" if path == "/" else path.lstrip("/"))).resolve()
             if not target.is_relative_to(root):
                 return self.error(403, "PATH_DENIED", "Static path is outside the frontend")
             if not target.is_file():
                 if PurePosixPath(path).suffix or path.startswith("/assets/") or "text/html" not in self.headers.get("Accept", ""):
                     return self.error(404, "NOT_FOUND", "Static resource not found")
-                target = root / "index.html"
+                target = (root / "index.html").resolve()
+                if not target.is_relative_to(root):
+                    return self.error(403, "PATH_DENIED", "Frontend entry is outside the static root")
             try:
                 self.reply(200, target.read_bytes(), mimetypes.guess_type(target.name)[0] or "application/octet-stream")
             except OSError:
@@ -146,7 +153,7 @@ def create_server(config: Config) -> ThreadingHTTPServer:
         def do_GET(self):
             try:
                 self.handle_local()
-            except (BrokenPipeError, ConnectionResetError, TimeoutError):
+            except (BrokenPipeError, ConnectionResetError, ConnectionAbortedError, TimeoutError):
                 pass
             except ValueError:
                 self.error(400, "INVALID_REQUEST", "Invalid request target")
