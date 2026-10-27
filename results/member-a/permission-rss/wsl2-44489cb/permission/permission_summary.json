@@ -1,0 +1,150 @@
+{
+  "status": "passed",
+  "qualified_observation": true,
+  "run_count": 24,
+  "interval_count": 30,
+  "comparisons": [
+    {
+      "round": 1,
+      "scenario": "ttl",
+      "static_duration_ns": 6000000000,
+      "dynamic_estimated_ns": 4000000000,
+      "dynamic_lower_ns": 3965389779,
+      "dynamic_upper_ns": 4034610221,
+      "reduction_estimate": 0.33333333333333337,
+      "reduction_lower_bound": 0.3275649631666666,
+      "reduction_upper_bound": 0.3391017035
+    },
+    {
+      "round": 1,
+      "scenario": "phase",
+      "static_duration_ns": 6000000000,
+      "dynamic_estimated_ns": 1800924135,
+      "dynamic_lower_ns": 1793003330,
+      "dynamic_upper_ns": 1808844941,
+      "reduction_estimate": 0.6998459775,
+      "reduction_lower_bound": 0.6985258431666667,
+      "reduction_upper_bound": 0.7011661116666666
+    },
+    {
+      "round": 1,
+      "scenario": "revoke",
+      "static_duration_ns": 6000000000,
+      "dynamic_estimated_ns": 3299652008,
+      "dynamic_lower_ns": 3284666206,
+      "dynamic_upper_ns": 3314637810,
+      "reduction_estimate": 0.4500579986666666,
+      "reduction_lower_bound": 0.44756036499999996,
+      "reduction_upper_bound": 0.4525556323333333
+    },
+    {
+      "round": 1,
+      "scenario": "uses",
+      "static_duration_ns": 6000000000,
+      "dynamic_estimated_ns": 1912220780,
+      "dynamic_lower_ns": 1880419481,
+      "dynamic_upper_ns": 1944022079,
+      "reduction_estimate": 0.6812965366666667,
+      "reduction_lower_bound": 0.6759963201666667,
+      "reduction_upper_bound": 0.6865967531666667
+    },
+    {
+      "round": 2,
+      "scenario": "ttl",
+      "static_duration_ns": 6000000000,
+      "dynamic_estimated_ns": 4000000000,
+      "dynamic_lower_ns": 3982776294,
+      "dynamic_upper_ns": 4017223706,
+      "reduction_estimate": 0.33333333333333337,
+      "reduction_lower_bound": 0.33046271566666663,
+      "reduction_upper_bound": 0.336203951
+    },
+    {
+      "round": 2,
+      "scenario": "phase",
+      "static_duration_ns": 6000000000,
+      "dynamic_estimated_ns": 1799884545,
+      "dynamic_lower_ns": 1788183233,
+      "dynamic_upper_ns": 1811585857,
+      "reduction_estimate": 0.7000192425,
+      "reduction_lower_bound": 0.6980690238333334,
+      "reduction_upper_bound": 0.7019694611666667
+    },
+    {
+      "round": 2,
+      "scenario": "revoke",
+      "static_duration_ns": 6000000000,
+      "dynamic_estimated_ns": 3300631092,
+      "dynamic_lower_ns": 3282852152,
+      "dynamic_upper_ns": 3318410032,
+      "reduction_estimate": 0.449894818,
+      "reduction_lower_bound": 0.4469316613333333,
+      "reduction_upper_bound": 0.45285797466666666
+    },
+    {
+      "round": 2,
+      "scenario": "uses",
+      "static_duration_ns": 6000000000,
+      "dynamic_estimated_ns": 1913129488,
+      "dynamic_lower_ns": 1880772728,
+      "dynamic_upper_ns": 1945486248,
+      "reduction_estimate": 0.6811450853333334,
+      "reduction_lower_bound": 0.675752292,
+      "reduction_upper_bound": 0.6865378786666667
+    },
+    {
+      "round": 3,
+      "scenario": "ttl",
+      "static_duration_ns": 6000000000,
+      "dynamic_estimated_ns": 4000000000,
+      "dynamic_lower_ns": 3961267851,
+      "dynamic_upper_ns": 4038732149,
+      "reduction_estimate": 0.33333333333333337,
+      "reduction_lower_bound": 0.3268779751666666,
+      "reduction_upper_bound": 0.3397886915
+    },
+    {
+      "round": 3,
+      "scenario": "phase",
+      "static_duration_ns": 6000000000,
+      "dynamic_estimated_ns": 1799341575,
+      "dynamic_lower_ns": 1792913774,
+      "dynamic_upper_ns": 1805769376,
+      "reduction_estimate": 0.7001097375,
+      "reduction_lower_bound": 0.6990384373333334,
+      "reduction_upper_bound": 0.7011810376666667
+    },
+    {
+      "round": 3,
+      "scenario": "revoke",
+      "static_duration_ns": 6000000000,
+      "dynamic_estimated_ns": 3300541153,
+      "dynamic_lower_ns": 3285100055,
+      "dynamic_upper_ns": 3315982253,
+      "reduction_estimate": 0.44990980783333334,
+      "reduction_lower_bound": 0.4473362911666666,
+      "reduction_upper_bound": 0.4524833241666667
+    },
+    {
+      "round": 3,
+      "scenario": "uses",
+      "static_duration_ns": 6000000000,
+      "dynamic_estimated_ns": 1917606204,
+      "dynamic_lower_ns": 1884807481,
+      "dynamic_upper_ns": 1950404927,
+      "reduction_estimate": 0.680398966,
+      "reduction_lower_bound": 0.6749325121666667,
+      "reduction_upper_bound": 0.6858654198333334
+    }
+  ],
+  "clock": "time.perf_counter_ns; integer ns; HTTP request/response brackets",
+  "interpretation": "Granted write-time in a fixed task observation window; midpoint estimates with measurement bounds, not attack probability or statistical confidence intervals.",
+  "run_id": "local-permission-20261027T110416Z-926566e9",
+  "config": {
+    "rounds": 3,
+    "window_seconds": 6,
+    "ttl_seconds": 2,
+    "file_bytes": 4096,
+    "formal": true
+  }
+}

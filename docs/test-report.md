@@ -1,10 +1,39 @@
 # 成员 A 验证报告
 
-日期：2026-10-26（Asia/Shanghai）。本报告以成员 A 的后端为主，另记录本次获用户授权的前端接口修复；只读代理、Python 适配器和团队完整 Demo 仍未验收。
+更新日期：2026-10-27（Asia/Shanghai）。本报告记录 A 的后端验证及其后的集成复核。以下按受测版本区分证据；B 的黑盒/HTTP 和 A 的权限窗口/RSS 已完成实测，录屏、统一版本及最终干净环境验收待完成。历史段落保留当时状态，不视为最新任务列表。
 
-## 接口与实验入口补充验证
+## 2026-10-27 权限窗口与 RSS 补充实测
 
-本次新增健康/审计契约回归、认证与健康锁等待的异步调度回归，以及 feature 隔离的 HTTP 静态基线。Windows 默认模式 77 项、启用 bench-harness 后 81 项；WSL2 启用该 feature 后 85 项，均含 4 项文档测试，全部通过。
+受测提交为 `44489cb826042f734be03dc9a563756feced1f06`，产品 Rust 树仍为 `0f34e6290f7819a0a8ebd2086e1c5a0675be60c6`。WSL2 正式权限实验得到 PERMISSION_PASS：三轮四场景、24 个独立实例、30 区间及 12 组比较。完整黑盒负载 RSS 得到 RSS_PASS：34/34、0 跳过、35 个进程、4806 个样本，观测峰值 5372 KiB。
+
+验证器已检查现场夹具/审计，并对公开导出离线重算。WSL2 中 bench 首轮 22 项、后续加强后的权限窗口 8 项/RSS 5 项及 demo 33 项均通过；release 产品/实验程序构建通过。两份 manifest 原样保留 dirty=true，Git 状态查询超时及 151 个源码条目匹配 Git blob 的核对说明见 [实测报告](member-a-permission-rss-report.md) 与 [归档](../results/member-a/permission-rss/wsl2-44489cb/README.md)。这些是本地实测，不代替最终干净环境和远程 CI 核验。
+
+B 的先行结果分别见 [34 场景报告](member-b-blackbox-report.md) 和 [HTTP 配对报告](member-b-http-bench-report.md)，各自保留原始受测版本。下方 `41a2357` 及更早记录不改写为本轮重测结果。
+
+## 2026-10-27 集成复核（较早记录）
+
+核对基点为 `41a2357e6155f34997dd627b3225714f723bde20`。该版本的 `crates/` 树为 `0f34e6290f7819a0a8ebd2086e1c5a0675be60c6`，与下节 `a3f334b` 的验证树完全相同；`crates/core` 树也与最初纯策略采样版本相同。本次文档收尾核对版本关系并独立复核保留的 Demo 结果，没有重新执行整套 Rust 门禁或生成新性能样本。
+
+| 检查范围 | 集成版本实际结果与边界 |
+| --- | --- |
+| 接口联调 | B 已于 2026-10-27 确认当前客户端、代理和页面消费的响应形状；契约、设计说明及 OpenAPI 已同步 |
+| 前端 | 前一轮集成复跑 25 项测试、lint 及含类型检查的 build 全部通过；Node.js 24.16.0、npm 11.13.0 |
+| Windows Python | Python 3.14.5；客户端 13、代理 12、demo/文档 24 项通过，共 49 项；代理外部符号链接测试因 OS 权限跳过 1 项 |
+| WSL2 Python | Ubuntu 24.04 / Python 3.12.3；客户端 13、代理 13、demo/文档 24 项全部通过，共 50 项，包含符号链接复验 |
+| release 与最小演示 | Windows/WSL2 均成功构建 Rust release，实跑 MINIMAL_DEMO_PASS；两套结果均记录干净的 41a2357 代码，13 个流程检查、8 次工具调用、5 次拒绝、17 条审计事件 |
+| 保留结果复核 | 文档收尾时再次对上述两套独立夹具执行 demo.verify，均得到 MINIMAL_VERIFY_PASS；核对文件、租约及 API/磁盘事件一致性 |
+| 持续看板 | 公开 dist 入口完成 DASHBOARD_FLOW_PASS 并保持服务；4173/5173 查询均返回 200，实际页面显示 1 个任务、3 次成功、5 次拒绝、0 次执行/输入失败 |
+| Rust 检查记录 | 使用相同 crates 树的既有 77/81/85 项记录，分别对应 Windows 默认/Windows 全 feature/WSL2 全 feature；不将其计为本次重新跑测 |
+
+集成复跑来自前一轮本地开发会话；本次整理时保留报告及版本索引至 [integration-20261027](../results/member-a/integration-20261027/README.md)。测试命令的会话输出与保存的 Demo 结果分开标注。复制的最小演示报告、事件和 manifest 来自既有实际运行，保留其原始 run_id、时间、源码哈希和二进制哈希，没有补写新采样日期。
+
+B 的双模式浏览器验收与截图仍归属 [B 报告](member-b-test-report.md) 及 results/member-b/dashboard/。A 的本轮页面查看只确认当前总览显示真实数据，没有重复执行 B 的完整 F01～F04 浏览器矩阵。运行中的展示实例和端口是观测快照，重启后会变化。
+
+完整黑盒 CSV、HTTP 公平对照、权限窗口及服务 RSS 仍由 B 实测，A 配合定位 Rust 问题。双方在最终集成版本确定后统一运行六项 Rust 门禁及完整集成复验；目前的 WSL2 缓存环境复跑不代表干净环境验收，远程 CI 本次也未核验。
+
+## 2026-10-26 接口与实验入口补充验证（历史记录）
+
+该轮新增健康/审计契约回归、认证与健康锁等待的异步调度回归，以及 feature 隔离的 HTTP 静态基线。Windows 默认模式 77 项、启用 bench-harness 后 81 项；WSL2 启用该 feature 后 85 项，均含 4 项文档测试，全部通过。
 
 Windows 的默认/全 feature Clippy 和测试、WSL2 的全 feature Clippy 和测试通过（Clippy 均为 -D warnings）；两环境的 fmt、全 feature 文档构建、产品与实验例程 release 构建通过。WSL2 另显式执行全 feature 文档测试。默认产品的真实 TCP 测试也在全 feature 构建下通过，确认没有因实验 feature 放开授权。CI 已增加实验门禁，远程结果仍须实际推送运行后查看。
 
@@ -16,9 +45,9 @@ B 仍需按 [HTTP 实验约定](http-experiment.md) 完成采样与统计。补�
 
 ## 原始后端交付验证（历史记录）
 
-以下原始样本和日志的受测源码为 `cf502f8406ce0b9309654b176ef71d2c770c6c26`，crates 树为 `20e6ce2b892d0f3347d82735eb6754fd304d4106`。它们保持原始引用，不能当作本次改动后的重测性能结果。core 策略算法本次未改，HTTP 服务代码已有后续变更。
+以下原始样本和日志的受测源码为 `cf502f8406ce0b9309654b176ef71d2c770c6c26`，crates 树为 `20e6ce2b892d0f3347d82735eb6754fd304d4106`。它们保持原始引用，不能当作当前集成版本的重测性能结果。core 策略算法未改，HTTP 服务代码已有后续变更。
 
-## 环境和质量门禁
+### 环境和质量门禁
 
 | 环境 | 工具链 | cargo test --workspace 计数 |
 | --- | --- | --- |
@@ -40,7 +69,7 @@ cargo build --workspace --release --locked
 
 单独重复 doc 门禁的 4 项不再次累加到测试总数。GitHub CI 已配置相同固定版本和命令，但本次没有推送或查看远程运行，不宣称远程已绿。
 
-## 功能与证据映射
+### 功能与证据映射
 
 | 需求 | 实现与自动验证 |
 | --- | --- |
@@ -67,7 +96,7 @@ Windows 和 Linux 均实际看到 BACKEND_TCP_MINIMAL_PASS。覆盖 inspect 读�
 
 额外启动检查见 startup-checks.json：缺 Admin Token、非回环地址、配置缺失、审计位于工作区内部均非零退出；夹具 initializer 拒绝覆盖已有目录且保留内容。
 
-## 纯策略实测
+### 纯策略实测
 
 硬件：Intel Core i7-12700H；Ubuntu WSL2；release；单并发。三个独立采样轮次，各先排除 256 次预热，再测允许/拒绝各 1000 次，共 6000 条。使用 Instant，百分位为 nearest-rank。
 
@@ -80,7 +109,7 @@ Windows 和 Linux 均实际看到 BACKEND_TCP_MINIMAL_PASS。覆盖 inspect 读�
 
 `/usr/bin/time -v` 观察到该独立微基准进程峰值 RSS 为 2276 KiB；它不是完整服务或完整测试流程的峰值 RSS，不替代 B 的资源实验。端到端基线、读/写/拒绝各至少 100 次、权限窗口对照和服务 RSS 仍由 B 实测。
 
-## 原始文件与复现
+### 原始文件与复现
 
 - linux-checks.log、windows-checks.log：完整命令输出；对应 verification JSON 记录 commit、源码树、工具链和逐项退出码。
 - policy_samples.json、policy_samples.csv：全部 6000 个样本；policy_summary.json：环境及每轮百分位；policy_resource_usage.txt：独立进程资源原始输出。

@@ -209,7 +209,7 @@ def csv_rows(cases, all_requests):
 
 
 class CaseContext:
-    def __init__(self, binary, fixture, token):
+    def __init__(self, binary, fixture, token, monitor_factory=None):
         self.binary, self.fixture = binary, fixture
         self.secrets = [token]
         self.server = None
@@ -218,9 +218,10 @@ class CaseContext:
         self.probes = []
         self.identities = {}
         self.servers = []
+        self.monitor_factory = monitor_factory
 
     def start(self):
-        self.server = ManagedBroker(self.binary, self.fixture, self.secrets[0])
+        self.server = ManagedBroker(self.binary, self.fixture, self.secrets[0], monitor_factory=self.monitor_factory)
         self.servers.append(self.server)
         self.server.start()
         self.http = BrokerHttp(self.server.base_url)

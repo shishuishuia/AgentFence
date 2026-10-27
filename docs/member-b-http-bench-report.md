@@ -57,4 +57,4 @@ python -m bench.verify results/member-b/http-bench/linux-d03037a --evidence-only
 
 本机结果为 `BENCH_EVIDENCE_PASS`，确认 formal=true、measured=1800、warmup=360、runs=6。现场完整验证在 CI 内执行；导出的 public 不含私有夹具，离线检查明确为 files_checked=false。结果引用保留实际受测 commit，后续整理文档不改写来源，也不宣称这些记录具有防篡改能力。
 
-本项不包含权限窗口和峰值 RSS；两者不得由本项延迟样本推算。
+本项不包含权限窗口和峰值 RSS；两者不得由本项延迟样本推算。A 后续以独立运行完成这两项，见 [权限窗口与 RSS 实测报告](member-a-permission-rss-report.md)，其数据和受测版本单独保留。

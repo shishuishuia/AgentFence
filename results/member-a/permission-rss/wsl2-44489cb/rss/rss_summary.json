@@ -1,0 +1,371 @@
+{
+  "status": "passed",
+  "workload": "full A01..A10 D01..D24 real HTTP suite",
+  "case_counts": {
+    "passed": 34,
+    "failed": 0,
+    "skipped": 0
+  },
+  "suite_directory": "local-e2e-20261027T110718Z-20f0acd9",
+  "sample_count": 4806,
+  "monitor_count": 35,
+  "poll_interval_seconds": 0.005,
+  "peak_rss_kib": 5372,
+  "processes": [
+    {
+      "monitor_id": "A01-001",
+      "case_id": "A01",
+      "pid": 1145,
+      "started_ns": 4568720905311,
+      "finished_ns": 4569371891617,
+      "sample_count": 119,
+      "peak_rss_kib": 4656,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "A02-002",
+      "case_id": "A02",
+      "pid": 1169,
+      "started_ns": 4570031937829,
+      "finished_ns": 4570666910454,
+      "sample_count": 115,
+      "peak_rss_kib": 4644,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "A03-003",
+      "case_id": "A03",
+      "pid": 1193,
+      "started_ns": 4571361109545,
+      "finished_ns": 4571919341679,
+      "sample_count": 101,
+      "peak_rss_kib": 4696,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "A04-004",
+      "case_id": "A04",
+      "pid": 1217,
+      "started_ns": 4572744115697,
+      "finished_ns": 4573402171799,
+      "sample_count": 118,
+      "peak_rss_kib": 4760,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "A05-005",
+      "case_id": "A05",
+      "pid": 1241,
+      "started_ns": 4574125804012,
+      "finished_ns": 4574773930938,
+      "sample_count": 117,
+      "peak_rss_kib": 4716,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "A06-006",
+      "case_id": "A06",
+      "pid": 1265,
+      "started_ns": 4575527988912,
+      "finished_ns": 4576179260516,
+      "sample_count": 118,
+      "peak_rss_kib": 4700,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "A07-007",
+      "case_id": "A07",
+      "pid": 1289,
+      "started_ns": 4576831912089,
+      "finished_ns": 4577391670356,
+      "sample_count": 103,
+      "peak_rss_kib": 4672,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "A08-008",
+      "case_id": "A08",
+      "pid": 1313,
+      "started_ns": 4578133444808,
+      "finished_ns": 4578913492157,
+      "sample_count": 141,
+      "peak_rss_kib": 4732,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "A09-009",
+      "case_id": "A09",
+      "pid": 1337,
+      "started_ns": 4579601081620,
+      "finished_ns": 4580202575062,
+      "sample_count": 110,
+      "peak_rss_kib": 4716,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "A10-010",
+      "case_id": "A10",
+      "pid": 1361,
+      "started_ns": 4580856929003,
+      "finished_ns": 4582233737989,
+      "sample_count": 249,
+      "peak_rss_kib": 4784,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D01-011",
+      "case_id": "D01",
+      "pid": 1385,
+      "started_ns": 4582949998730,
+      "finished_ns": 4583883537748,
+      "sample_count": 170,
+      "peak_rss_kib": 4788,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D02-012",
+      "case_id": "D02",
+      "pid": 1409,
+      "started_ns": 4584677198670,
+      "finished_ns": 4585322386657,
+      "sample_count": 116,
+      "peak_rss_kib": 4796,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D03-013",
+      "case_id": "D03",
+      "pid": 1433,
+      "started_ns": 4585990565518,
+      "finished_ns": 4586627195161,
+      "sample_count": 115,
+      "peak_rss_kib": 4720,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D04-014",
+      "case_id": "D04",
+      "pid": 1457,
+      "started_ns": 4587322477786,
+      "finished_ns": 4588098542709,
+      "sample_count": 139,
+      "peak_rss_kib": 4804,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D05-015",
+      "case_id": "D05",
+      "pid": 1481,
+      "started_ns": 4588806680325,
+      "finished_ns": 4589374408900,
+      "sample_count": 104,
+      "peak_rss_kib": 4692,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D06-016",
+      "case_id": "D06",
+      "pid": 1505,
+      "started_ns": 4590106945382,
+      "finished_ns": 4590791326371,
+      "sample_count": 122,
+      "peak_rss_kib": 4672,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D07-017",
+      "case_id": "D07",
+      "pid": 1529,
+      "started_ns": 4591494932527,
+      "finished_ns": 4592090802685,
+      "sample_count": 108,
+      "peak_rss_kib": 4656,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D08-018",
+      "case_id": "D08",
+      "pid": 1553,
+      "started_ns": 4592808998633,
+      "finished_ns": 4594070548513,
+      "sample_count": 229,
+      "peak_rss_kib": 4760,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D09-019",
+      "case_id": "D09",
+      "pid": 1577,
+      "started_ns": 4594743874797,
+      "finished_ns": 4595451744275,
+      "sample_count": 128,
+      "peak_rss_kib": 4744,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D10-020",
+      "case_id": "D10",
+      "pid": 1601,
+      "started_ns": 4596158935749,
+      "finished_ns": 4597944827493,
+      "sample_count": 322,
+      "peak_rss_kib": 4800,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D11-021",
+      "case_id": "D11",
+      "pid": 1625,
+      "started_ns": 4598605733068,
+      "finished_ns": 4599531372127,
+      "sample_count": 163,
+      "peak_rss_kib": 4740,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D12-022",
+      "case_id": "D12",
+      "pid": 1649,
+      "started_ns": 4600380762621,
+      "finished_ns": 4601129454149,
+      "sample_count": 133,
+      "peak_rss_kib": 4724,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D13-023",
+      "case_id": "D13",
+      "pid": 1673,
+      "started_ns": 4601867344002,
+      "finished_ns": 4602510311729,
+      "sample_count": 116,
+      "peak_rss_kib": 4736,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D14-024",
+      "case_id": "D14",
+      "pid": 1697,
+      "started_ns": 4603367722189,
+      "finished_ns": 4604013164180,
+      "sample_count": 115,
+      "peak_rss_kib": 4656,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D15-025",
+      "case_id": "D15",
+      "pid": 1721,
+      "started_ns": 4604752247873,
+      "finished_ns": 4605434299313,
+      "sample_count": 122,
+      "peak_rss_kib": 4652,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D16-026",
+      "case_id": "D16",
+      "pid": 1745,
+      "started_ns": 4606188952074,
+      "finished_ns": 4606907198389,
+      "sample_count": 128,
+      "peak_rss_kib": 4684,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D17-027",
+      "case_id": "D17",
+      "pid": 1769,
+      "started_ns": 4607633354844,
+      "finished_ns": 4608333390527,
+      "sample_count": 125,
+      "peak_rss_kib": 4792,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D18-028",
+      "case_id": "D18",
+      "pid": 1793,
+      "started_ns": 4609119938815,
+      "finished_ns": 4609873278782,
+      "sample_count": 134,
+      "peak_rss_kib": 4728,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D19-029",
+      "case_id": "D19",
+      "pid": 1817,
+      "started_ns": 4610618158794,
+      "finished_ns": 4611240473715,
+      "sample_count": 111,
+      "peak_rss_kib": 4776,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D20-030",
+      "case_id": "D20",
+      "pid": 1841,
+      "started_ns": 4611916342954,
+      "finished_ns": 4613028756966,
+      "sample_count": 195,
+      "peak_rss_kib": 4812,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D21-031",
+      "case_id": "D21",
+      "pid": 1865,
+      "started_ns": 4613786185271,
+      "finished_ns": 4614845476640,
+      "sample_count": 184,
+      "peak_rss_kib": 5372,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D22-032",
+      "case_id": "D22",
+      "pid": 1889,
+      "started_ns": 4615651493970,
+      "finished_ns": 4616386919265,
+      "sample_count": 130,
+      "peak_rss_kib": 4672,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D23-033",
+      "case_id": "D23",
+      "pid": 1913,
+      "started_ns": 4617189571024,
+      "finished_ns": 4617583142985,
+      "sample_count": 71,
+      "peak_rss_kib": 4752,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D23-034",
+      "case_id": "D23",
+      "pid": 1937,
+      "started_ns": 4617637314689,
+      "finished_ns": 4618313452542,
+      "sample_count": 121,
+      "peak_rss_kib": 4656,
+      "server_stopped": true
+    },
+    {
+      "monitor_id": "D24-035",
+      "case_id": "D24",
+      "pid": 1961,
+      "started_ns": 4619183202388,
+      "finished_ns": 4619827265191,
+      "sample_count": 114,
+      "peak_rss_kib": 4728,
+      "server_stopped": true
+    }
+  ],
+  "source": "/proc/<owned Rust pid>/status: VmRSS and kernel lifetime VmHWM, kB interpreted as KiB",
+  "scope": "Rust service only, each case from spawn through final HTTP/audit collection; D23 includes both instances",
+  "aggregation": "maximum individual service VmHWM, not a sum and not Python/Node/system RSS",
+  "capture_boundary": "last sample before terminating the already-completed owned server",
+  "limitations": "procfs RSS/HWM values are approximate and may fluctuate; report the maximum observed value, without claiming every transient peak was captured"
+}

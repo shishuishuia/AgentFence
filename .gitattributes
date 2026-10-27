@@ -10,3 +10,6 @@
 /results/member-b/http-bench/** -text
 /results/member-b/http-bench/**/*.csv whitespace=cr-at-eol
 
+/results/member-a/permission-rss/** -text
+/results/member-a/permission-rss/**/*.csv whitespace=cr-at-eol
+

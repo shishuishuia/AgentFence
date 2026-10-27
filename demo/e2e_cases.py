@@ -152,7 +152,7 @@ def execute(ctx, case_id, metadata):
         raise CaseFailure("unimplemented fixed case")
 
 
-def run(binary: Path, results: Path):
+def run(binary: Path, results: Path, *, monitor_factory=None):
     check(binary.is_file(), "release server binary missing; build agentfence-server first")
     results.mkdir(parents=True, exist_ok=True)
     run_id = "local-e2e-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8]
@@ -169,7 +169,7 @@ def run(binary: Path, results: Path):
         ctx, events = None, []
         try:
             prepare(fixture, case_id)
-            ctx = CaseContext(binary, fixture, secrets.token_hex(32))
+            ctx = CaseContext(binary, fixture, secrets.token_hex(32), monitor_factory=monitor_factory)
             ctx.start()
             execute(ctx, case_id, entry["metadata"])
         except PlatformSkip:

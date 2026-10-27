@@ -41,4 +41,17 @@ python -m bench.verify results/member-b/http-bench/<已归档目录> --evidence-
 
 导出复核无法再次访问 CI 已销毁的私有夹具，`files_checked=false`，与采样现场完整核验区分。CI 构建真实例程后运行全部 9 项基准测试，再采集正式数据并上传公开 artifact；未构建例程时 6 项真实进程测试会明确跳过。
 
-该实验报告开发/CI 主机上观测到的端到端差异，包含网络、磁盘和同步审计噪声，不能解释成纯策略 CPU 开销、稳定性能承诺或生产吞吐量。三轮仅作描述性对照，不提供统计显著性结论。权限窗口与 RSS 属于后续独立实验。
+该实验报告开发/CI 主机上观测到的端到端差异，包含网络、磁盘和同步审计噪声，不能解释成纯策略 CPU 开销、稳定性能承诺或生产吞吐量。三轮仅作描述性对照，不提供统计显著性结论。
+
+## 权限窗口与服务 RSS
+
+另有独立入口，不从上述 HTTP 延迟样本推算：
+
+```sh
+python -m bench.run_windows
+python -m bench.run_resources
+```
+
+前者用共享 Rust 实验程序对照 TTL、阶段退出、撤销和次数耗尽，默认三轮、24 个独立实例，导出 `permission_windows.csv`、区间并集及 HTTP 测量上下界。后者在 Linux/WSL 对真实 Rust 进程读取 RSS/HWM，覆盖全部 34 场景和 D23 的两个实例，导出原始采样和峰值汇总。各自使用新目录及随机回环端口，不占用看板服务。
+
+方法、运行参数、采样限制、完整/离线复核命令见 [权限窗口与 RSS 实验说明](../docs/permission-rss-experiments.md)。`bench.run_windows --smoke` 仅用于程序检查，不是正式实验结果。
