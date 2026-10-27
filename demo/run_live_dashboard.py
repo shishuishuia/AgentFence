@@ -23,6 +23,7 @@ def main():
     parser.add_argument("--server-bin", type=Path, default=default_binary())
     parser.add_argument("--port", type=int, default=4173)
     parser.add_argument("--step-delay", type=float, default=2.5)
+    parser.add_argument("--agent", choices=("deterministic", "deepseek"), default="deterministic")
     args = parser.parse_args()
     if not 0 <= args.step_delay <= 10:
         parser.error("step-delay must be finite and between 0 and 10")
@@ -36,7 +37,13 @@ def main():
     try:
         token = secrets.token_hex(32)
         with ManagedBroker(args.server_bin, root / "fixture", token) as broker:
-            runner = LiveDemo(broker.base_url, token, root / "fixture", root, step_delay=args.step_delay)
+            if args.agent == "deepseek":
+                from integrations.deepseek import DeepSeekClient, DeepSeekConfig
+                from .llm_live import LLMLiveDemo
+                runner = LLMLiveDemo(broker.base_url, token, root / "fixture", root,
+                                     step_delay=args.step_delay, model_client=DeepSeekClient(DeepSeekConfig.from_env()))
+            else:
+                runner = LiveDemo(broker.base_url, token, root / "fixture", root, step_delay=args.step_delay)
             try:
                 config = Config(broker.base_url, token, port=args.port, dist=None if args.mode == "dev" else REPO / "front/dist")
                 with create_server(config, demo=runner) as server:

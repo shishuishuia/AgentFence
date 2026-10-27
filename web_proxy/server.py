@@ -147,7 +147,8 @@ def create_server(config: Config, *, demo=None) -> ThreadingHTTPServer:
             if self.headers.get("Origin") not in origins or self.headers.get_all("X-AgentFence-Demo", []) != ["1"]:
                 return self.error(403, "DEMO_ORIGIN_REQUIRED", "Use the local demo console")
             lengths = self.headers.get_all("Content-Length", [])
-            if self.headers.get("Transfer-Encoding") or len(lengths) != 1 or not re.fullmatch(r"[0-9]{1,3}", lengths[0]) or not 0 < int(lengths[0]) <= 256:
+            task_enabled = getattr(demo, "accepts_task", False)
+            if self.headers.get("Transfer-Encoding") or len(lengths) != 1 or not re.fullmatch(r"[0-9]{1,5}", lengths[0]) or not 0 < int(lengths[0]) <= (8192 if task_enabled else 256):
                 return self.error(400, "INVALID_REQUEST", "Invalid demo body length")
             if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
                 return self.error(415, "INVALID_REQUEST", "Demo controls require JSON")
@@ -160,11 +161,14 @@ def create_server(config: Config, *, demo=None) -> ThreadingHTTPServer:
                         result[key] = value
                     return result
                 body = json.loads(self.rfile.read(int(lengths[0])), object_pairs_hook=unique)
-                if not isinstance(body, dict) or set(body) != {"action", "request_id"} or body["action"] not in ("start", "pause", "resume") or not isinstance(body["request_id"], str) or not IDENTIFIER.fullmatch(body["request_id"]):
+                if not isinstance(body, dict) or not {"action", "request_id"} <= set(body) or not set(body) <= {"action", "request_id", "task"} or body["action"] not in ("start", "pause", "resume") or not isinstance(body["request_id"], str) or not IDENTIFIER.fullmatch(body["request_id"]):
+                    raise ValueError
+                if "task" in body and (not task_enabled or body["action"] != "start" or not isinstance(body["task"], str) or not body["task"].strip() or len(body["task"]) > 1000 or len(body["task"].encode()) > 4000):
                     raise ValueError
             except (ValueError, UnicodeError):
                 return self.error(400, "INVALID_REQUEST", "Only fixed demo actions are accepted")
-            status, state = demo.control(body["action"], body["request_id"])
+            options = {"task": body["task"]} if "task" in body else {}
+            status, state = demo.control(body["action"], body["request_id"], **options)
             self.reply(status, state)
 
         def static(self, path):
