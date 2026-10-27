@@ -1,0 +1,4250 @@
+[
+  {
+    "key": "r01-enforced",
+    "round": 1,
+    "mode": "enforced",
+    "order_index": 1,
+    "binary_sha256": "5abcd076a2ac053decbaf0bbff5712a13c0f08e25f4a4113a87e0f7f3087e2b6",
+    "server_stopped": true,
+    "api_matches_disk": true,
+    "initial_files": {
+      "workspace/Cargo.toml": {
+        "kind": "file",
+        "sha256": "0c58d36a1550ee660ef74d837b6ffe757c8742bc64dbfadb00acd79719a8375a",
+        "bytes": 85
+      },
+      "workspace/src": {
+        "kind": "directory"
+      },
+      "workspace/src/main.rs": {
+        "kind": "file",
+        "sha256": "4467d6893a70528a7889c8ca175b334fb58a4d93c7edc27620ac9575c1daad8a",
+        "bytes": 35
+      },
+      "workspace/unlisted.txt": {
+        "kind": "file",
+        "sha256": "be676755ad4d2969fa73f463461aa358ec21bc466a13bb89897176c5eddb8b9a",
+        "bytes": 24
+      }
+    },
+    "policy_sha256": "22bec499279e239afaac9edf489a5474211c76871072a075d34c18de3fd2a983",
+    "instance_id": "inst_67a265e585b832cf0824da6702af6474",
+    "experiment": {
+      "audit": "FileSink::append + sync_data",
+      "file_operations": "LocalFiles",
+      "http": "agentfence_server::app",
+      "max_content_bytes": 65536,
+      "mode": "enforced",
+      "schema_version": 1,
+      "synthetic_fixture": true,
+      "workspace_id": "demo",
+      "authorization_mode": "phase_path_lease"
+    },
+    "scenario_order": [
+      "read",
+      "write",
+      "deny"
+    ],
+    "phase": "edit",
+    "final_content_sha256": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746",
+    "final_files": {
+      "workspace/Cargo.toml": {
+        "kind": "file",
+        "sha256": "0c58d36a1550ee660ef74d837b6ffe757c8742bc64dbfadb00acd79719a8375a",
+        "bytes": 85
+      },
+      "workspace/src": {
+        "kind": "directory"
+      },
+      "workspace/src/main.rs": {
+        "kind": "file",
+        "sha256": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746",
+        "bytes": 4096
+      },
+      "workspace/unlisted.txt": {
+        "kind": "file",
+        "sha256": "be676755ad4d2969fa73f463461aa358ec21bc466a13bb89897176c5eddb8b9a",
+        "bytes": 24
+      }
+    },
+    "batches": [
+      {
+        "batch_id": "r1-enforced-seed-b1",
+        "phase": "seed",
+        "seed": true,
+        "uses": 1,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:58.443624431Z",
+          "grant_id": "grant_170069c621de197b45433f5efa8d1700",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_3",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:58.443624431Z",
+          "grant_id": "grant_170069c621de197b45433f5efa8d1700",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:58.443624431Z",
+          "grant_id": "grant_170069c621de197b45433f5efa8d1700",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:58.443624431Z",
+          "grant_id": "grant_170069c621de197b45433f5efa8d1700",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_7",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-enforced-warmup-b2",
+        "phase": "warmup",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:58.560981577Z",
+          "grant_id": "grant_1ad812c1435af9615135480b98834b41",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_128",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:58.560981577Z",
+          "grant_id": "grant_1ad812c1435af9615135480b98834b41",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:58.560981577Z",
+          "grant_id": "grant_1ad812c1435af9615135480b98834b41",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:58.560981577Z",
+          "grant_id": "grant_1ad812c1435af9615135480b98834b41",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_141",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-enforced-warmup-b3",
+        "phase": "warmup",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:58.577874674Z",
+          "grant_id": "grant_606c7137d66ab49ae1f2c9dafa171185",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_142",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:58.577874674Z",
+          "grant_id": "grant_606c7137d66ab49ae1f2c9dafa171185",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:58.577874674Z",
+          "grant_id": "grant_606c7137d66ab49ae1f2c9dafa171185",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:58.577874674Z",
+          "grant_id": "grant_606c7137d66ab49ae1f2c9dafa171185",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_155",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-enforced-measured-b4",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:58.594786570Z",
+          "grant_id": "grant_18238e5e059ca3c88d96643d019ad75e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_156",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:58.594786570Z",
+          "grant_id": "grant_18238e5e059ca3c88d96643d019ad75e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:58.594786570Z",
+          "grant_id": "grant_18238e5e059ca3c88d96643d019ad75e",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:58.594786570Z",
+          "grant_id": "grant_18238e5e059ca3c88d96643d019ad75e",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_169",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-enforced-measured-b5",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:58.611665167Z",
+          "grant_id": "grant_4c09ac598fe173d180a3bbdfcc3dd49a",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_170",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:58.611665167Z",
+          "grant_id": "grant_4c09ac598fe173d180a3bbdfcc3dd49a",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:58.611665167Z",
+          "grant_id": "grant_4c09ac598fe173d180a3bbdfcc3dd49a",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:58.611665167Z",
+          "grant_id": "grant_4c09ac598fe173d180a3bbdfcc3dd49a",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_183",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-enforced-measured-b6",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:58.628087335Z",
+          "grant_id": "grant_7701362e34c0ec8a5a5040c3ec7d38df",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_184",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:58.628087335Z",
+          "grant_id": "grant_7701362e34c0ec8a5a5040c3ec7d38df",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:58.628087335Z",
+          "grant_id": "grant_7701362e34c0ec8a5a5040c3ec7d38df",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:58.628087335Z",
+          "grant_id": "grant_7701362e34c0ec8a5a5040c3ec7d38df",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_197",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-enforced-measured-b7",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:58.644767933Z",
+          "grant_id": "grant_409a00bde83da0fe991085c59ce8814e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_198",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:58.644767933Z",
+          "grant_id": "grant_409a00bde83da0fe991085c59ce8814e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:58.644767933Z",
+          "grant_id": "grant_409a00bde83da0fe991085c59ce8814e",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:58.644767933Z",
+          "grant_id": "grant_409a00bde83da0fe991085c59ce8814e",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_211",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-enforced-measured-b8",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:58.661294218Z",
+          "grant_id": "grant_c6e979942221d6da487ed6a9a78b7656",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_212",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:58.661294218Z",
+          "grant_id": "grant_c6e979942221d6da487ed6a9a78b7656",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:58.661294218Z",
+          "grant_id": "grant_c6e979942221d6da487ed6a9a78b7656",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:58.661294218Z",
+          "grant_id": "grant_c6e979942221d6da487ed6a9a78b7656",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_225",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-enforced-measured-b9",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:58.681733775Z",
+          "grant_id": "grant_91dc4eb8076377bce6c9fde472f46aba",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_226",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:58.681733775Z",
+          "grant_id": "grant_91dc4eb8076377bce6c9fde472f46aba",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:58.681733775Z",
+          "grant_id": "grant_91dc4eb8076377bce6c9fde472f46aba",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:58.681733775Z",
+          "grant_id": "grant_91dc4eb8076377bce6c9fde472f46aba",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_239",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-enforced-measured-b10",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:58.698000020Z",
+          "grant_id": "grant_76d8f6b610c29dc0474b03a3b75ae0c3",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_240",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:58.698000020Z",
+          "grant_id": "grant_76d8f6b610c29dc0474b03a3b75ae0c3",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:58.698000020Z",
+          "grant_id": "grant_76d8f6b610c29dc0474b03a3b75ae0c3",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:58.698000020Z",
+          "grant_id": "grant_76d8f6b610c29dc0474b03a3b75ae0c3",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_253",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-enforced-measured-b11",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:58.714351652Z",
+          "grant_id": "grant_0c7d3a3d6225c6146f029604c41f503b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_254",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:58.714351652Z",
+          "grant_id": "grant_0c7d3a3d6225c6146f029604c41f503b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:58.714351652Z",
+          "grant_id": "grant_0c7d3a3d6225c6146f029604c41f503b",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:58.714351652Z",
+          "grant_id": "grant_0c7d3a3d6225c6146f029604c41f503b",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_267",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-enforced-measured-b12",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:58.730404454Z",
+          "grant_id": "grant_d0d1395bd97d8dbde863e4023758e6ef",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_268",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:58.730404454Z",
+          "grant_id": "grant_d0d1395bd97d8dbde863e4023758e6ef",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:58.730404454Z",
+          "grant_id": "grant_d0d1395bd97d8dbde863e4023758e6ef",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:58.730404454Z",
+          "grant_id": "grant_d0d1395bd97d8dbde863e4023758e6ef",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_281",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-enforced-measured-b13",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:58.746518528Z",
+          "grant_id": "grant_5e9965439642a7a3644591d8b80518c4",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_282",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:58.746518528Z",
+          "grant_id": "grant_5e9965439642a7a3644591d8b80518c4",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:58.746518528Z",
+          "grant_id": "grant_5e9965439642a7a3644591d8b80518c4",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:58.746518528Z",
+          "grant_id": "grant_5e9965439642a7a3644591d8b80518c4",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_67a265e585b832cf0824da6702af6474_295",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_fb1d549e9a0477b72da23253f786cf1c",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      }
+    ]
+  },
+  {
+    "key": "r01-baseline",
+    "round": 1,
+    "mode": "baseline",
+    "order_index": 2,
+    "binary_sha256": "5abcd076a2ac053decbaf0bbff5712a13c0f08e25f4a4113a87e0f7f3087e2b6",
+    "server_stopped": true,
+    "api_matches_disk": true,
+    "initial_files": {
+      "workspace/Cargo.toml": {
+        "kind": "file",
+        "sha256": "0c58d36a1550ee660ef74d837b6ffe757c8742bc64dbfadb00acd79719a8375a",
+        "bytes": 85
+      },
+      "workspace/src": {
+        "kind": "directory"
+      },
+      "workspace/src/main.rs": {
+        "kind": "file",
+        "sha256": "4467d6893a70528a7889c8ca175b334fb58a4d93c7edc27620ac9575c1daad8a",
+        "bytes": 35
+      },
+      "workspace/unlisted.txt": {
+        "kind": "file",
+        "sha256": "be676755ad4d2969fa73f463461aa358ec21bc466a13bb89897176c5eddb8b9a",
+        "bytes": 24
+      }
+    },
+    "policy_sha256": "22bec499279e239afaac9edf489a5474211c76871072a075d34c18de3fd2a983",
+    "instance_id": "inst_6799dae98a6d02fcd8bb53e887b6990a",
+    "experiment": {
+      "audit": "FileSink::append + sync_data",
+      "file_operations": "LocalFiles",
+      "http": "agentfence_server::app",
+      "max_content_bytes": 65536,
+      "mode": "baseline",
+      "schema_version": 1,
+      "synthetic_fixture": true,
+      "workspace_id": "demo",
+      "authorization_mode": "static_path_acl"
+    },
+    "scenario_order": [
+      "read",
+      "write",
+      "deny"
+    ],
+    "phase": "edit",
+    "final_content_sha256": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746",
+    "final_files": {
+      "workspace/Cargo.toml": {
+        "kind": "file",
+        "sha256": "0c58d36a1550ee660ef74d837b6ffe757c8742bc64dbfadb00acd79719a8375a",
+        "bytes": 85
+      },
+      "workspace/src": {
+        "kind": "directory"
+      },
+      "workspace/src/main.rs": {
+        "kind": "file",
+        "sha256": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746",
+        "bytes": 4096
+      },
+      "workspace/unlisted.txt": {
+        "kind": "file",
+        "sha256": "be676755ad4d2969fa73f463461aa358ec21bc466a13bb89897176c5eddb8b9a",
+        "bytes": 24
+      }
+    },
+    "batches": [
+      {
+        "batch_id": "r1-baseline-seed-b1",
+        "phase": "seed",
+        "seed": true,
+        "uses": 1,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:58.939228681Z",
+          "grant_id": "grant_34704323576f67de5315da9737980e20",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_3",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:58.939228681Z",
+          "grant_id": "grant_34704323576f67de5315da9737980e20",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:58.939228681Z",
+          "grant_id": "grant_34704323576f67de5315da9737980e20",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:58.939228681Z",
+          "grant_id": "grant_34704323576f67de5315da9737980e20",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_7",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-baseline-warmup-b2",
+        "phase": "warmup",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.054545465Z",
+          "grant_id": "grant_561c114702c12121c9cf45c1d1a8bea6",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_128",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.054545465Z",
+          "grant_id": "grant_561c114702c12121c9cf45c1d1a8bea6",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.054545465Z",
+          "grant_id": "grant_561c114702c12121c9cf45c1d1a8bea6",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.054545465Z",
+          "grant_id": "grant_561c114702c12121c9cf45c1d1a8bea6",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_141",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-baseline-warmup-b3",
+        "phase": "warmup",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.070775564Z",
+          "grant_id": "grant_b08c261d72c2a659f8462fd2dc5ffd53",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_142",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.070775564Z",
+          "grant_id": "grant_b08c261d72c2a659f8462fd2dc5ffd53",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.070775564Z",
+          "grant_id": "grant_b08c261d72c2a659f8462fd2dc5ffd53",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.070775564Z",
+          "grant_id": "grant_b08c261d72c2a659f8462fd2dc5ffd53",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_155",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-baseline-measured-b4",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.087082880Z",
+          "grant_id": "grant_d2bc98a6422f71492f8b75e525e73318",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_156",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.087082880Z",
+          "grant_id": "grant_d2bc98a6422f71492f8b75e525e73318",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.087082880Z",
+          "grant_id": "grant_d2bc98a6422f71492f8b75e525e73318",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.087082880Z",
+          "grant_id": "grant_d2bc98a6422f71492f8b75e525e73318",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_169",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-baseline-measured-b5",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.103547212Z",
+          "grant_id": "grant_59a98771429de88bace8fd2ea86624c6",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_170",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.103547212Z",
+          "grant_id": "grant_59a98771429de88bace8fd2ea86624c6",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.103547212Z",
+          "grant_id": "grant_59a98771429de88bace8fd2ea86624c6",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.103547212Z",
+          "grant_id": "grant_59a98771429de88bace8fd2ea86624c6",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_183",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-baseline-measured-b6",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.124321053Z",
+          "grant_id": "grant_58b92c723474a24325ee4a89938b1551",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_184",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.124321053Z",
+          "grant_id": "grant_58b92c723474a24325ee4a89938b1551",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.124321053Z",
+          "grant_id": "grant_58b92c723474a24325ee4a89938b1551",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.124321053Z",
+          "grant_id": "grant_58b92c723474a24325ee4a89938b1551",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_197",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-baseline-measured-b7",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.141031766Z",
+          "grant_id": "grant_7a6258eb1987809cbfc493c3ea776aaf",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_198",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.141031766Z",
+          "grant_id": "grant_7a6258eb1987809cbfc493c3ea776aaf",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.141031766Z",
+          "grant_id": "grant_7a6258eb1987809cbfc493c3ea776aaf",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.141031766Z",
+          "grant_id": "grant_7a6258eb1987809cbfc493c3ea776aaf",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_211",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-baseline-measured-b8",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.158363053Z",
+          "grant_id": "grant_7d6ab578a4f12f23e89149c9d79254c0",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_212",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.158363053Z",
+          "grant_id": "grant_7d6ab578a4f12f23e89149c9d79254c0",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.158363053Z",
+          "grant_id": "grant_7d6ab578a4f12f23e89149c9d79254c0",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.158363053Z",
+          "grant_id": "grant_7d6ab578a4f12f23e89149c9d79254c0",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_225",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-baseline-measured-b9",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.174813715Z",
+          "grant_id": "grant_74dce71bc816582a404fcb197f9d5919",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_226",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.174813715Z",
+          "grant_id": "grant_74dce71bc816582a404fcb197f9d5919",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.174813715Z",
+          "grant_id": "grant_74dce71bc816582a404fcb197f9d5919",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.174813715Z",
+          "grant_id": "grant_74dce71bc816582a404fcb197f9d5919",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_239",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-baseline-measured-b10",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.190947649Z",
+          "grant_id": "grant_68a0cc115b814cdaa671e3e330a9673f",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_240",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.190947649Z",
+          "grant_id": "grant_68a0cc115b814cdaa671e3e330a9673f",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.190947649Z",
+          "grant_id": "grant_68a0cc115b814cdaa671e3e330a9673f",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.190947649Z",
+          "grant_id": "grant_68a0cc115b814cdaa671e3e330a9673f",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_253",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-baseline-measured-b11",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.208157905Z",
+          "grant_id": "grant_6a44cd16cd080feba181a2f65ed168c2",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_254",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.208157905Z",
+          "grant_id": "grant_6a44cd16cd080feba181a2f65ed168c2",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.208157905Z",
+          "grant_id": "grant_6a44cd16cd080feba181a2f65ed168c2",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.208157905Z",
+          "grant_id": "grant_6a44cd16cd080feba181a2f65ed168c2",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_267",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-baseline-measured-b12",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.224595406Z",
+          "grant_id": "grant_7eb524525aebb53b348dd6a46e3fdaba",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_268",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.224595406Z",
+          "grant_id": "grant_7eb524525aebb53b348dd6a46e3fdaba",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.224595406Z",
+          "grant_id": "grant_7eb524525aebb53b348dd6a46e3fdaba",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.224595406Z",
+          "grant_id": "grant_7eb524525aebb53b348dd6a46e3fdaba",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_281",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r1-baseline-measured-b13",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.241405018Z",
+          "grant_id": "grant_aef2095f35f994c5dc54437db7d7f636",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_282",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.241405018Z",
+          "grant_id": "grant_aef2095f35f994c5dc54437db7d7f636",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.241405018Z",
+          "grant_id": "grant_aef2095f35f994c5dc54437db7d7f636",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.241405018Z",
+          "grant_id": "grant_aef2095f35f994c5dc54437db7d7f636",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_6799dae98a6d02fcd8bb53e887b6990a_295",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_add5cff567c6236eaa512b3ec8f3dae0",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      }
+    ]
+  },
+  {
+    "key": "r02-baseline",
+    "round": 2,
+    "mode": "baseline",
+    "order_index": 3,
+    "binary_sha256": "5abcd076a2ac053decbaf0bbff5712a13c0f08e25f4a4113a87e0f7f3087e2b6",
+    "server_stopped": true,
+    "api_matches_disk": true,
+    "initial_files": {
+      "workspace/Cargo.toml": {
+        "kind": "file",
+        "sha256": "0c58d36a1550ee660ef74d837b6ffe757c8742bc64dbfadb00acd79719a8375a",
+        "bytes": 85
+      },
+      "workspace/src": {
+        "kind": "directory"
+      },
+      "workspace/src/main.rs": {
+        "kind": "file",
+        "sha256": "4467d6893a70528a7889c8ca175b334fb58a4d93c7edc27620ac9575c1daad8a",
+        "bytes": 35
+      },
+      "workspace/unlisted.txt": {
+        "kind": "file",
+        "sha256": "be676755ad4d2969fa73f463461aa358ec21bc466a13bb89897176c5eddb8b9a",
+        "bytes": 24
+      }
+    },
+    "policy_sha256": "22bec499279e239afaac9edf489a5474211c76871072a075d34c18de3fd2a983",
+    "instance_id": "inst_40d5d106572e7c501ccd39f841499fab",
+    "experiment": {
+      "audit": "FileSink::append + sync_data",
+      "file_operations": "LocalFiles",
+      "http": "agentfence_server::app",
+      "max_content_bytes": 65536,
+      "mode": "baseline",
+      "schema_version": 1,
+      "synthetic_fixture": true,
+      "workspace_id": "demo",
+      "authorization_mode": "static_path_acl"
+    },
+    "scenario_order": [
+      "write",
+      "deny",
+      "read"
+    ],
+    "phase": "edit",
+    "final_content_sha256": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746",
+    "final_files": {
+      "workspace/Cargo.toml": {
+        "kind": "file",
+        "sha256": "0c58d36a1550ee660ef74d837b6ffe757c8742bc64dbfadb00acd79719a8375a",
+        "bytes": 85
+      },
+      "workspace/src": {
+        "kind": "directory"
+      },
+      "workspace/src/main.rs": {
+        "kind": "file",
+        "sha256": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746",
+        "bytes": 4096
+      },
+      "workspace/unlisted.txt": {
+        "kind": "file",
+        "sha256": "be676755ad4d2969fa73f463461aa358ec21bc466a13bb89897176c5eddb8b9a",
+        "bytes": 24
+      }
+    },
+    "batches": [
+      {
+        "batch_id": "r2-baseline-seed-b1",
+        "phase": "seed",
+        "seed": true,
+        "uses": 1,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.431893525Z",
+          "grant_id": "grant_cc6c0c0e53458b8b0ee792c24c8ae6cf",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_3",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.431893525Z",
+          "grant_id": "grant_cc6c0c0e53458b8b0ee792c24c8ae6cf",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.431893525Z",
+          "grant_id": "grant_cc6c0c0e53458b8b0ee792c24c8ae6cf",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.431893525Z",
+          "grant_id": "grant_cc6c0c0e53458b8b0ee792c24c8ae6cf",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_7",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-baseline-warmup-b2",
+        "phase": "warmup",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.435592346Z",
+          "grant_id": "grant_002f777728ca430f5c6acc04c44bc347",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_8",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.435592346Z",
+          "grant_id": "grant_002f777728ca430f5c6acc04c44bc347",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.435592346Z",
+          "grant_id": "grant_002f777728ca430f5c6acc04c44bc347",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.435592346Z",
+          "grant_id": "grant_002f777728ca430f5c6acc04c44bc347",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_21",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-baseline-warmup-b3",
+        "phase": "warmup",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.451778959Z",
+          "grant_id": "grant_df07e6e13a4d476bf44c1de3ea422d8e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_22",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.451778959Z",
+          "grant_id": "grant_df07e6e13a4d476bf44c1de3ea422d8e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.451778959Z",
+          "grant_id": "grant_df07e6e13a4d476bf44c1de3ea422d8e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.451778959Z",
+          "grant_id": "grant_df07e6e13a4d476bf44c1de3ea422d8e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_35",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-baseline-measured-b4",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.468374939Z",
+          "grant_id": "grant_2a6b9fcea145e1bc65b70a8f9c8b93ad",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_36",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.468374939Z",
+          "grant_id": "grant_2a6b9fcea145e1bc65b70a8f9c8b93ad",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.468374939Z",
+          "grant_id": "grant_2a6b9fcea145e1bc65b70a8f9c8b93ad",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.468374939Z",
+          "grant_id": "grant_2a6b9fcea145e1bc65b70a8f9c8b93ad",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_49",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-baseline-measured-b5",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.484715114Z",
+          "grant_id": "grant_6f2c983ea7290b1b8de3b36ca14a359d",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_50",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.484715114Z",
+          "grant_id": "grant_6f2c983ea7290b1b8de3b36ca14a359d",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.484715114Z",
+          "grant_id": "grant_6f2c983ea7290b1b8de3b36ca14a359d",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.484715114Z",
+          "grant_id": "grant_6f2c983ea7290b1b8de3b36ca14a359d",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_63",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-baseline-measured-b6",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.500922840Z",
+          "grant_id": "grant_18e43fc7e0284c8fcf81dd0b780d38e6",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_64",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.500922840Z",
+          "grant_id": "grant_18e43fc7e0284c8fcf81dd0b780d38e6",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.500922840Z",
+          "grant_id": "grant_18e43fc7e0284c8fcf81dd0b780d38e6",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.500922840Z",
+          "grant_id": "grant_18e43fc7e0284c8fcf81dd0b780d38e6",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_77",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-baseline-measured-b7",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.518169229Z",
+          "grant_id": "grant_2699e911f4ed0ee85d3e8f59473a7511",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_78",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.518169229Z",
+          "grant_id": "grant_2699e911f4ed0ee85d3e8f59473a7511",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.518169229Z",
+          "grant_id": "grant_2699e911f4ed0ee85d3e8f59473a7511",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.518169229Z",
+          "grant_id": "grant_2699e911f4ed0ee85d3e8f59473a7511",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_91",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-baseline-measured-b8",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.562666965Z",
+          "grant_id": "grant_a94f9798cea49726cf79fcdc2b3a4dda",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_92",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.562666965Z",
+          "grant_id": "grant_a94f9798cea49726cf79fcdc2b3a4dda",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.562666965Z",
+          "grant_id": "grant_a94f9798cea49726cf79fcdc2b3a4dda",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.562666965Z",
+          "grant_id": "grant_a94f9798cea49726cf79fcdc2b3a4dda",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_105",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-baseline-measured-b9",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.578834910Z",
+          "grant_id": "grant_e52b61bda8fd153829d7cd614b2bf745",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_106",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.578834910Z",
+          "grant_id": "grant_e52b61bda8fd153829d7cd614b2bf745",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.578834910Z",
+          "grant_id": "grant_e52b61bda8fd153829d7cd614b2bf745",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.578834910Z",
+          "grant_id": "grant_e52b61bda8fd153829d7cd614b2bf745",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_119",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-baseline-measured-b10",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.595113512Z",
+          "grant_id": "grant_4fe56132b95de1667261454870ab349e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_120",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.595113512Z",
+          "grant_id": "grant_4fe56132b95de1667261454870ab349e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.595113512Z",
+          "grant_id": "grant_4fe56132b95de1667261454870ab349e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.595113512Z",
+          "grant_id": "grant_4fe56132b95de1667261454870ab349e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_133",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-baseline-measured-b11",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.611686388Z",
+          "grant_id": "grant_2dbaaadab72d5c4b6d3f6fda0079a7e3",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_134",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.611686388Z",
+          "grant_id": "grant_2dbaaadab72d5c4b6d3f6fda0079a7e3",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.611686388Z",
+          "grant_id": "grant_2dbaaadab72d5c4b6d3f6fda0079a7e3",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.611686388Z",
+          "grant_id": "grant_2dbaaadab72d5c4b6d3f6fda0079a7e3",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_147",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-baseline-measured-b12",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.627992722Z",
+          "grant_id": "grant_c6314c0c3afd2b9978d7941f7872ef2e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_148",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.627992722Z",
+          "grant_id": "grant_c6314c0c3afd2b9978d7941f7872ef2e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.627992722Z",
+          "grant_id": "grant_c6314c0c3afd2b9978d7941f7872ef2e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.627992722Z",
+          "grant_id": "grant_c6314c0c3afd2b9978d7941f7872ef2e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_161",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-baseline-measured-b13",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.644173146Z",
+          "grant_id": "grant_e55e6ec5f37293becc25f191f5baddc4",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_162",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.644173146Z",
+          "grant_id": "grant_e55e6ec5f37293becc25f191f5baddc4",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.644173146Z",
+          "grant_id": "grant_e55e6ec5f37293becc25f191f5baddc4",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.644173146Z",
+          "grant_id": "grant_e55e6ec5f37293becc25f191f5baddc4",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_40d5d106572e7c501ccd39f841499fab_175",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_2e20dc53d903ee251ef9f4ccc5b7eab3",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      }
+    ]
+  },
+  {
+    "key": "r02-enforced",
+    "round": 2,
+    "mode": "enforced",
+    "order_index": 4,
+    "binary_sha256": "5abcd076a2ac053decbaf0bbff5712a13c0f08e25f4a4113a87e0f7f3087e2b6",
+    "server_stopped": true,
+    "api_matches_disk": true,
+    "initial_files": {
+      "workspace/Cargo.toml": {
+        "kind": "file",
+        "sha256": "0c58d36a1550ee660ef74d837b6ffe757c8742bc64dbfadb00acd79719a8375a",
+        "bytes": 85
+      },
+      "workspace/src": {
+        "kind": "directory"
+      },
+      "workspace/src/main.rs": {
+        "kind": "file",
+        "sha256": "4467d6893a70528a7889c8ca175b334fb58a4d93c7edc27620ac9575c1daad8a",
+        "bytes": 35
+      },
+      "workspace/unlisted.txt": {
+        "kind": "file",
+        "sha256": "be676755ad4d2969fa73f463461aa358ec21bc466a13bb89897176c5eddb8b9a",
+        "bytes": 24
+      }
+    },
+    "policy_sha256": "22bec499279e239afaac9edf489a5474211c76871072a075d34c18de3fd2a983",
+    "instance_id": "inst_e79c8bbc1f6a11999a8b936ddf2a00af",
+    "experiment": {
+      "audit": "FileSink::append + sync_data",
+      "file_operations": "LocalFiles",
+      "http": "agentfence_server::app",
+      "max_content_bytes": 65536,
+      "mode": "enforced",
+      "schema_version": 1,
+      "synthetic_fixture": true,
+      "workspace_id": "demo",
+      "authorization_mode": "phase_path_lease"
+    },
+    "scenario_order": [
+      "write",
+      "deny",
+      "read"
+    ],
+    "phase": "edit",
+    "final_content_sha256": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746",
+    "final_files": {
+      "workspace/Cargo.toml": {
+        "kind": "file",
+        "sha256": "0c58d36a1550ee660ef74d837b6ffe757c8742bc64dbfadb00acd79719a8375a",
+        "bytes": 85
+      },
+      "workspace/src": {
+        "kind": "directory"
+      },
+      "workspace/src/main.rs": {
+        "kind": "file",
+        "sha256": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746",
+        "bytes": 4096
+      },
+      "workspace/unlisted.txt": {
+        "kind": "file",
+        "sha256": "be676755ad4d2969fa73f463461aa358ec21bc466a13bb89897176c5eddb8b9a",
+        "bytes": 24
+      }
+    },
+    "batches": [
+      {
+        "batch_id": "r2-enforced-seed-b1",
+        "phase": "seed",
+        "seed": true,
+        "uses": 1,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.944922775Z",
+          "grant_id": "grant_4ec236b1a03afd32a2b71042e153073d",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_3",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.944922775Z",
+          "grant_id": "grant_4ec236b1a03afd32a2b71042e153073d",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.944922775Z",
+          "grant_id": "grant_4ec236b1a03afd32a2b71042e153073d",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.944922775Z",
+          "grant_id": "grant_4ec236b1a03afd32a2b71042e153073d",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_7",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-enforced-warmup-b2",
+        "phase": "warmup",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.948724189Z",
+          "grant_id": "grant_d5490c6b3369922d7bb3d12a5375286b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_8",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.948724189Z",
+          "grant_id": "grant_d5490c6b3369922d7bb3d12a5375286b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.948724189Z",
+          "grant_id": "grant_d5490c6b3369922d7bb3d12a5375286b",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.948724189Z",
+          "grant_id": "grant_d5490c6b3369922d7bb3d12a5375286b",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_21",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-enforced-warmup-b3",
+        "phase": "warmup",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.965861565Z",
+          "grant_id": "grant_6e95fc23378d23c1c842c6bb84836777",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_22",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.965861565Z",
+          "grant_id": "grant_6e95fc23378d23c1c842c6bb84836777",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.965861565Z",
+          "grant_id": "grant_6e95fc23378d23c1c842c6bb84836777",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.965861565Z",
+          "grant_id": "grant_6e95fc23378d23c1c842c6bb84836777",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_35",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-enforced-measured-b4",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.982873050Z",
+          "grant_id": "grant_a2e76ee699b879126bb585629f21efca",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_36",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.982873050Z",
+          "grant_id": "grant_a2e76ee699b879126bb585629f21efca",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.982873050Z",
+          "grant_id": "grant_a2e76ee699b879126bb585629f21efca",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.982873050Z",
+          "grant_id": "grant_a2e76ee699b879126bb585629f21efca",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_49",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-enforced-measured-b5",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:03:59.999397483Z",
+          "grant_id": "grant_ab30775cb51148c69642047fe68cb41b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_50",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:03:59.999397483Z",
+          "grant_id": "grant_ab30775cb51148c69642047fe68cb41b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:03:59.999397483Z",
+          "grant_id": "grant_ab30775cb51148c69642047fe68cb41b",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:03:59.999397483Z",
+          "grant_id": "grant_ab30775cb51148c69642047fe68cb41b",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_63",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-enforced-measured-b6",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.018998989Z",
+          "grant_id": "grant_f5c15c2d39d0d3835ad528130babcd4e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_64",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.018998989Z",
+          "grant_id": "grant_f5c15c2d39d0d3835ad528130babcd4e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.018998989Z",
+          "grant_id": "grant_f5c15c2d39d0d3835ad528130babcd4e",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.018998989Z",
+          "grant_id": "grant_f5c15c2d39d0d3835ad528130babcd4e",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_77",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-enforced-measured-b7",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.036158738Z",
+          "grant_id": "grant_bf547587203af0727d8a044c0046d77a",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_78",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.036158738Z",
+          "grant_id": "grant_bf547587203af0727d8a044c0046d77a",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.036158738Z",
+          "grant_id": "grant_bf547587203af0727d8a044c0046d77a",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.036158738Z",
+          "grant_id": "grant_bf547587203af0727d8a044c0046d77a",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_91",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-enforced-measured-b8",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.052513885Z",
+          "grant_id": "grant_9b61750c3e5fd6942f24ba7636102b23",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_92",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.052513885Z",
+          "grant_id": "grant_9b61750c3e5fd6942f24ba7636102b23",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.052513885Z",
+          "grant_id": "grant_9b61750c3e5fd6942f24ba7636102b23",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.052513885Z",
+          "grant_id": "grant_9b61750c3e5fd6942f24ba7636102b23",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_105",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-enforced-measured-b9",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.069180552Z",
+          "grant_id": "grant_a01b2a6f4cc0e18bd3597c819543903f",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_106",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.069180552Z",
+          "grant_id": "grant_a01b2a6f4cc0e18bd3597c819543903f",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.069180552Z",
+          "grant_id": "grant_a01b2a6f4cc0e18bd3597c819543903f",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.069180552Z",
+          "grant_id": "grant_a01b2a6f4cc0e18bd3597c819543903f",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_119",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-enforced-measured-b10",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.085925226Z",
+          "grant_id": "grant_f0c232dbc1d8f21bc1a3ce5cbf5d58b4",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_120",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.085925226Z",
+          "grant_id": "grant_f0c232dbc1d8f21bc1a3ce5cbf5d58b4",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.085925226Z",
+          "grant_id": "grant_f0c232dbc1d8f21bc1a3ce5cbf5d58b4",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.085925226Z",
+          "grant_id": "grant_f0c232dbc1d8f21bc1a3ce5cbf5d58b4",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_133",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-enforced-measured-b11",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.102690201Z",
+          "grant_id": "grant_7641b04dc5e72258593a98f4290d1d23",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_134",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.102690201Z",
+          "grant_id": "grant_7641b04dc5e72258593a98f4290d1d23",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.102690201Z",
+          "grant_id": "grant_7641b04dc5e72258593a98f4290d1d23",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.102690201Z",
+          "grant_id": "grant_7641b04dc5e72258593a98f4290d1d23",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_147",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-enforced-measured-b12",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.118989634Z",
+          "grant_id": "grant_4560d4d5bacb8e60d0751ad95b64f4eb",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_148",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.118989634Z",
+          "grant_id": "grant_4560d4d5bacb8e60d0751ad95b64f4eb",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.118989634Z",
+          "grant_id": "grant_4560d4d5bacb8e60d0751ad95b64f4eb",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.118989634Z",
+          "grant_id": "grant_4560d4d5bacb8e60d0751ad95b64f4eb",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_161",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r2-enforced-measured-b13",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.135505054Z",
+          "grant_id": "grant_8f4869e5f14abaa385ef7e190f61e2b5",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_162",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.135505054Z",
+          "grant_id": "grant_8f4869e5f14abaa385ef7e190f61e2b5",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.135505054Z",
+          "grant_id": "grant_8f4869e5f14abaa385ef7e190f61e2b5",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.135505054Z",
+          "grant_id": "grant_8f4869e5f14abaa385ef7e190f61e2b5",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_e79c8bbc1f6a11999a8b936ddf2a00af_175",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_bc4a912a287f6c3ab705f480029632ba",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      }
+    ]
+  },
+  {
+    "key": "r03-enforced",
+    "round": 3,
+    "mode": "enforced",
+    "order_index": 5,
+    "binary_sha256": "5abcd076a2ac053decbaf0bbff5712a13c0f08e25f4a4113a87e0f7f3087e2b6",
+    "server_stopped": true,
+    "api_matches_disk": true,
+    "initial_files": {
+      "workspace/Cargo.toml": {
+        "kind": "file",
+        "sha256": "0c58d36a1550ee660ef74d837b6ffe757c8742bc64dbfadb00acd79719a8375a",
+        "bytes": 85
+      },
+      "workspace/src": {
+        "kind": "directory"
+      },
+      "workspace/src/main.rs": {
+        "kind": "file",
+        "sha256": "4467d6893a70528a7889c8ca175b334fb58a4d93c7edc27620ac9575c1daad8a",
+        "bytes": 35
+      },
+      "workspace/unlisted.txt": {
+        "kind": "file",
+        "sha256": "be676755ad4d2969fa73f463461aa358ec21bc466a13bb89897176c5eddb8b9a",
+        "bytes": 24
+      }
+    },
+    "policy_sha256": "22bec499279e239afaac9edf489a5474211c76871072a075d34c18de3fd2a983",
+    "instance_id": "inst_f26c7912e74e36c958251df65b3623b9",
+    "experiment": {
+      "audit": "FileSink::append + sync_data",
+      "file_operations": "LocalFiles",
+      "http": "agentfence_server::app",
+      "max_content_bytes": 65536,
+      "mode": "enforced",
+      "schema_version": 1,
+      "synthetic_fixture": true,
+      "workspace_id": "demo",
+      "authorization_mode": "phase_path_lease"
+    },
+    "scenario_order": [
+      "deny",
+      "read",
+      "write"
+    ],
+    "phase": "edit",
+    "final_content_sha256": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746",
+    "final_files": {
+      "workspace/Cargo.toml": {
+        "kind": "file",
+        "sha256": "0c58d36a1550ee660ef74d837b6ffe757c8742bc64dbfadb00acd79719a8375a",
+        "bytes": 85
+      },
+      "workspace/src": {
+        "kind": "directory"
+      },
+      "workspace/src/main.rs": {
+        "kind": "file",
+        "sha256": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746",
+        "bytes": 4096
+      },
+      "workspace/unlisted.txt": {
+        "kind": "file",
+        "sha256": "be676755ad4d2969fa73f463461aa358ec21bc466a13bb89897176c5eddb8b9a",
+        "bytes": 24
+      }
+    },
+    "batches": [
+      {
+        "batch_id": "r3-enforced-seed-b1",
+        "phase": "seed",
+        "seed": true,
+        "uses": 1,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.439599128Z",
+          "grant_id": "grant_c41c2368adc2efe0e1dab061e64485e1",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_3",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.439599128Z",
+          "grant_id": "grant_c41c2368adc2efe0e1dab061e64485e1",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.439599128Z",
+          "grant_id": "grant_c41c2368adc2efe0e1dab061e64485e1",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.439599128Z",
+          "grant_id": "grant_c41c2368adc2efe0e1dab061e64485e1",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_7",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-enforced-warmup-b2",
+        "phase": "warmup",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.636653953Z",
+          "grant_id": "grant_21d9ef5eee3fdfe113c29d4e0d2cfadd",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_248",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.636653953Z",
+          "grant_id": "grant_21d9ef5eee3fdfe113c29d4e0d2cfadd",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.636653953Z",
+          "grant_id": "grant_21d9ef5eee3fdfe113c29d4e0d2cfadd",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.636653953Z",
+          "grant_id": "grant_21d9ef5eee3fdfe113c29d4e0d2cfadd",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_261",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-enforced-warmup-b3",
+        "phase": "warmup",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.653855455Z",
+          "grant_id": "grant_b93004abee0f3840b0acd01fa45f5e34",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_262",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.653855455Z",
+          "grant_id": "grant_b93004abee0f3840b0acd01fa45f5e34",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.653855455Z",
+          "grant_id": "grant_b93004abee0f3840b0acd01fa45f5e34",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.653855455Z",
+          "grant_id": "grant_b93004abee0f3840b0acd01fa45f5e34",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_275",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-enforced-measured-b4",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.675106225Z",
+          "grant_id": "grant_406958281c60986bf3fde317af44af7e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_276",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.675106225Z",
+          "grant_id": "grant_406958281c60986bf3fde317af44af7e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.675106225Z",
+          "grant_id": "grant_406958281c60986bf3fde317af44af7e",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.675106225Z",
+          "grant_id": "grant_406958281c60986bf3fde317af44af7e",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_289",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-enforced-measured-b5",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.691698579Z",
+          "grant_id": "grant_77c7574e92f0da88fcc873b4b2b88ef4",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_290",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.691698579Z",
+          "grant_id": "grant_77c7574e92f0da88fcc873b4b2b88ef4",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.691698579Z",
+          "grant_id": "grant_77c7574e92f0da88fcc873b4b2b88ef4",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.691698579Z",
+          "grant_id": "grant_77c7574e92f0da88fcc873b4b2b88ef4",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_303",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-enforced-measured-b6",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.708288611Z",
+          "grant_id": "grant_c258bd8f50e636549b38f26c6410a069",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_304",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.708288611Z",
+          "grant_id": "grant_c258bd8f50e636549b38f26c6410a069",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.708288611Z",
+          "grant_id": "grant_c258bd8f50e636549b38f26c6410a069",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.708288611Z",
+          "grant_id": "grant_c258bd8f50e636549b38f26c6410a069",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_317",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-enforced-measured-b7",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.724850540Z",
+          "grant_id": "grant_a15b761467fe11d7da95f6c7a600795e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_318",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.724850540Z",
+          "grant_id": "grant_a15b761467fe11d7da95f6c7a600795e",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.724850540Z",
+          "grant_id": "grant_a15b761467fe11d7da95f6c7a600795e",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.724850540Z",
+          "grant_id": "grant_a15b761467fe11d7da95f6c7a600795e",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_331",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-enforced-measured-b8",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.741413310Z",
+          "grant_id": "grant_dfa85a8949c32e99bb12834f545148df",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_332",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.741413310Z",
+          "grant_id": "grant_dfa85a8949c32e99bb12834f545148df",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.741413310Z",
+          "grant_id": "grant_dfa85a8949c32e99bb12834f545148df",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.741413310Z",
+          "grant_id": "grant_dfa85a8949c32e99bb12834f545148df",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_345",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-enforced-measured-b9",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.758220789Z",
+          "grant_id": "grant_41d4997cd05a760f2d8c83e5347f752b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_346",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.758220789Z",
+          "grant_id": "grant_41d4997cd05a760f2d8c83e5347f752b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.758220789Z",
+          "grant_id": "grant_41d4997cd05a760f2d8c83e5347f752b",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.758220789Z",
+          "grant_id": "grant_41d4997cd05a760f2d8c83e5347f752b",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_359",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-enforced-measured-b10",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.774494984Z",
+          "grant_id": "grant_ea648a631003c545509f3531bf0f8f40",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_360",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.774494984Z",
+          "grant_id": "grant_ea648a631003c545509f3531bf0f8f40",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.774494984Z",
+          "grant_id": "grant_ea648a631003c545509f3531bf0f8f40",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.774494984Z",
+          "grant_id": "grant_ea648a631003c545509f3531bf0f8f40",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_373",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-enforced-measured-b11",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.792219854Z",
+          "grant_id": "grant_61800ad2a8db3e4cb8fdea908a46db42",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_374",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.792219854Z",
+          "grant_id": "grant_61800ad2a8db3e4cb8fdea908a46db42",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.792219854Z",
+          "grant_id": "grant_61800ad2a8db3e4cb8fdea908a46db42",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.792219854Z",
+          "grant_id": "grant_61800ad2a8db3e4cb8fdea908a46db42",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_387",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-enforced-measured-b12",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.809383059Z",
+          "grant_id": "grant_6b7168d2727d17cd0f73c88f6a7a1522",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_388",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.809383059Z",
+          "grant_id": "grant_6b7168d2727d17cd0f73c88f6a7a1522",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.809383059Z",
+          "grant_id": "grant_6b7168d2727d17cd0f73c88f6a7a1522",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.809383059Z",
+          "grant_id": "grant_6b7168d2727d17cd0f73c88f6a7a1522",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_401",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-enforced-measured-b13",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.825976686Z",
+          "grant_id": "grant_1dbd07cb9862f70c801d56097fb39886",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_402",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.825976686Z",
+          "grant_id": "grant_1dbd07cb9862f70c801d56097fb39886",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.825976686Z",
+          "grant_id": "grant_1dbd07cb9862f70c801d56097fb39886",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "revoked": false,
+          "status": "used_up",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.825976686Z",
+          "grant_id": "grant_1dbd07cb9862f70c801d56097fb39886",
+          "path": "src/main.rs",
+          "remaining_uses": 0,
+          "request_id": "req_inst_f26c7912e74e36c958251df65b3623b9_415",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_a2e083e7c4cc2e03d825030f8fed51da",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      }
+    ]
+  },
+  {
+    "key": "r03-baseline",
+    "round": 3,
+    "mode": "baseline",
+    "order_index": 6,
+    "binary_sha256": "5abcd076a2ac053decbaf0bbff5712a13c0f08e25f4a4113a87e0f7f3087e2b6",
+    "server_stopped": true,
+    "api_matches_disk": true,
+    "initial_files": {
+      "workspace/Cargo.toml": {
+        "kind": "file",
+        "sha256": "0c58d36a1550ee660ef74d837b6ffe757c8742bc64dbfadb00acd79719a8375a",
+        "bytes": 85
+      },
+      "workspace/src": {
+        "kind": "directory"
+      },
+      "workspace/src/main.rs": {
+        "kind": "file",
+        "sha256": "4467d6893a70528a7889c8ca175b334fb58a4d93c7edc27620ac9575c1daad8a",
+        "bytes": 35
+      },
+      "workspace/unlisted.txt": {
+        "kind": "file",
+        "sha256": "be676755ad4d2969fa73f463461aa358ec21bc466a13bb89897176c5eddb8b9a",
+        "bytes": 24
+      }
+    },
+    "policy_sha256": "22bec499279e239afaac9edf489a5474211c76871072a075d34c18de3fd2a983",
+    "instance_id": "inst_975a592d1abc8fa470ff6ed6a1b963d7",
+    "experiment": {
+      "audit": "FileSink::append + sync_data",
+      "file_operations": "LocalFiles",
+      "http": "agentfence_server::app",
+      "max_content_bytes": 65536,
+      "mode": "baseline",
+      "schema_version": 1,
+      "synthetic_fixture": true,
+      "workspace_id": "demo",
+      "authorization_mode": "static_path_acl"
+    },
+    "scenario_order": [
+      "deny",
+      "read",
+      "write"
+    ],
+    "phase": "edit",
+    "final_content_sha256": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746",
+    "final_files": {
+      "workspace/Cargo.toml": {
+        "kind": "file",
+        "sha256": "0c58d36a1550ee660ef74d837b6ffe757c8742bc64dbfadb00acd79719a8375a",
+        "bytes": 85
+      },
+      "workspace/src": {
+        "kind": "directory"
+      },
+      "workspace/src/main.rs": {
+        "kind": "file",
+        "sha256": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746",
+        "bytes": 4096
+      },
+      "workspace/unlisted.txt": {
+        "kind": "file",
+        "sha256": "be676755ad4d2969fa73f463461aa358ec21bc466a13bb89897176c5eddb8b9a",
+        "bytes": 24
+      }
+    },
+    "batches": [
+      {
+        "batch_id": "r3-baseline-seed-b1",
+        "phase": "seed",
+        "seed": true,
+        "uses": 1,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:00.938421435Z",
+          "grant_id": "grant_518c0af261eca7ba79ba7a01167a45cc",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_3",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:00.938421435Z",
+          "grant_id": "grant_518c0af261eca7ba79ba7a01167a45cc",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:00.938421435Z",
+          "grant_id": "grant_518c0af261eca7ba79ba7a01167a45cc",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:00.938421435Z",
+          "grant_id": "grant_518c0af261eca7ba79ba7a01167a45cc",
+          "path": "src/main.rs",
+          "remaining_uses": 1,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_7",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-baseline-warmup-b2",
+        "phase": "warmup",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:01.135808190Z",
+          "grant_id": "grant_d5fe95186cc717266f1ad00de820bc4b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_248",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:01.135808190Z",
+          "grant_id": "grant_d5fe95186cc717266f1ad00de820bc4b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:01.135808190Z",
+          "grant_id": "grant_d5fe95186cc717266f1ad00de820bc4b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:01.135808190Z",
+          "grant_id": "grant_d5fe95186cc717266f1ad00de820bc4b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_261",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-baseline-warmup-b3",
+        "phase": "warmup",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:01.152537521Z",
+          "grant_id": "grant_481bc6ea36b0ca4bd36fb4f7928a281c",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_262",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:01.152537521Z",
+          "grant_id": "grant_481bc6ea36b0ca4bd36fb4f7928a281c",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:01.152537521Z",
+          "grant_id": "grant_481bc6ea36b0ca4bd36fb4f7928a281c",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:01.152537521Z",
+          "grant_id": "grant_481bc6ea36b0ca4bd36fb4f7928a281c",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_275",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-baseline-measured-b4",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:01.168403952Z",
+          "grant_id": "grant_bfcf445f29859f72ef03932337f62f63",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_276",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:01.168403952Z",
+          "grant_id": "grant_bfcf445f29859f72ef03932337f62f63",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:01.168403952Z",
+          "grant_id": "grant_bfcf445f29859f72ef03932337f62f63",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:01.168403952Z",
+          "grant_id": "grant_bfcf445f29859f72ef03932337f62f63",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_289",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-baseline-measured-b5",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:01.184789886Z",
+          "grant_id": "grant_b4037d7428bab602d054aeb74b29dca4",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_290",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:01.184789886Z",
+          "grant_id": "grant_b4037d7428bab602d054aeb74b29dca4",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:01.184789886Z",
+          "grant_id": "grant_b4037d7428bab602d054aeb74b29dca4",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:01.184789886Z",
+          "grant_id": "grant_b4037d7428bab602d054aeb74b29dca4",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_303",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-baseline-measured-b6",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:01.201110501Z",
+          "grant_id": "grant_ca75bbc2fe875f5e34d9cb5dcbb01536",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_304",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:01.201110501Z",
+          "grant_id": "grant_ca75bbc2fe875f5e34d9cb5dcbb01536",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:01.201110501Z",
+          "grant_id": "grant_ca75bbc2fe875f5e34d9cb5dcbb01536",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:01.201110501Z",
+          "grant_id": "grant_ca75bbc2fe875f5e34d9cb5dcbb01536",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_317",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-baseline-measured-b7",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:01.217147761Z",
+          "grant_id": "grant_d0d8ee2f63902311c0815f8f047a3cde",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_318",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:01.217147761Z",
+          "grant_id": "grant_d0d8ee2f63902311c0815f8f047a3cde",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:01.217147761Z",
+          "grant_id": "grant_d0d8ee2f63902311c0815f8f047a3cde",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:01.217147761Z",
+          "grant_id": "grant_d0d8ee2f63902311c0815f8f047a3cde",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_331",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-baseline-measured-b8",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:01.233185791Z",
+          "grant_id": "grant_dc9eba0b67e7411fd7077baec43868dd",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_332",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:01.233185791Z",
+          "grant_id": "grant_dc9eba0b67e7411fd7077baec43868dd",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:01.233185791Z",
+          "grant_id": "grant_dc9eba0b67e7411fd7077baec43868dd",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:01.233185791Z",
+          "grant_id": "grant_dc9eba0b67e7411fd7077baec43868dd",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_345",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-baseline-measured-b9",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:01.249304772Z",
+          "grant_id": "grant_a9fb04527c4e377aaaa9a0dbb271f3fb",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_346",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:01.249304772Z",
+          "grant_id": "grant_a9fb04527c4e377aaaa9a0dbb271f3fb",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:01.249304772Z",
+          "grant_id": "grant_a9fb04527c4e377aaaa9a0dbb271f3fb",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:01.249304772Z",
+          "grant_id": "grant_a9fb04527c4e377aaaa9a0dbb271f3fb",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_359",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-baseline-measured-b10",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:01.265578197Z",
+          "grant_id": "grant_b9f2dd5ff7195118ea710d2323e22f0b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_360",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:01.265578197Z",
+          "grant_id": "grant_b9f2dd5ff7195118ea710d2323e22f0b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:01.265578197Z",
+          "grant_id": "grant_b9f2dd5ff7195118ea710d2323e22f0b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:01.265578197Z",
+          "grant_id": "grant_b9f2dd5ff7195118ea710d2323e22f0b",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_373",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-baseline-measured-b11",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:01.282345966Z",
+          "grant_id": "grant_a16e699e3f2c7509fb7d8e63e4992190",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_374",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:01.282345966Z",
+          "grant_id": "grant_a16e699e3f2c7509fb7d8e63e4992190",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:01.282345966Z",
+          "grant_id": "grant_a16e699e3f2c7509fb7d8e63e4992190",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:01.282345966Z",
+          "grant_id": "grant_a16e699e3f2c7509fb7d8e63e4992190",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_387",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-baseline-measured-b12",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:01.299257572Z",
+          "grant_id": "grant_6b7d9f3432f211884cabb6140f744117",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_388",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:01.299257572Z",
+          "grant_id": "grant_6b7d9f3432f211884cabb6140f744117",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:01.299257572Z",
+          "grant_id": "grant_6b7d9f3432f211884cabb6140f744117",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:01.299257572Z",
+          "grant_id": "grant_6b7d9f3432f211884cabb6140f744117",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_401",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      },
+      {
+        "batch_id": "r3-baseline-measured-b13",
+        "phase": "measured",
+        "seed": false,
+        "uses": 10,
+        "grant": {
+          "expires_at": "2026-10-27T06:04:01.315932431Z",
+          "grant_id": "grant_17ea6398c556bb93dcfed8783c820231",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_402",
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "before": {
+          "expires_at": "2026-10-27T06:04:01.315932431Z",
+          "grant_id": "grant_17ea6398c556bb93dcfed8783c820231",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "after": {
+          "expires_at": "2026-10-27T06:04:01.315932431Z",
+          "grant_id": "grant_17ea6398c556bb93dcfed8783c820231",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "revoked": false,
+          "status": "active",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "revoked": {
+          "expires_at": "2026-10-27T06:04:01.315932431Z",
+          "grant_id": "grant_17ea6398c556bb93dcfed8783c820231",
+          "path": "src/main.rs",
+          "remaining_uses": 10,
+          "request_id": "req_inst_975a592d1abc8fa470ff6ed6a1b963d7_415",
+          "revoked": true,
+          "status": "revoked",
+          "task_id": "task_f15eae210fe793979a73b99ee635d3f8",
+          "tool": "write_file"
+        },
+        "file_sha256_after": "8418a3b91dcbfa9b7aed2cd5b4d0404e73343b8b8c6bd2bd63815f83f776e746"
+      }
+    ]
+  }
+]
