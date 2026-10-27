@@ -196,18 +196,18 @@ npm run dev
 
 ```sh
 # 开发：终端一
-python -m demo.run_dashboard --mode dev
+python -m demo.run_live_dashboard --mode dev
 # 开发：终端二
 npm --prefix front run dev
 ```
 
-访问 http://127.0.0.1:5173。任务出现后，在展示终端回车播放权限流程；每个检查点停留 3 秒，完成后继续提供查询，Ctrl+C 关闭自有 Rust 与代理。重新演示重新启动入口，使用新夹具。浏览器始终只读，Token 不需要手动复制。
+访问 http://127.0.0.1:5173/dashboard，点击“开始执行任务”，页面实时显示固定 Agent 任务的 13 个步骤，可暂停/继续并查看租约、审计。演示 Agent 通过真实 Rust API 修改独立夹具并读回验证，包含 5 次预期拦截；无需在线模型或手动复制 Token。完成后可点击“再运行一次”。暂停不会延长租约有效期，Ctrl+C 关闭自有服务。原 `demo.run_dashboard` 仍提供终端播放、浏览器只读的展示方式。
 
 正式构建展示：停止上一套展示入口，执行：
 
 ```sh
 npm --prefix front run build
-python -m demo.run_dashboard --mode dist
+python -m demo.run_live_dashboard --mode dist
 ```
 
 访问 http://127.0.0.1:4173，支持详情深链接刷新。5173/4173 被占用时检查已有服务，不要盲目结束其他进程。代理独立启动、环境变量与错误排查见 [代理说明](web_proxy/README.md)，演示参数见 [演示说明](demo/README.md)。原 `python -m demo.run_minimal` 继续负责自动核验并退出。

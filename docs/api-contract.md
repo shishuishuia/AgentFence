@@ -231,6 +231,8 @@ TTL 在进入受控临界区时采样，`now >= deadline` 为过期。已进入�
 
 浏览器接口由 B 的只读代理映射：`/api/tasks` → 管理任务列表，`/api/tasks/:id` → 详情，`/api/events` → 事件，`/api/health` → 健康。代理限定 GET，持有环境变量中的 Admin Token，不转发浏览器凭证。Rust 不读取前端筛选参数 result，不支持代理任意 URL。
 
+2026-10-27 补充：显式启动 `demo.run_live_dashboard` 时，在本地代理额外安装 GET `/api/demo/state` 和 POST `/api/demo/control`。后者 JSON 只能包含 `action`（start/pause/resume）和 `request_id`；start 使用唯一请求键并去重，pause/resume 必须携带当前 run_id。成功启动返回 202，重复启动同一请求键返回 200，繁忙/过期控制返回 409 和当前快照。请求必须来自本地 Origin，带 `X-AgentFence-Demo: 1`，只接受 256 字节以内 JSON；不接受任意任务或工具参数，不返回凭证。状态含 run_id、task_id、phase、13 步进度、HTTP 结果及最终 verified；verified 只在文件和 API/磁盘审计核验通过后为 true。此能力仅运行固定临时夹具任务，不是 Rust 管理/工具接口的浏览器映射；默认代理及原展示脚本不安装此能力。方法见 [演示说明](../demo/README.md)。
+
 ## 错误码汇总
 
 | HTTP | reason_code |

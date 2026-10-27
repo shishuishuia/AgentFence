@@ -2,6 +2,8 @@
 
 Python 3.10+，仅用标准库。默认监听 `127.0.0.1:4173`。
 
+独立启动保持以下只读边界。若要从页面启动固定 Agent 任务，使用显式的 `python -m demo.run_live_dashboard`，见 [交互演示](../demo/README.md)。它额外安装 GET `/api/demo/state` 和 POST `/api/demo/control`；控制仅接受固定 start/pause/resume 与请求键，不透传 Rust 写接口。POST 强制本地 Origin、自定义请求头、JSON 和 256 字节上限；不支持跨域预检，凭证不进入浏览器。
+
 启动前在当前终端设置 `AGENTFENCE_ADMIN_TOKEN`（与 Rust 一致，32～256 个可见 ASCII 字符），以及可选 `AGENTFENCE_BROKER_URL`（默认 `http://127.0.0.1:8080`，仅数字回环 HTTP 地址）。不要将凭证放入命令参数、源码、`VITE_` 环境变量或浏览器。
 
 ```sh
