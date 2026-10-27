@@ -1,7 +1,16 @@
 import type { AuditEvent } from '@/types/api'
 
 export type ResultFilter = 'all' | 'allowed' | 'denied' | 'failed'
-const denied = new Set(['INVALID_STAGE', 'PATH_DENIED', 'LEASE_REQUIRED', 'LEASE_NOT_FOUND', 'LEASE_MISMATCH', 'LEASE_REVOKED', 'LEASE_EXPIRED', 'LEASE_USED_UP'])
+const denied = new Set([
+  'INVALID_STAGE',
+  'PATH_DENIED',
+  'LEASE_REQUIRED',
+  'LEASE_NOT_FOUND',
+  'LEASE_MISMATCH',
+  'LEASE_REVOKED',
+  'LEASE_EXPIRED',
+  'LEASE_USED_UP',
+])
 
 export function classify(event: AuditEvent): Exclude<ResultFilter, 'all'> | null {
   if (event.event_type !== 'result') return null
@@ -19,8 +28,16 @@ export function statistics(events: AuditEvent[]) {
 }
 
 export function pendingRequests(events: AuditEvent[]) {
-  const completed = new Set(events.filter(e => e.event_type === 'result').map(e => `${e.instance_id}:${e.request_id}`))
-  return new Set(events.filter(e => e.event_type === 'intent' && !completed.has(`${e.instance_id}:${e.request_id}`)).map(e => `${e.instance_id}:${e.request_id}`))
+  const completed = new Set(
+    events.filter((e) => e.event_type === 'result').map((e) => `${e.instance_id}:${e.request_id}`),
+  )
+  return new Set(
+    events
+      .filter(
+        (e) => e.event_type === 'intent' && !completed.has(`${e.instance_id}:${e.request_id}`),
+      )
+      .map((e) => `${e.instance_id}:${e.request_id}`),
+  )
 }
 
 export function formatTime(value: string | null | undefined) {

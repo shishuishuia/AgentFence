@@ -11,7 +11,12 @@ export interface RequestContext {
 /** One owner per resource: completion-based polling and generation-checked writes. */
 export function usePolling<T>(
   load: (context: RequestContext) => Promise<T>,
-  options: { key?: MaybeRefOrGetter<string>; reset?: () => void; fatal?: (error: Error) => boolean; interval?: number } = {},
+  options: {
+    key?: MaybeRefOrGetter<string>
+    reset?: () => void
+    fatal?: (error: Error) => boolean
+    interval?: number
+  } = {},
 ) {
   const session = useBrokerSession()
   const data = shallowRef<T | null>(null)
@@ -38,18 +43,29 @@ export function usePolling<T>(
     const active = new AbortController()
     controller = active
     let timedOut = false
-    const timeout = setTimeout(() => { timedOut = true; active.abort() }, 6000)
+    const timeout = setTimeout(() => {
+      timedOut = true
+      active.abort()
+    }, 6000)
     const context: RequestContext = {
       signal: active.signal,
       isCurrent: () => current() && !active.signal.aborted,
-      observe: (id) => { if (current()) session.observe(id, epoch) },
+      observe: (id) => {
+        if (current()) session.observe(id, epoch)
+      },
     }
     loading.value = true
     let fatal = false
     try {
       const result = await load(context)
       if (!context.isCurrent()) return
-      if (result && typeof result === 'object' && 'instance_id' in result && typeof result.instance_id === 'string') context.observe(result.instance_id)
+      if (
+        result &&
+        typeof result === 'object' &&
+        'instance_id' in result &&
+        typeof result.instance_id === 'string'
+      )
+        context.observe(result.instance_id)
       if (!context.isCurrent()) return
       data.value = result
       error.value = null
@@ -57,17 +73,29 @@ export function usePolling<T>(
     } catch (caught) {
       if (!current() || caught instanceof SessionChanged) return
       if (caught instanceof ApiError) {
-        try { context.observe(caught.instanceId) } catch (changed) { if (changed instanceof SessionChanged) return; throw changed }
+        try {
+          context.observe(caught.instanceId)
+        } catch (changed) {
+          if (changed instanceof SessionChanged) return
+          throw changed
+        }
       }
       if (!current() || (!timedOut && active.signal.aborted)) return
-      const failure = timedOut ? new ApiError(0, 'REQUEST_TIMEOUT', '请求超时，请检查本地服务。') : caught instanceof Error ? caught : new Error('查询失败')
+      const failure = timedOut
+        ? new ApiError(0, 'REQUEST_TIMEOUT', '请求超时，请检查本地服务。')
+        : caught instanceof Error
+          ? caught
+          : new Error('查询失败')
       error.value = failure
       fatal = options.fatal?.(failure) ?? false
     } finally {
       clearTimeout(timeout)
       if (current()) {
         loading.value = false
-        if (!fatal) timer = setTimeout(() => { void refresh() }, options.interval ?? 1000)
+        if (!fatal)
+          timer = setTimeout(() => {
+            void refresh()
+          }, options.interval ?? 1000)
       }
     }
   }
@@ -81,7 +109,13 @@ export function usePolling<T>(
     void refresh()
   }
 
-  watch([() => toValue(options.key ?? ''), session.epoch], reset, { immediate: true, flush: 'sync' })
-  onScopeDispose(() => { disposed = true; invalidate() })
+  watch([() => toValue(options.key ?? ''), session.epoch], reset, {
+    immediate: true,
+    flush: 'sync',
+  })
+  onScopeDispose(() => {
+    disposed = true
+    invalidate()
+  })
   return { data, error, loading, updatedAt, refresh, reset }
 }

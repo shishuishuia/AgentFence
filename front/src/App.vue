@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 import './assets/main.css'
+import { useBrokerSession } from '@/composables/useBrokerSession'
 
 const route = useRoute()
+const session = useBrokerSession()
 const logoUrl = `${import.meta.env.BASE_URL}favicon.svg`
 </script>
 
@@ -29,7 +31,12 @@ const logoUrl = `${import.meta.env.BASE_URL}favicon.svg`
         <div class="breadcrumb">工作空间 <span>/</span> {{ route.meta.title }}</div>
         <span class="environment">LOCAL</span>
       </header>
-      <main id="main-content"><RouterView /></main>
+      <main id="main-content">
+        <p v-if="session.restarted.value" class="notice" role="status">
+          服务实例已变化，已清空旧实例数据并重新查询。
+        </p>
+        <RouterView />
+      </main>
       <footer>AgentFence Lite <span>任务感知的工具权限控制</span></footer>
     </div>
   </div>

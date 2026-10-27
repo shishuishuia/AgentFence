@@ -41,7 +41,13 @@ export async function getJson<T>(path: string, signal?: AbortSignal): Promise<T>
   }
   if (!response.ok) {
     if (isErrorResponse(payload)) {
-      throw new ApiError(response.status, payload.reason_code, payload.message, payload.request_id, payload.instance_id)
+      throw new ApiError(
+        response.status,
+        payload.reason_code,
+        payload.message,
+        payload.request_id,
+        payload.instance_id,
+      )
     }
     throw new ApiError(response.status, 'HTTP_ERROR', `接口请求失败（${response.status}）`)
   }

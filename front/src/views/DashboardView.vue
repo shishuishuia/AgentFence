@@ -1,89 +1,85 @@
 <script setup lang="ts">
-import { onBeforeUnmount, ref } from 'vue'
+import { computed } from 'vue'
 import { RouterLink } from 'vue-router'
-import { getHealth } from '@/api'
-import { ApiError } from '@/api/client'
-
-const state = ref<'idle' | 'loading' | 'connected' | 'failed'>('idle')
-const message = ref('点击检测，确认本地只读代理和 Rust 服务是否可用。')
-let controller: AbortController | undefined
-
-async function checkConnection() {
-  controller?.abort()
-  const current = new AbortController()
-  controller = current
-  state.value = 'loading'
-  const timeout = setTimeout(() => current.abort(), 6000)
-  try {
-    const health = await getHealth(current.signal)
-    if (controller !== current || current.signal.aborted) return
-    state.value = health.status === 'ok' ? 'connected' : 'failed'
-    message.value =
-      health.status === 'ok'
-        ? `Rust 服务可用，实例：${health.instance_id}`
-        : '服务返回了未知的健康状态，请检查只读代理。'
-  } catch (error) {
-    if (controller !== current) return
-    state.value = 'failed'
-    message.value =
-      error instanceof ApiError ? error.message : '暂时无法连接，请检查本地 4173 端口的只读代理。'
-  } finally {
-    clearTimeout(timeout)
-  }
-}
-
-onBeforeUnmount(() => {
-  controller?.abort()
-  controller = undefined
-})
+import { getHealth, getTasks } from '@/api'
+import { usePolling } from '@/composables/usePolling'
+import { useAuditEvents } from '@/composables/useAuditEvents'
+import { useBrokerSession } from '@/composables/useBrokerSession'
+import { statistics } from '@/utils/audit'
+import RequestState from '@/components/RequestState.vue'
+import TaskTable from '@/components/TaskTable.vue'
+const session = useBrokerSession()
+const health = usePolling((context) => getHealth(context.signal))
+const tasks = usePolling((context) => getTasks(5, context.signal))
+const feed = useAuditEvents()
+const audit = usePolling((context) => feed.load(context), { reset: feed.reset, fatal: feed.fatal })
+const counts = computed(() => statistics(feed.events.value))
 </script>
-
 <template>
   <section>
     <p class="eyebrow">AGENTFENCE WORKSPACE</p>
     <h1>项目总览</h1>
-    <p class="page-description">围绕任务阶段，观察工具权限与审计记录。</p>
-    <div class="hero panel">
-      <div>
-        <span class="pill">前端工程已创建</span>
-        <h2>从可见的权限开始</h2>
-        <p>Vue 页面、路由和只读 API 入口已准备好。下一步连接 Rust 服务，展示任务执行过程。</p>
-        <RouterLink class="button primary" to="/tasks">查看任务页面 <span>→</span></RouterLink>
+    <p class="page-description">从真实任务与审计结果，观察阶段如何约束工具权限。</p>
+    <section class="panel connection-panel">
+      <div class="section-heading">
+        <h2>服务连接</h2>
+        <span
+          class="status-label"
+          :class="health.error.value ? 'failed' : health.data.value ? 'connected' : 'loading'"
+          >{{ health.error.value ? '未连接' : health.data.value ? '已连接' : '检测中' }}</span
+        >
       </div>
-      <div class="phase-flow" aria-label="任务阶段">
-        <span>01 <strong>Inspect</strong><small>读取代码</small></span>
-        <span>02 <strong>Edit</strong><small>受控修改</small></span>
-        <span>03 <strong>Verify</strong><small>验证结果</small></span>
-        <span>04 <strong>Done</strong><small>结束任务</small></span>
-      </div>
-    </div>
-    <div class="overview-grid">
-      <section class="panel connection-panel">
-        <div class="section-heading">
-          <h2>服务连接</h2>
-          <span class="status-label" :class="state">{{
-            state === 'connected'
-              ? '已连接'
-              : state === 'loading'
-                ? '检测中'
-                : state === 'failed'
-                  ? '未连接'
-                  : '未检测'
-          }}</span>
-        </div>
-        <p role="status" aria-live="polite">{{ message }}</p>
-        <button class="button" :disabled="state === 'loading'" @click="checkConnection">
-          {{ state === 'loading' ? '正在检测…' : '检测连接' }}
-        </button>
+      <p class="mono">当前实例：{{ session.instanceId.value || '等待查询' }}</p>
+      <RequestState
+        :loading="health.loading.value"
+        :error="health.error.value"
+        :updated-at="health.updatedAt.value"
+        :has-data="!!health.data.value"
+        @refresh="health.refresh"
+      />
+      <p v-if="health.error.value">健康异常时，仍可查询已有任务与审计以排查问题。</p>
+    </section>
+    <div class="metric-grid">
+      <section class="panel">
+        <span>执行成功</span><strong>{{ counts.allowed }}</strong>
       </section>
       <section class="panel">
-        <h2>开始联调</h2>
-        <ul class="setup-list">
-          <li><span>01</span>启动 Rust Broker 与本地只读代理</li>
-          <li><span>02</span>通过管理员 CLI 创建任务和发放租约</li>
-          <li><span>03</span>接入任务列表与审计事件</li>
-        </ul>
+        <span>策略拒绝</span><strong>{{ counts.denied }}</strong>
+      </section>
+      <section class="panel">
+        <span>执行或输入失败</span><strong>{{ counts.failed }}</strong>
       </section>
     </div>
+    <RequestState
+      :loading="audit.loading.value"
+      :error="audit.error.value"
+      :updated-at="audit.updatedAt.value"
+      :has-data="!!audit.data.value"
+      @refresh="audit.reset"
+    />
+    <p class="scope-note">
+      统计仅针对当前加载的 {{ feed.events.value.length }} 条事件中的工具结果。<template
+        v-if="feed.truncated.value"
+        >仅保留最近 2000 条。</template
+      ><template v-if="feed.hasMore.value">正在继续加载。</template
+      >管理事件和调用意图不计入完成结果。
+    </p>
+    <section class="panel section-gap">
+      <div class="section-heading">
+        <h2>最近任务</h2>
+        <RouterLink class="text-link" to="/tasks">查看任务列表 →</RouterLink>
+      </div>
+      <RequestState
+        :loading="tasks.loading.value"
+        :error="tasks.error.value"
+        :updated-at="tasks.updatedAt.value"
+        :has-data="!!tasks.data.value"
+        @refresh="tasks.refresh"
+      />
+      <p v-if="tasks.data.value?.truncated" class="scope-note">
+        仅展示最近 5 个任务；当前实例共 {{ tasks.data.value.total }} 个。
+      </p>
+      <TaskTable v-if="tasks.data.value" :tasks="tasks.data.value.items" />
+    </section>
   </section>
 </template>

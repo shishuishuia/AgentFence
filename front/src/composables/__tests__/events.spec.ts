@@ -5,18 +5,34 @@ import { getEvents } from '@/api'
 
 vi.mock('@/api', () => ({ getEvents: vi.fn<typeof getEvents>() }))
 afterEach(() => vi.clearAllMocks())
-const context = (): RequestContext => ({ signal: new AbortController().signal, isCurrent: () => true, observe: vi.fn<(id: string | null | undefined) => void>() })
-const page = (ids: number[], cursor: string, more = false) => ({ instance_id: 'inst_1', events: ids.map(id => ({ event_id: id, instance_id: 'inst_1' })), next_cursor: cursor, has_more: more })
+const context = (): RequestContext => ({
+  signal: new AbortController().signal,
+  isCurrent: () => true,
+  observe: vi.fn<(id: string | null | undefined) => void>(),
+})
+const page = (ids: number[], cursor: string, more = false) => ({
+  instance_id: 'inst_1',
+  events: ids.map((id) => ({ event_id: id, instance_id: 'inst_1' })),
+  next_cursor: cursor,
+  has_more: more,
+})
 
 describe('事件增量分页', () => {
   it('空页仍更新游标，跨页去重，重置后清空', async () => {
-    vi.mocked(getEvents).mockResolvedValueOnce(page([1], 'opaque-a', true) as never).mockResolvedValueOnce(page([1, 2], 'opaque-b') as never).mockResolvedValueOnce(page([], 'opaque-c') as never).mockResolvedValueOnce(page([], 'opaque-d') as never)
+    vi.mocked(getEvents)
+      .mockResolvedValueOnce(page([1], 'opaque-a', true) as never)
+      .mockResolvedValueOnce(page([1, 2], 'opaque-b') as never)
+      .mockResolvedValueOnce(page([], 'opaque-c') as never)
+      .mockResolvedValueOnce(page([], 'opaque-d') as never)
     const feed = useAuditEvents()
     await feed.load(context(), 'task_1')
-    expect(feed.events.value.map(e => e.event_id)).toEqual([1, 2])
+    expect(feed.events.value.map((e) => e.event_id)).toEqual([1, 2])
     await feed.load(context(), 'task_1')
     await feed.load(context(), 'task_1')
-    expect(getEvents).toHaveBeenLastCalledWith(expect.objectContaining({ after: 'opaque-c' }), expect.any(AbortSignal))
+    expect(getEvents).toHaveBeenLastCalledWith(
+      expect.objectContaining({ after: 'opaque-c' }),
+      expect.any(AbortSignal),
+    )
     feed.reset()
     expect(feed.events.value).toEqual([])
   })

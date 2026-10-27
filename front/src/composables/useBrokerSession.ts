@@ -19,5 +19,10 @@ export function useBrokerSession() {
     }
     instanceId.value = id
   }
-  return { instanceId: readonly(instanceId), epoch: readonly(epoch), restarted: readonly(restarted), observe }
+  return {
+    instanceId: readonly(instanceId),
+    epoch: readonly(epoch),
+    restarted: readonly(restarted),
+    observe,
+  }
 }

@@ -53,12 +53,7 @@ export interface AuditEvent {
   task_id: string | null
   timestamp: string
   event_type:
-    | 'task_created'
-    | 'phase_changed'
-    | 'grant_issued'
-    | 'grant_revoked'
-    | 'intent'
-    | 'result'
+    'task_created' | 'phase_changed' | 'grant_issued' | 'grant_revoked' | 'intent' | 'result'
   phase: Phase | null
   tool: string | null
   path: string | null
