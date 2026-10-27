@@ -33,3 +33,12 @@ jobs:
       - run: python -m unittest discover -s demo/tests -v
       - run: python -m demo.run_minimal
       - run: python -m demo.run_dashboard --mode dist --auto --step-delay 0 --hold-seconds 0
+      - name: Run all 34 independent HTTP security cases
+        run: python -m demo.e2e_cases --results-dir results/local-blackbox-ci
+      - name: Upload sanitized black-box evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: blackbox-${{ github.sha }}-ubuntu
+          path: results/local-blackbox-ci/local-e2e-*/public/
+          if-no-files-found: warn

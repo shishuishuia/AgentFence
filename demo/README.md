@@ -1,5 +1,17 @@
 # 确定性最小演示
 
+## 34 场景独立 HTTP 黑盒
+
+```sh
+cargo build --release --locked -p agentfence-server
+python -m demo.e2e_cases
+python -m demo.e2e_verify results/local-e2e-<本次运行编号>
+```
+
+完整覆盖 A01～A10、D01～D24，每条独立夹具及真实 TCP 服务。CSV、脱敏响应、事件、逐条证明和 manifest 在本次目录的 public/，完整夹具在 fixtures/。34 条全过才输出 BLACKBOX_PASS，失败退出 1，平台跳过退出 2，不能把 Windows 无符号链接权限计为通过。支持 `bash demo/e2e_cases.sh` 及直接 Python 文件入口。
+
+详细范围、变体、脱敏和离线核验见 [独立黑盒报告](../docs/member-b-blackbox-report.md)。该结果与最小演示、Rust 单元/路由测试各自独立；本次不包含性能及权限窗口实验。
+
 ## 持续运行的 Vue 展示
 
 先构建 release Rust。开发模式在两个终端运行：
