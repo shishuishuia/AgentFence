@@ -8,6 +8,7 @@ export class ApiError extends Error {
     public readonly reasonCode: string,
     message: string,
     public readonly requestId?: string,
+    public readonly instanceId?: string | null,
   ) {
     super(message)
     this.name = 'ApiError'
@@ -40,7 +41,7 @@ export async function getJson<T>(path: string, signal?: AbortSignal): Promise<T>
   }
   if (!response.ok) {
     if (isErrorResponse(payload)) {
-      throw new ApiError(response.status, payload.reason_code, payload.message, payload.request_id)
+      throw new ApiError(response.status, payload.reason_code, payload.message, payload.request_id, payload.instance_id)
     }
     throw new ApiError(response.status, 'HTTP_ERROR', `接口请求失败（${response.status}）`)
   }

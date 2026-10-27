@@ -23,6 +23,7 @@ describe('只读API请求', () => {
       status: 503,
       reasonCode: 'AUDIT_UNAVAILABLE',
       requestId: 'req-test',
+      instanceId: 'inst-test',
     })
   })
 
