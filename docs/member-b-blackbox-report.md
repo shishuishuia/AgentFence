@@ -43,8 +43,26 @@ python -m demo.e2e_verify /path/to/public --evidence-only
 
 此模式输出 `BLACKBOX_EVIDENCE_PASS`，只核验证据内部一致性，不宣称重新调用服务或复查缺失的实际夹具。CI 只上传 public，不上传原始夹具和带宿主路径的磁盘审计。
 
-## 本轮验证状态
+## 实测结果
 
-Windows 当前真实运行已覆盖其余 32 条，D17/D18 因符号链接权限跳过，严格入口返回 partial；这是平台限制，不记为完整 34 条通过。新增反向测试覆盖凭证/内容泄漏、错误执行标记、错误扣次、非目标文件变化、漏测变体、重复分页、缺失审计、夹具/磁盘审计篡改及 CSV 不一致。
+受测源码：`fd73fbe9e10a53dfa58143596134dd8deb372bd6`，CI 工作区干净。GitHub Ubuntu runner，Python 3.12.15，Rust/Cargo 1.98.1；完整 Linux/二进制/源码哈希见随结果保存的 manifest。
 
-Dashboard CI 已增加 Ubuntu 下严格运行全部 34 条及上传脱敏证据的门禁。完整 Linux 结果将在真实运行完成后补充，当前不预填通过率或成功记录。
+| 环境 | 通过 | 失败 | 跳过 | 判定 |
+| --- | --- | --- | --- | --- |
+| Windows 本机 | 32 | 0 | 2（D17/D18） | partial，不能记为全过 |
+| GitHub Ubuntu CI | 34 | 0 | 0 | BLACKBOX_PASS |
+
+[实际 CI 运行](https://github.com/shishuishuia/AgentFence/actions/runs/40455050957) 已成功，包含原有前端/客户端/代理/demo 回归、严格 34 场景及脱敏 artifact 上传。Linux 实际执行了文件和父目录符号链接；完整入口在 CI 内还复核了保留的夹具文件与磁盘审计。下载的 public 再在本机通过 `BLACKBOX_EVIDENCE_PASS`，不把该离线证据检查冒称为本机重新运行 Linux。
+
+34 个固定场景包含 41 个实测 HTTP 变体：正常场景 10/10 正确，异常场景 24/24 按契约正确处理。另按请求统计实际策略拒绝为 16/16；身份、输入、非 UTF-8、管理迁移/租约冲突不混入这个分母。这不是全系统安全证明或性能结果。
+
+实现新增 9 项真实流程/反向测试，连同原 demo/文档测试共 33 项本机回归通过。反向检查包括凭证/内容泄漏、错误执行标记和扣次、非目标文件变化、漏测变体、重复分页、缺失审计、夹具/磁盘审计篡改、CSV 不一致。过程中修正了绝对路径脱敏前后比较不一致的核验问题，Rust 源码未改。
+
+结果保存在 [linux-fd73fbe](../results/member-b/blackbox/linux-fd73fbe/)：
+
+- [security_cases.csv](../results/member-b/blackbox/linux-fd73fbe/security_cases.csv)：逐条结果及前置状态。
+- [security_report.json](../results/member-b/blackbox/linux-fd73fbe/security_report.json)：全部副作用证明。
+- [metrics_summary.json](../results/member-b/blackbox/linux-fd73fbe/metrics_summary.json)：分子/分母及分类范围。
+- responses/、events/：脱敏请求/响应和审计；run_manifest.json：受测版本与环境；provenance.json：真实 CI 和下载 artifact 来源及哈希。
+
+提交的结果保留原始受测 commit，后续仅整理结果和文档不改写该引用。完整 HTTP 性能、公平基线采样、权限窗口和服务 RSS 仍属于下一阶段。

@@ -10,7 +10,7 @@
 
 成员 A 的后端已实现：管理员/任务 Token 隔离、四阶段状态机、工作区配置、精确路径限制、UTF-8 文件读写、单调时钟写租约、原子替换和消费、intent/result 审计，以及 v2.1 的任务列表/详情/事件查询。
 
-已合入成员 A 的 `crates/`、`config/`、Rust 测试及接口说明；`front/` 已接入真实任务与审计、轮询和实例恢复，`web_proxy/` 提供四条只读查询及 dist 托管，`integrations/` 和 `demo/` 提供 HTTP 客户端、独立最小演示和持续展示入口。34 场景独立 HTTP 黑盒驱动已实现，当前 Windows 跳过两条符号链接场景，完整结果待 Ubuntu 门禁验证；实验采样仍待实现。对接入口见 [成员 A 交接](docs/member-a-handoff.md)、[API 契约](docs/api-contract.md)、[B 的验证记录](docs/member-b-test-report.md) 和 [独立黑盒报告](docs/member-b-blackbox-report.md)。
+已合入成员 A 的 `crates/`、`config/`、Rust 测试及接口说明；`front/` 已接入真实任务与审计、轮询和实例恢复，`web_proxy/` 提供四条只读查询及 dist 托管，`integrations/` 和 `demo/` 提供 HTTP 客户端、独立最小演示和持续展示入口。34 场景独立 HTTP 黑盒已在 Ubuntu CI 全部通过，逐条 CSV、脱敏响应和审计证据已保留；Windows 本机两条符号链接场景明确记为跳过，实验采样仍待实现。对接入口见 [成员 A 交接](docs/member-a-handoff.md)、[API 契约](docs/api-contract.md)、[B 的验证记录](docs/member-b-test-report.md) 和 [独立黑盒报告](docs/member-b-blackbox-report.md)。
 
 ## 环境依赖
 
