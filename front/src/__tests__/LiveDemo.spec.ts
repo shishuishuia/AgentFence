@@ -19,6 +19,61 @@ const idle: DemoState = {
 afterEach(() => vi.unstubAllGlobals())
 
 describe('交互演示控制', () => {
+  it('真实模型模式提交用户任务，不显示写死的 13 步进度', async () => {
+    const modelState: DemoState = {
+      ...idle,
+      mode: 'llm',
+      model: 'deepseek-flash',
+      provider: 'DeepSeek',
+      model_configured: true,
+      total_steps: null,
+      model_round: 0,
+      max_rounds: 12,
+    }
+    const request = vi
+      .fn<typeof fetch>()
+      .mockImplementation(async () => new Response(JSON.stringify(modelState)))
+    vi.stubGlobal('fetch', request)
+    const wrapper = mount(LiveDemoPanel, { global: { stubs: { RouterLink: RouterLinkStub } } })
+    try {
+      await flushPromises()
+      await wrapper.get('textarea').setValue('把输出改为 Hello DeepSeek')
+      await wrapper.get('button.primary').trigger('click')
+      await flushPromises()
+      const post = request.mock.calls.find((c) => c[1]?.method === 'POST')!
+      expect(JSON.parse(String(post[1]!.body)).task).toBe('把输出改为 Hello DeepSeek')
+      expect(wrapper.text()).toContain('DeepSeek / deepseek-flash')
+      expect(wrapper.find('progress').exists()).toBe(false)
+    } finally {
+      wrapper.unmount()
+    }
+  })
+
+  it('服务端缺少模型凭证时禁用启动，不要求浏览器输入密钥', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn<typeof fetch>().mockResolvedValue(
+        new Response(
+          JSON.stringify({
+            ...idle,
+            mode: 'llm',
+            total_steps: null,
+            model_configured: false,
+            model: 'deepseek-flash',
+          }),
+        ),
+      ),
+    )
+    const wrapper = mount(LiveDemoPanel, { global: { stubs: { RouterLink: RouterLinkStub } } })
+    try {
+      await flushPromises()
+      expect(wrapper.get('button.primary').attributes('disabled')).toBeDefined()
+      expect(wrapper.text()).toContain('服务端未配置 DeepSeek 密钥')
+      expect(wrapper.find('input[type=password]').exists()).toBe(false)
+    } finally {
+      wrapper.unmount()
+    }
+  })
   it('非预期的 403 显示失败，不计为预期拦截', async () => {
     vi.stubGlobal(
       'fetch',

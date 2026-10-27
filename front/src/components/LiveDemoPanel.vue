@@ -8,6 +8,8 @@ const poll = usePolling((context) => getDemoState(context.signal))
 const state = poll.data
 const pending = ref(false)
 const controlError = ref('')
+const task = ref('读取 src/main.rs，把程序输出改为“你好，AgentFence！”，然后读回确认修改正确。')
+const isLLM = computed(() => state.value?.mode === 'llm')
 const stepsList = ref<HTMLOListElement | null>(null)
 const active = computed(() => ['running', 'paused'].includes(state.value?.status ?? ''))
 const titles: Record<string, string> = {
@@ -24,6 +26,8 @@ const titles: Record<string, string> = {
   verify_write_denied: '验证 verify 阶段拒绝写入',
   advance_done: '完成任务，收回权限',
   done_read_denied: '验证 done 阶段拒绝读取',
+  read_file: 'Agent 调用 read_file',
+  write_file: 'Agent 调用 write_file',
 }
 const statusText = computed(
   () =>
@@ -42,7 +46,10 @@ let disposed = false
 watch(
   () => state.value?.run_id,
   (id) => {
-    if (id && id !== previousRun) startKey = null
+    if (id && id !== previousRun) {
+      startKey = null
+      if (state.value?.task_prompt) task.value = state.value.task_prompt
+    }
   },
 )
 watch(
@@ -65,7 +72,12 @@ async function act(action: 'start' | 'pause' | 'resume') {
     previousRun = state.value.run_id
   }
   try {
-    await controlDemo(action, action === 'start' ? startKey! : state.value.run_id!, current.signal)
+    await controlDemo(
+      action,
+      action === 'start' ? startKey! : state.value.run_id!,
+      current.signal,
+      action === 'start' && isLLM.value ? task.value : undefined,
+    )
     if (disposed) return
     if (action === 'start') startKey = null
     await poll.refresh()
@@ -100,15 +112,43 @@ onScopeDispose(() => {
         statusText
       }}</span>
     </div>
-    <p>
+    <template v-if="isLLM">
+      <p class="scope-note">
+        真实模型 Agent · {{ state?.provider }} / {{ state?.model }} · 工具调用由 Rust 网关鉴权
+      </p>
+      <label class="task-input-label" for="agent-task">本次任务</label>
+      <textarea
+        id="agent-task"
+        v-model="task"
+        :disabled="active || pending"
+        maxlength="1000"
+        rows="3"
+      />
+      <p class="scope-note">
+        可读取 src/main.rs、Cargo.toml；可申请一次 src/main.rs
+        写入。模型根据你的要求选择工具，完成后读回并核对审计。
+      </p>
+      <p v-if="state?.model_configured === false" role="alert" class="field-error">
+        服务端未配置 DeepSeek 密钥，无法启动模型任务。
+      </p>
+    </template>
+    <p v-else>
       任务：将独立演示工作区中 <code>src/main.rs</code> 的输出从 before 改为 fixed
       中文，读回验证，并检查越权操作是否被拦截。
     </p>
-    <p class="scope-note">确定性演示 Agent · 无需模型密钥 · 所有工具调用经过真实 Rust 服务</p>
+    <p v-if="!isLLM" class="scope-note">
+      确定性演示 Agent · 无需模型密钥 · 所有工具调用经过真实 Rust 服务
+    </p>
     <div class="demo-actions">
       <button
         class="button primary"
-        :disabled="!state?.enabled || active || pending || !!poll.error.value"
+        :disabled="
+          !state?.enabled ||
+          active ||
+          pending ||
+          !!poll.error.value ||
+          (isLLM && (!task.trim() || state?.model_configured === false))
+        "
         @click="act('start')"
       >
         {{
@@ -148,7 +188,11 @@ onScopeDispose(() => {
     </p>
     <template v-if="state?.run_id">
       <div class="demo-progress-label" aria-live="polite">
-        <span
+        <span v-if="isLLM"
+          >{{ state.phase || '准备中' }} · {{ state.completed_steps }} 条执行记录 · 模型第
+          {{ state.model_round }} / {{ state.max_rounds }} 轮</span
+        >
+        <span v-else
           >{{ state.phase || '准备中' }} · {{ state.completed_steps }} /
           {{ state.total_steps }} 步</span
         >
@@ -159,6 +203,7 @@ onScopeDispose(() => {
         }}</span>
       </div>
       <progress
+        v-if="state.total_steps !== null"
         :value="state.completed_steps"
         :max="state.total_steps"
         aria-label="Agent 任务进度"
@@ -167,14 +212,33 @@ onScopeDispose(() => {
         当前请求完成后暂停。租约仍按真实时间到期，请及时继续。
       </p>
       <p v-if="state.failure" role="alert" class="field-error">{{ state.failure }}</p>
+      <p v-if="isLLM" aria-live="polite">
+        {{ state.activity
+        }}<span v-if="state.usage"> · 累计 {{ state.usage.total_tokens }} tokens</span>
+      </p>
+      <details v-if="state.model_messages?.length" class="model-replies">
+        <summary>模型执行说明（{{ state.model_messages.length }}）</summary>
+        <p v-for="(message, index) in state.model_messages" :key="index">{{ message }}</p>
+      </details>
+      <p v-if="state.summary" class="model-summary">{{ state.summary }}</p>
       <ol ref="stepsList" class="demo-steps" aria-label="实时执行记录">
-        <li v-for="step in state.steps" :key="step.case">
+        <li v-for="(step, index) in state.steps" :key="index">
           <span>{{ titles[step.case] || step.case }}</span>
           <span
             class="result-badge"
-            :class="!step.pass ? 'failed' : step.http_status === 403 ? 'denied' : 'allowed'"
-            >{{ !step.pass ? '非预期响应' : step.http_status === 403 ? '预期拦截' : '成功' }} ·
-            {{ step.http_status }}</span
+            :class="
+              isLLM && step.http_status === 403 ? 'denied' : !step.pass ? 'failed' : 'allowed'
+            "
+            >{{
+              isLLM && step.http_status === 403
+                ? '策略拒绝'
+                : !step.pass
+                  ? '非预期响应'
+                  : step.http_status === 403
+                    ? '预期拦截'
+                    : '成功'
+            }}
+            · {{ step.http_status }}</span
           >
           <code>{{ step.reason_code || 'OK' }}</code>
         </li>
@@ -187,6 +251,30 @@ onScopeDispose(() => {
 .live-demo {
   background: linear-gradient(120deg, #f0f5ec, #fff);
   margin-bottom: 24px;
+}
+.task-input-label {
+  display: block;
+  font-size: 13px;
+  margin: 16px 0 10px;
+}
+textarea {
+  width: 100%;
+  box-sizing: border-box;
+  resize: vertical;
+  font: inherit;
+  line-height: 1.8;
+  padding: 12px;
+  border: 1px solid #c9d8c3;
+  border-radius: 8px;
+  color: #344d3b;
+  background: #fff;
+}
+.model-replies,
+.model-summary {
+  margin-top: 18px;
+  font-size: 13px;
+  line-height: 1.8;
+  white-space: pre-wrap;
 }
 .demo-actions {
   display: flex;

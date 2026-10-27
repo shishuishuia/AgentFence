@@ -1,6 +1,7 @@
 import { ApiError, getJson } from './client'
 
 export interface DemoStep {
+  kind?: 'control' | 'tool'
   case: string
   http_status: number
   reason_code: string | null
@@ -18,10 +19,21 @@ export interface DemoState {
   task_id: string | null
   phase: string | null
   completed_steps: number
-  total_steps: number
+  total_steps: number | null
   steps: DemoStep[]
   failure: string | null
   verified: boolean
+  mode?: 'llm'
+  provider?: string
+  model?: string
+  model_configured?: boolean
+  task_prompt?: string
+  model_round?: number
+  max_rounds?: number
+  activity?: string
+  model_messages?: string[]
+  summary?: string | null
+  usage?: { total_tokens: number }
 }
 
 function valid(value: DemoState): DemoState {
@@ -31,7 +43,7 @@ function valid(value: DemoState): DemoState {
     typeof value.instance_id !== 'string' ||
     !['idle', 'running', 'paused', 'succeeded', 'failed'].includes(value.status) ||
     !Number.isInteger(value.completed_steps) ||
-    value.total_steps !== 13 ||
+    !((value.mode === 'llm' && value.total_steps === null) || value.total_steps === 13) ||
     !Array.isArray(value.steps) ||
     value.steps.length !== value.completed_steps ||
     !value.steps.every(
@@ -73,13 +85,18 @@ export async function controlDemo(
   action: 'start' | 'pause' | 'resume',
   requestId: string,
   signal: AbortSignal,
+  task?: string,
 ): Promise<DemoState> {
   const response = await fetch('/api/demo/control', {
     method: 'POST',
     credentials: 'omit',
     signal,
     headers: { 'Content-Type': 'application/json', 'X-AgentFence-Demo': '1' },
-    body: JSON.stringify({ action, request_id: requestId }),
+    body: JSON.stringify({
+      action,
+      request_id: requestId,
+      ...(task === undefined ? {} : { task }),
+    }),
   })
   if (!response.ok && response.status !== 409)
     throw new Error(`演示控制失败（${response.status}），请刷新执行状态。`)
