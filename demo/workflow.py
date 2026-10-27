@@ -27,7 +27,7 @@ def write_json(path: Path, value):
     path.write_text(json.dumps(value, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
-def execute_flow(http: BrokerHttp, admin_token: str, fixture: Path, checks: list[dict], credentials: list[str], checkpoint: Callable[[str, str], None] | None = None) -> tuple[str, list[dict], dict, int]:
+def execute_flow(http: BrokerHttp, admin_token: str, fixture: Path, checks: list[dict], credentials: list[str], checkpoint: Callable[[str, str], None] | None = None, on_step: Callable[[dict], None] | None = None) -> tuple[str, list[dict], dict, int]:
     admin = AdminClient(http, admin_token)
 
     def record(name: str, response: ApiResponse, status: int, reason: str | None = None) -> dict:
@@ -55,6 +55,8 @@ def execute_flow(http: BrokerHttp, admin_token: str, fixture: Path, checks: list
             require(body.get("allowed") is (status == 200), f"{name}: incorrect allowed flag")
             require(body.get("executed") is (status == 200), f"{name}: incorrect executed flag")
         entry["pass"] = True
+        if on_step is not None:
+            on_step(entry)
         return body
 
     created = record("create_task", admin.create_task("demo"), 201)

@@ -31,7 +31,7 @@ def valid_shape(kind: str, status: int, body: dict) -> bool:
     return isinstance(body.get("events"), list) and isinstance(body.get("next_cursor"), str) and type(body.get("has_more")) is bool and all(isinstance(e, dict) and type(e.get("event_id")) is int and all(isinstance(e.get(k), str) for k in ("instance_id", "request_id", "timestamp", "event_type", "reason_code")) and type(e.get("allowed")) is bool and type(e.get("executed")) is bool for e in body["events"])
 
 
-def create_server(config: Config) -> ThreadingHTTPServer:
+def create_server(config: Config, *, demo=None) -> ThreadingHTTPServer:
     class Handler(BaseHTTPRequestHandler):
         server_version = "AgentFenceProxy"
 
@@ -88,6 +88,8 @@ def create_server(config: Config) -> ThreadingHTTPServer:
             return self.static(path)
 
         def api(self, path, query):
+            if path in ("/api/demo/state", "/api/demo/control") and demo is not None:
+                return self.demo_api(path, query)
             match = re.fullmatch(r"/api/tasks/([A-Za-z0-9_-]{1,128})", path)
             kind = {"/api/health": "health", "/api/tasks": "tasks", "/api/events": "events"}.get(path)
             if match:
@@ -131,6 +133,39 @@ def create_server(config: Config) -> ThreadingHTTPServer:
                 self.error(502, "BROKER_UNAVAILABLE", "Rust broker is unavailable")
             except BrokerInvalidResponse:
                 self.error(502, "BROKER_INVALID_RESPONSE", "Rust broker returned an invalid response")
+
+        def demo_api(self, path, query):
+            # Only the explicitly started, fixed-fixture demo runner installs this capability.
+            if query:
+                return self.error(400, "INVALID_REQUEST", "Demo routes do not accept query parameters")
+            expected = "GET" if path.endswith("/state") else "POST"
+            if self.command != expected:
+                return self.error(405, "METHOD_NOT_ALLOWED", "Unsupported demo method", expected)
+            if expected == "GET":
+                return self.reply(200, demo.snapshot())
+            origins = {f"http://127.0.0.1:{self.server.server_port}", "http://127.0.0.1:5173"}
+            if self.headers.get("Origin") not in origins or self.headers.get_all("X-AgentFence-Demo", []) != ["1"]:
+                return self.error(403, "DEMO_ORIGIN_REQUIRED", "Use the local demo console")
+            lengths = self.headers.get_all("Content-Length", [])
+            if self.headers.get("Transfer-Encoding") or len(lengths) != 1 or not re.fullmatch(r"[0-9]{1,3}", lengths[0]) or not 0 < int(lengths[0]) <= 256:
+                return self.error(400, "INVALID_REQUEST", "Invalid demo body length")
+            if self.headers.get("Content-Type", "").split(";")[0].strip().lower() != "application/json":
+                return self.error(415, "INVALID_REQUEST", "Demo controls require JSON")
+            try:
+                def unique(pairs):
+                    result = {}
+                    for key, value in pairs:
+                        if key in result:
+                            raise ValueError
+                        result[key] = value
+                    return result
+                body = json.loads(self.rfile.read(int(lengths[0])), object_pairs_hook=unique)
+                if not isinstance(body, dict) or set(body) != {"action", "request_id"} or body["action"] not in ("start", "pause", "resume") or not isinstance(body["request_id"], str) or not IDENTIFIER.fullmatch(body["request_id"]):
+                    raise ValueError
+            except (ValueError, UnicodeError):
+                return self.error(400, "INVALID_REQUEST", "Only fixed demo actions are accepted")
+            status, state = demo.control(body["action"], body["request_id"])
+            self.reply(status, state)
 
         def static(self, path):
             if config.dist is None:
