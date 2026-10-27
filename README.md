@@ -140,6 +140,8 @@ cargo build --release --locked -p agentfence-server --features bench-harness --e
 
 启动参数、固定夹具、基线语义和 B 的采样约定见 [HTTP 公平对照入口](docs/http-experiment.md)。产品服务没有关闭阶段/租约授权的开关。
 
+B 的 [配对采样脚本](bench/README.md) 已接入该入口：`python -m bench.run_bench` 默认采集 3 轮、两模式、读写拒绝各 100 次，共 1800 个正式样本，另外保存 360 个预热样本。运行方法、计时范围及证据复核命令见脚本说明，实际验证状态见 [HTTP 性能报告](docs/member-b-http-bench-report.md)。
+
 ## 目录与交接
 
 ```text

@@ -42,3 +42,16 @@ jobs:
           name: blackbox-${{ github.sha }}-ubuntu
           path: results/local-blackbox-ci/local-e2e-*/public/
           if-no-files-found: warn
+      - name: Build shared Rust HTTP experiment
+        run: cargo build --release --locked -p agentfence-server --features bench-harness --example http_experiment
+      - name: Test paired HTTP sampling and evidence verification
+        run: python -m unittest discover -s bench/tests -v
+      - name: Collect three-round paired HTTP benchmark
+        run: python -m bench.run_bench --results-dir results/local-bench-ci
+      - name: Upload sanitized HTTP benchmark evidence
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: http-benchmark-${{ github.sha }}-ubuntu
+          path: results/local-bench-ci/local-bench-*/public/
+          if-no-files-found: warn
