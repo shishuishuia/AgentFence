@@ -4,13 +4,16 @@ use crate::{
     audit::{AuditSink, AuditStore, Event, FileSink},
     authorization::Authorization,
     clock::{Clock, SystemClock},
-    config::{Configuration, StartupError},
+    config::{Configuration, StartupError, Workspace},
     files::{FileOperations, LocalFiles},
+    workspace::{self, PREVIEW_TTL, Preview},
 };
 use agentfence_core::{
-    Grant, GrantSpec, GrantStatus, Phase, ReasonCode, TimePoint, Tool, ToolCall, resolve_existing,
+    Grant, GrantSpec, GrantStatus, PermissionProfile, Phase, ReasonCode, TimePoint, Tool, ToolCall,
+    resolve_existing,
 };
 use chrono::{DateTime, Utc};
+use hmac::{Hmac, Mac};
 use serde::{Deserialize, Serialize};
 use serde_json::{Value, json};
 use sha2::{Digest, Sha256};
@@ -24,6 +27,7 @@ use std::{
     time::Instant,
 };
 use subtle::ConstantTimeEq;
+mod registry;
 
 /// Per-request context created before body validation and authentication.
 #[derive(Clone)]
@@ -74,6 +78,9 @@ struct Task {
     task_id: String,
     workspace_id: String,
     phase: Phase,
+    profile: PermissionProfile,
+    goal: String,
+    snapshot_id: Option<String>,
     grants: Vec<Grant>,
     created_at: DateTime<Utc>,
     updated_at: DateTime<Utc>,
@@ -86,11 +93,11 @@ pub(crate) enum Identity {
 }
 
 struct Shared {
-    config: Configuration,
+    workspaces: Mutex<HashMap<String, Arc<Workspace>>>,
+    previews: Mutex<HashMap<String, Preview>>,
     admin_hash: [u8; 32],
     tasks: Mutex<HashMap<String, Arc<Mutex<Task>>>>,
     agent_hashes: Mutex<HashMap<[u8; 32], String>>,
-    workspace_locks: HashMap<String, Mutex<()>>,
     audit: Mutex<AuditStore>,
     clock: Arc<dyn Clock>,
     files: Arc<dyn FileOperations>,
@@ -192,18 +199,18 @@ impl Broker {
             ));
         }
         let instance_id = format!("inst_{}", random_hex::<16>()?);
-        let workspace_locks = config
+        let workspaces = config
             .workspaces
-            .keys()
-            .map(|id| (id.clone(), Mutex::new(())))
+            .into_iter()
+            .map(|(id, workspace)| (id, Arc::new(workspace)))
             .collect();
         Ok(Self {
             shared: Arc::new(Shared {
-                config,
+                workspaces: Mutex::new(workspaces),
+                previews: Mutex::new(HashMap::new()),
                 admin_hash: hash(admin_token),
                 tasks: Mutex::new(HashMap::new()),
                 agent_hashes: Mutex::new(HashMap::new()),
-                workspace_locks,
                 audit: Mutex::new(AuditStore::new(instance_id.clone(), sink)),
                 clock,
                 files,
@@ -288,6 +295,7 @@ impl Broker {
         let mut final_code = code;
         if audit_tool {
             let mut event = Event::new("result", &ctx.request_id, self.shared.clock.sample());
+            event.task_id = ctx.agent_task.clone();
             event.reason_code = code;
             event.duration_us = micros(ctx.started);
             if self.append(event).is_err() {
@@ -301,8 +309,14 @@ impl Broker {
         &self,
         ctx: &RequestContext,
         workspace_id: &str,
+        profile: PermissionProfile,
+        goal: String,
     ) -> Result<Value, ReasonCode> {
-        if !self.shared.config.workspaces.contains_key(workspace_id) {
+        let workspace = self.workspace(workspace_id)?;
+        if workspace.snapshot.is_some() && profile != PermissionProfile::Readonly {
+            return Err(ReasonCode::ReadonlyTask);
+        }
+        if profile == PermissionProfile::Readonly && workspace.snapshot.is_none() {
             return Err(ReasonCode::InvalidRequest);
         }
         let task_id = format!(
@@ -317,6 +331,9 @@ impl Broker {
             task_id: task_id.clone(),
             workspace_id: workspace_id.into(),
             phase: Phase::Inspect,
+            profile,
+            goal,
+            snapshot_id: workspace.snapshot.as_ref().map(|s| s.id.clone()),
             grants: Vec::new(),
             created_at: now.utc,
             updated_at: now.utc,
@@ -325,6 +342,8 @@ impl Broker {
         let mut event = Event::new("task_created", &ctx.request_id, now);
         event.task_id = Some(task_id.clone());
         event.phase = Some(Phase::Inspect);
+        event.workspace_id = Some(workspace_id.into());
+        event.snapshot_id = task.snapshot_id.clone();
         event.allowed = true;
         event.executed = true;
         event.reason_code = ReasonCode::Ok;
@@ -366,12 +385,7 @@ impl Broker {
         let task = lock(&task)?;
         let now = self.shared.clock.sample();
         let mut value = summary(&task);
-        let workspace = self
-            .shared
-            .config
-            .workspaces
-            .get(&task.workspace_id)
-            .ok_or(ReasonCode::InvalidRequest)?;
+        let workspace = self.workspace(&task.workspace_id)?;
         value["allowed_paths"] = json!(workspace.policy.allowed_paths());
         value["grants"] = json!(
             task.grants
@@ -392,7 +406,11 @@ impl Broker {
     ) -> Result<Value, ReasonCode> {
         let task = self.task(id)?;
         let mut task = lock(&task)?;
-        if task.phase.next() != Some(phase) {
+        if task.profile == PermissionProfile::Readonly && phase == Phase::Edit {
+            self.management_denied(ctx, &task, "advance_phase", ReasonCode::ReadonlyTask)?;
+            return Err(ReasonCode::ReadonlyTask);
+        }
+        if task.phase.next_for(task.profile) != Some(phase) {
             return Err(ReasonCode::InvalidTransition);
         }
         let now = self.shared.clock.sample();
@@ -421,15 +439,14 @@ impl Broker {
     ) -> Result<Value, ReasonCode> {
         let task = self.task(id)?;
         let mut task = lock(&task)?;
+        if task.profile == PermissionProfile::Readonly {
+            self.management_denied(ctx, &task, "issue_grant", ReasonCode::ReadonlyTask)?;
+            return Err(ReasonCode::ReadonlyTask);
+        }
         if task.phase != Phase::Edit {
             return Err(ReasonCode::InvalidStage);
         }
-        let workspace = self
-            .shared
-            .config
-            .workspaces
-            .get(&task.workspace_id)
-            .ok_or(ReasonCode::InvalidRequest)?;
+        let workspace = self.workspace(&task.workspace_id)?;
         workspace.policy.check_path(path)?;
         let now = self.shared.clock.sample();
         if task
@@ -572,7 +589,7 @@ impl Broker {
             Ok(task) => task,
             Err(code) => return self.reject(ctx, code, true),
         };
-        let Some(workspace) = self.shared.config.workspaces.get(&task.workspace_id) else {
+        let Ok(workspace) = self.workspace(&task.workspace_id) else {
             return self.reject(ctx, ReasonCode::InvalidRequest, true);
         };
         if request
@@ -585,10 +602,7 @@ impl Broker {
         if own_task_id != request.task_id {
             return self.reject(ctx, ReasonCode::TaskTokenMismatch, true);
         }
-        let Some(gate) = self.shared.workspace_locks.get(&task.workspace_id) else {
-            return self.reject(ctx, ReasonCode::InvalidRequest, true);
-        };
-        let _workspace_guard = match lock(gate) {
+        let _workspace_guard = match lock(&workspace.gate) {
             Ok(guard) => guard,
             Err(code) => return self.reject(ctx, code, true),
         };
@@ -596,6 +610,8 @@ impl Broker {
         let now = self.shared.clock.sample();
         let mut event = Event::new("result", &ctx.request_id, now);
         event.task_id = Some(task.task_id.clone());
+        event.workspace_id = Some(task.workspace_id.clone());
+        event.snapshot_id = task.snapshot_id.clone();
         event.phase = Some(task.phase);
         event.tool = Some(request.tool.clone());
         event.path = Some(request.path.chars().take(256).collect());
@@ -610,6 +626,9 @@ impl Broker {
         let result = (|| -> Result<(), ReasonCode> {
             if !self.healthy() {
                 return Err(ReasonCode::AuditUnavailable);
+            }
+            if task.profile == PermissionProfile::Readonly && tool == Tool::WriteFile {
+                return Err(ReasonCode::ReadonlyTask);
             }
             if request
                 .content
@@ -657,7 +676,21 @@ impl Broker {
                         .files
                         .read(&path, workspace.policy.max_content_bytes())?;
                     event.executed = true;
-                    data = json!({"bytes_read":content.len(),"content":content});
+                    if let Some(snapshot) = &workspace.snapshot {
+                        let actual = format!("{:x}", Sha256::digest(content.as_bytes()));
+                        if !snapshot
+                            .manifest
+                            .files
+                            .iter()
+                            .any(|f| f.path == request.path && f.sha256 == actual)
+                        {
+                            return Err(ReasonCode::SnapshotChanged);
+                        }
+                    }
+                    data = json!({"bytes_read":content.len(),"sha256":format!("{:x}",Sha256::digest(content.as_bytes())),"content":content});
+                    if let Some(id) = &task.snapshot_id {
+                        data["snapshot_id"] = json!(id);
+                    }
                 }
                 Tool::WriteFile => {
                     let content = request
@@ -705,10 +738,26 @@ impl Broker {
         }
         self.outcome(ctx, code, allowed, executed, data, decision_us)
     }
+
+    fn management_denied(
+        &self,
+        ctx: &RequestContext,
+        task: &Task,
+        tool: &str,
+        code: ReasonCode,
+    ) -> Result<(), ReasonCode> {
+        let mut event = Event::new("result", &ctx.request_id, self.shared.clock.sample());
+        event.task_id = Some(task.task_id.clone());
+        event.phase = Some(task.phase);
+        event.tool = Some(tool.into());
+        event.reason_code = code;
+        event.duration_us = micros(ctx.started);
+        self.append(event)
+    }
 }
 
 fn summary(task: &Task) -> Value {
-    json!({"task_id":task.task_id,"workspace_id":task.workspace_id,"phase":task.phase,"created_at":task.created_at,"updated_at":task.updated_at})
+    json!({"task_id":task.task_id,"workspace_id":task.workspace_id,"snapshot_id":task.snapshot_id,"phase":task.phase,"permission_profile":task.profile,"goal":task.goal,"created_at":task.created_at,"updated_at":task.updated_at})
 }
 
 fn grant_snapshot(grant: &Grant, phase: Phase, now: TimePoint) -> Value {

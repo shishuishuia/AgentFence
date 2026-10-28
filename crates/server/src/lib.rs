@@ -13,6 +13,7 @@ pub mod config;
 pub mod experiment;
 pub mod files;
 mod http;
+mod workspace;
 
 pub use broker::Broker;
 pub use config::{Configuration, StartupError};

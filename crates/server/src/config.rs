@@ -6,6 +6,7 @@ use std::{
     collections::BTreeMap,
     fs,
     path::{Path, PathBuf},
+    sync::{Arc, Mutex},
 };
 
 /// A safe startup error, distinct from public per-request errors.
@@ -48,6 +49,8 @@ pub struct Workspace {
     pub(crate) root: PathBuf,
     /// Validated pure path/content policy.
     pub(crate) policy: Policy,
+    pub(crate) gate: Arc<Mutex<()>>,
+    pub(crate) snapshot: Option<Arc<crate::workspace::Snapshot>>,
 }
 
 /// Validated workspace registry, loaded once without hot updates.
@@ -67,6 +70,16 @@ pub fn valid_id(id: &str) -> bool {
 }
 
 impl Configuration {
+    /// Start a v2 registry with no preauthorized live-project roots.
+    ///
+    /// Only a separately authenticated administrator can import a workspace.
+    #[must_use]
+    pub fn empty() -> Self {
+        Self {
+            workspaces: BTreeMap::new(),
+        }
+    }
+
     /// Load JSON; relative roots are relative to the policy file's directory.
     pub fn load(path: &Path) -> Result<Self, StartupError> {
         let canonical = path.canonicalize()?;
@@ -98,7 +111,15 @@ impl Configuration {
             }
             let policy = Policy::new(value.allowed_paths, value.max_content_bytes)
                 .map_err(|_| StartupError::Invalid("invalid allowlist or content limit"))?;
-            workspaces.insert(id, Workspace { root, policy });
+            workspaces.insert(
+                id,
+                Workspace {
+                    root,
+                    policy,
+                    gate: Arc::new(Mutex::new(())),
+                    snapshot: None,
+                },
+            );
         }
         Ok(Self { workspaces })
     }
