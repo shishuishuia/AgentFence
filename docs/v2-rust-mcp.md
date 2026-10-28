@@ -18,11 +18,13 @@ Linux 去掉 `.exe`。第二条命令创建两个不同的三文件项目、自�
 ## B 的对接顺序
 
 1. 原生助手弹目录选择器，给浏览器返回短时、单次、绑定会话的 selection_id。浏览器不能任意指定 source_path。
-2. 助手持 Admin Bearer 向 `POST /v1/admin/workspace-previews` 提交 `{source_path}`；Rust 返回 preview_id、完整允许文件清单、排除摘要、统计及 manifest_sha256。
+2. 助手持 Admin Bearer 向 `POST /v1/admin/workspace-previews` 提交 `{source_path}`；Rust 返回 preview_id、完整允许文件清单、排除摘要、统计及 manifest_sha256。当排除清单被截断时，助手用 `GET /v1/admin/workspace-previews/{id}/excluded?offset=0&limit=100` 循 `next_offset` 分页取全，供管理员确认。
 3. 人确认后，助手向 `POST /v1/admin/workspaces` 提交 `{preview_id,display_name,profile:"readonly_snapshot"}`；不要重新接收路径。
 4. 向 `POST /v1/admin/tasks` 提交 `{workspace_id,goal,permission_profile:"readonly"}`。一次性 agent_token 仅交可信启动器，禁止返回浏览器。
 5. 启动器以白名单环境启动 MCP 子进程，连接选定的 MCP Client。模型读的是固定版本快照，不是活跃源目录。
 6. 读取结束后，由可信启动器/管理员使用已有 phase 接口推进 verify，核对读取和审计，再推进 done。MCP 没有阶段管理工具。done 表示受控访问关闭，不证明模型建议正确。
+
+`GET /v1/admin/workspaces` 返回每个工作区的摘要和计数，不重复发送完整清单。预览与确认响应包含最多 1000 条完整允许路径：极长路径下可能超过旧 Python 客户端的 1 MiB 限制，B 的可信助手应为这两个响应使用有界的 2 MiB 接收上限；不要为所有旧接口取消大小限制。
 
 新 Broker 可设置 `AGENTFENCE_EMPTY_REGISTRY=1`，从没有文件授权的实例开始。仍需随机 `AGENTFENCE_ADMIN_TOKEN`、回环 `AGENTFENCE_BIND` 和工作区外的 `AGENTFENCE_AUDIT`。不设置空注册表模式时仍使用现有配置，兼容 v1。重启后所有注册、快照、任务和 Token 失效，需重新导入；不承诺持久恢复。
 
@@ -53,7 +55,7 @@ HTTP 禁用代理/重定向，连接超时 2 秒、请求超时 10 秒、响应�
 
 默认允许 rs/toml/md/txt/json/yaml/yml 普通 UTF-8 文件；排除隐藏项、构建/依赖目录、常见凭证名、链接、Windows reparse point 和特殊文件。名称规则不能保证识别内容里的所有敏感数据，管理端仍须展示并确认实际清单。
 
-最多 1000 文件、每文件 65536 字节、总计 20 MiB、20000 遍历项和 64 层目录，超限明确失败。预览有效 300 秒，在确认入口检查；最多保留 16 个。确认单次消费，清单/内容变化返回 SNAPSHOT_CHANGED，必须重新预览。总工作区上限 32（含旧配置）。排除目录按一个目录项计，不递归计数；最多显示 200 个排除项，明确给出完整 excluded_entry_count 和 excluded_truncated。
+最多 1000 文件、每文件 65536 字节、总计 20 MiB、20000 遍历项和 64 层目录，超限明确失败。预览有效 300 秒，在确认入口检查；最多保留 16 个。确认单次消费，清单/内容变化返回 SNAPSHOT_CHANGED，必须重新预览。总工作区上限 32（含旧配置）。排除目录按一个目录项计，不递归计数；预览首包最多显示 200 项，并给出完整 excluded_entry_count 和 excluded_truncated。管理员可以分页取全；预览过期或确认消费后分页失效。
 
 快照复制预览批准的字节，之后原项目变化不更新它。readonly 任务必须绑定快照；快照不能通过省略 profile 或指定 controlled_edit 得到写权限。合法阶段为 inspect→verify→done，edit、grant、write 均由 Rust 返回 READONLY_TASK。旧活跃配置仍支持原 controlled_edit 测试。
 

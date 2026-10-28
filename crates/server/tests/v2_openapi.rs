@@ -13,6 +13,7 @@ fn v2_openapi_uses_the_correct_role_for_each_new_endpoint() {
     }
     for (path, method) in [
         ("/v1/admin/workspace-previews", "post"),
+        ("/v1/admin/workspace-previews/{id}/excluded", "get"),
         ("/v1/admin/workspaces", "post"),
         ("/v1/admin/workspaces", "get"),
     ] {

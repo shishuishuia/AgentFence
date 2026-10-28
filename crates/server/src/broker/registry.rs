@@ -51,6 +51,43 @@ impl Broker {
         Ok(response)
     }
 
+    pub(crate) fn preview_exclusions(
+        &self,
+        ctx: &RequestContext,
+        id: &str,
+        offset: usize,
+        limit: usize,
+    ) -> Result<Value, ReasonCode> {
+        if !(1..=200).contains(&limit) {
+            return Err(ReasonCode::InvalidRequest);
+        }
+        let now = self.shared.clock.sample();
+        let mut previews = lock(&self.shared.previews)?;
+        if previews
+            .get(id)
+            .is_none_or(|preview| preview.deadline <= now.monotonic)
+        {
+            previews.remove(id);
+            return Err(ReasonCode::PreviewExpired);
+        }
+        let preview = previews.get(id).ok_or(ReasonCode::PreviewExpired)?;
+        let total = preview.manifest.excluded.len();
+        if offset > total {
+            return Err(ReasonCode::InvalidRequest);
+        }
+        let end = offset.saturating_add(limit).min(total);
+        let next_offset = (end < total).then_some(end);
+        Ok(json!({
+            "preview_id": id,
+            "excluded": &preview.manifest.excluded[offset..end],
+            "excluded_entry_count": total,
+            "next_offset": next_offset,
+            "expires_at": preview.expires_at,
+            "request_id": ctx.request_id,
+            "instance_id": self.instance_id(),
+        }))
+    }
+
     pub(crate) fn register_workspace(
         &self,
         ctx: &RequestContext,
@@ -101,7 +138,7 @@ impl Broker {
         ids.sort();
         let items: Vec<_> = ids
             .into_iter()
-            .map(|id| workspace_value(id, &registry[id]))
+            .map(|id| workspace_summary_value(id, &registry[id]))
             .collect();
         Ok(json!({"items": items, "instance_id": self.instance_id()}))
     }
@@ -233,5 +270,24 @@ fn workspace_value(id: &str, workspace: &Workspace) -> Value {
         value
     } else {
         json!({"workspace_id":id, "snapshot_id":null, "display_name":id, "import_mode":"configured", "allowed_file_count":workspace.policy.allowed_paths().len()})
+    }
+}
+
+fn workspace_summary_value(id: &str, workspace: &Workspace) -> Value {
+    if let Some(snapshot) = &workspace.snapshot {
+        json!({
+            "workspace_id": id,
+            "snapshot_id": snapshot.id,
+            "display_name": snapshot.display_name,
+            "source_path": snapshot.source,
+            "imported_at": snapshot.imported_at,
+            "import_mode": "readonly_snapshot",
+            "allowed_file_count": snapshot.manifest.files.len(),
+            "excluded_entry_count": snapshot.manifest.excluded.len(),
+            "total_bytes": snapshot.manifest.total_bytes,
+            "manifest_sha256": snapshot.manifest.sha256(),
+        })
+    } else {
+        workspace_value(id, workspace)
     }
 }

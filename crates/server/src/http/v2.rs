@@ -26,6 +26,35 @@ pub(super) async fn preview_workspace(
 
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
+pub(super) struct ExclusionQuery {
+    #[serde(default)]
+    offset: usize,
+    #[serde(default = "default_file_limit")]
+    limit: usize,
+}
+
+pub(super) async fn preview_exclusions(
+    State(broker): State<Broker>,
+    Extension(ctx): Extension<RequestContext>,
+    path: Result<Path<String>, PathRejection>,
+    query: Result<Query<ExclusionQuery>, QueryRejection>,
+) -> Response {
+    let (Ok(Path(id)), Ok(Query(query))) = (path, query) else {
+        return failure(broker, ctx, ReasonCode::InvalidRequest, false).await;
+    };
+    if !valid_id(&id) {
+        return failure(broker, ctx, ReasonCode::InvalidRequest, false).await;
+    }
+    let worker = broker.clone();
+    let request = ctx.clone();
+    run(broker, ctx, StatusCode::OK, move || {
+        worker.preview_exclusions(&request, &id, query.offset, query.limit)
+    })
+    .await
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
 pub(super) struct RegisterWorkspace {
     preview_id: String,
     display_name: String,

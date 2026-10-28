@@ -338,6 +338,159 @@ async fn task_metadata_and_cursors_are_bound_to_identity_snapshot_and_filter() {
 }
 
 #[tokio::test]
+async fn administrator_can_page_all_exclusions_before_single_use_confirmation() {
+    let f = Fixture::new();
+    let source = f.project("preview-paging", &[("main.rs", "safe")]);
+    for index in 0..225 {
+        fs::write(source.join(format!("excluded_{index:03}.png")), "fixture").unwrap();
+    }
+    let preview = f.preview(&source).await;
+    assert_eq!(preview["excluded_entry_count"], 225);
+    assert_eq!(preview["excluded"].as_array().unwrap().len(), 200);
+    assert_eq!(preview["excluded_truncated"], true);
+    let route = format!(
+        "/v1/admin/workspace-previews/{}/excluded",
+        preview["preview_id"].as_str().unwrap()
+    );
+    let mut offset = 0usize;
+    let mut collected = Vec::new();
+    loop {
+        let (status, page) = f
+            .call(
+                "GET",
+                &format!("{route}?offset={offset}&limit=30"),
+                ADMIN,
+                Value::Null,
+            )
+            .await;
+        assert_eq!(status, 200, "{page}");
+        assert_eq!(page["excluded_entry_count"], 225);
+        collected.extend(page["excluded"].as_array().unwrap().iter().cloned());
+        match page["next_offset"].as_u64() {
+            Some(next) => {
+                assert!(next as usize > offset);
+                offset = next as usize;
+            }
+            None => break,
+        }
+    }
+    assert_eq!(collected.len(), 225);
+    assert_eq!(&collected[..200], preview["excluded"].as_array().unwrap());
+    assert_eq!(
+        f.call("GET", &format!("{route}?limit=0"), ADMIN, Value::Null)
+            .await
+            .0,
+        400
+    );
+    assert_eq!(
+        f.call("GET", &format!("{route}?offset=226"), ADMIN, Value::Null)
+            .await
+            .0,
+        400
+    );
+    assert_eq!(
+        f.call(
+            "GET",
+            &format!("{route}?source_path=forged"),
+            ADMIN,
+            Value::Null
+        )
+        .await
+        .0,
+        400
+    );
+
+    let other = f.project("other", &[("main.rs", "other")]);
+    let workspace = f.import(&other).await;
+    let task = f.task(&workspace).await;
+    let token = task["agent_token"].as_str().unwrap();
+    assert_eq!(
+        f.call("GET", &route, token, Value::Null).await.1["reason_code"],
+        "ROLE_DENIED"
+    );
+    assert_eq!(f.confirm(&preview).await.0, 201);
+    assert_eq!(
+        f.call("GET", &route, ADMIN, Value::Null).await.1["reason_code"],
+        "PREVIEW_EXPIRED"
+    );
+    let (_, list) = f
+        .call("GET", "/v1/admin/workspaces", ADMIN, Value::Null)
+        .await;
+    let items = list["items"].as_array().unwrap();
+    assert_eq!(items.len(), 2);
+    for item in items {
+        assert!(item.get("files").is_none());
+        assert!(item.get("excluded").is_none());
+        assert!(item["manifest_sha256"].is_string());
+    }
+
+    let expired = f.preview(&source).await;
+    f.clock.0.store(300, Ordering::SeqCst);
+    let route = format!(
+        "/v1/admin/workspace-previews/{}/excluded",
+        expired["preview_id"].as_str().unwrap()
+    );
+    assert_eq!(
+        f.call("GET", &route, ADMIN, Value::Null).await.1["reason_code"],
+        "PREVIEW_EXPIRED"
+    );
+}
+
+#[tokio::test]
+async fn maximum_file_count_and_long_paths_fit_the_documented_preview_bound() {
+    let f = Fixture::new();
+    let source = f.project("long-paths", &[]);
+    let mut directory = source.clone();
+    for _ in 0..4 {
+        directory = directory.join("a".repeat(250));
+    }
+    fs::create_dir_all(&directory).unwrap();
+    for index in 0..1000 {
+        fs::write(directory.join(format!("f_{index:04}.rs")), "x").unwrap();
+    }
+    for index in 0..200 {
+        fs::write(directory.join(format!("e_{index:04}.png")), "x").unwrap();
+    }
+
+    let preview = f.preview(&source).await;
+    assert_eq!(preview["allowed_file_count"], 1000);
+    assert_eq!(preview["excluded_entry_count"], 200);
+    let preview_bytes = serde_json::to_vec(&preview).unwrap().len();
+    assert!(
+        preview_bytes > 1024 * 1024,
+        "fixture must exercise the old client bound"
+    );
+    assert!(
+        preview_bytes <= 2 * 1024 * 1024,
+        "v2 trusted helper bound exceeded"
+    );
+    let (status, workspace) = f.confirm(&preview).await;
+    assert_eq!(status, 201, "{workspace}");
+    assert!(serde_json::to_vec(&workspace).unwrap().len() <= 2 * 1024 * 1024);
+
+    let (_, list) = f
+        .call("GET", "/v1/admin/workspaces", ADMIN, Value::Null)
+        .await;
+    assert!(serde_json::to_vec(&list).unwrap().len() < 8192);
+    let task = f.task(&workspace).await;
+    let route = format!(
+        "/v1/agent/tasks/{}/files?limit=200",
+        task["task_id"].as_str().unwrap()
+    );
+    let (status, page) = f
+        .call(
+            "GET",
+            &route,
+            task["agent_token"].as_str().unwrap(),
+            Value::Null,
+        )
+        .await;
+    assert_eq!(status, 200);
+    assert_eq!(page["files"].as_array().unwrap().len(), 200);
+    assert!(serde_json::to_vec(&page).unwrap().len() < 1024 * 1024);
+}
+
+#[tokio::test]
 async fn import_budgets_fail_explicitly_instead_of_silently_truncating() {
     let f = Fixture::new();
     let source = f.project("large-file", &[("main.rs", "safe")]);

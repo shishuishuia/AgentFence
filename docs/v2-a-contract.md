@@ -13,8 +13,9 @@
 | 方法与路径 | 请求 | 结果 |
 | --- | --- | --- |
 | POST /v1/admin/workspace-previews | `{source_path}`，仅可信助手提交原生绝对路径 | preview_id、源路径、允许文件/排除清单、字节数、manifest_sha256、到期时间 |
+| GET /v1/admin/workspace-previews/{id}/excluded | offset/limit，默认 100，上限 200 | 管理员分页查看完整排除清单；不消耗 preview_id |
 | POST /v1/admin/workspaces | `{preview_id,display_name,profile:"readonly_snapshot"}` | 导入确认过的内容；workspace_id、snapshot_id、manifest 与统计 |
-| GET /v1/admin/workspaces | 无 | 已注册工作区，源路径仅此管理面可见 |
+| GET /v1/admin/workspaces | 无 | 已注册工作区摘要及计数，不重复传输全量清单；源路径仅此管理面可见 |
 | POST /v1/admin/tasks | `{workspace_id,goal,permission_profile:"readonly"}` | 任务概要和一次性 agent_token，仅可信启动器保存 |
 
 预览有效期 300 秒、最多保留 16 个；确认时单次消费。重新扫描与预览哈希不一致返回 SNAPSHOT_CHANGED，必须重新预览。最多 1000 个导入文件、每文件 65536 UTF-8 字节、总计 20 MiB、最多遍历 20000 个条目。只读快照只能创建 readonly 任务。源目录/快照路径不进入 Agent 响应或审计。

@@ -39,6 +39,10 @@ pub fn app(broker: Broker) -> Router {
         .route("/v1/admin/events", get(events))
         .route("/v1/admin/workspace-previews", post(v2::preview_workspace))
         .route(
+            "/v1/admin/workspace-previews/{id}/excluded",
+            get(v2::preview_exclusions),
+        )
+        .route(
             "/v1/admin/workspaces",
             get(v2::workspaces).post(v2::register_workspace),
         )
