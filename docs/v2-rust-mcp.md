@@ -61,6 +61,20 @@ HTTP 禁用代理/重定向，连接超时 2 秒、请求超时 10 秒、响应�
 
 外部 Harness 的独立 Shell/文件工具须禁用或由外部沙箱约束。只安装 MCP 不会隔离整个 Agent；成功读取、哈希和审计不构成模型建议正确性的证明。
 
+## MCP 适配开销实验
+
+先按上文构建 Release，再在相同版本执行：
+
+```powershell
+cargo run --release --locked --target-dir target/v2 -p agentfence-mcp-server --example mcp_overhead -- target/v2/release/agentfence-mcp-server.exe
+```
+
+实验创建一个 4096 字节的合成只读文件与真实 Broker，对同一任务分别使用 Rust 直接 HTTP 客户端和真实 MCP stdio 子进程读取。两种路径使用同一个授权、文件和同步审计；顺序交替，并发为 1，HTTP 保持连接。每种方式各 60 次预热，3 轮各 100 次正式样本。任何请求失败或证据不一致则整次失败，不丢弃慢样本。
+
+`results/local-v2-mcp-bench-*/` 保存原始 `samples.jsonl`、`audit.jsonl`、API 导出 `events.json` 和 `summary.json`，包含构建提交、dirty 状态、工具链、二进制哈希、文件哈希、P50/P95/P99 与每轮结果。分位数采用 nearest-rank；脚本检查每个样本的 intent/result 和 API/磁盘审计一致。
+
+这是单机、单文件端到端读操作的观测。直接客户端与 Broker 运行在基准进程中，MCP 为独立进程；差值包括 JSON-RPC、进程通信、带行号输出和适配处理，不能说是纯协议开销。它不包含远程模型、真实网络、CPU/RSS 或统计显著性结论，不能与不同提交的历史实验直接比较。
+
 ## 验证
 
 ```powershell
