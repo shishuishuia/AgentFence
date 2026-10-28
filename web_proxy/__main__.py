@@ -13,11 +13,16 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--mode", choices=("dev", "dist"), default="dist")
     parser.add_argument("--port", type=int, default=4173, help="local port; default 4173 for Vite, 0 for isolated tests")
+    parser.add_argument("--manage-workspaces", action="store_true", help="enable trusted local v2 workspace management")
     args = parser.parse_args()
     try:
         options = {"dist": None} if args.mode == "dev" else {}
         config = Config(os.environ.get("AGENTFENCE_BROKER_URL", "http://127.0.0.1:8080"), os.environ.get("AGENTFENCE_ADMIN_TOKEN", ""), port=args.port, **options)
-        with create_server(config) as server:
+        manager = None
+        if args.manage_workspaces:
+            from .workspaces import WorkspaceBackend, WorkspaceManager
+            manager = WorkspaceManager(WorkspaceBackend(config))
+        with create_server(config, manager=manager) as server:
             print(json.dumps({"event": "proxy_ready", "url": f"http://127.0.0.1:{server.server_port}"}), flush=True)
             try:
                 server.serve_forever(poll_interval=0.1)

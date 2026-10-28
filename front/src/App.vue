@@ -18,6 +18,7 @@ const logoUrl = `${import.meta.env.BASE_URL}favicon.svg`
       <p class="nav-label">工作空间</p>
       <nav aria-label="主导航">
         <RouterLink to="/dashboard"><span class="nav-icon">◈</span>项目总览</RouterLink>
+        <RouterLink to="/workspaces"><span class="nav-icon">▧</span>工作区管理</RouterLink>
         <RouterLink to="/tasks"><span class="nav-icon">▤</span>任务列表</RouterLink>
         <RouterLink to="/audit"><span class="nav-icon">◎</span>审计事件</RouterLink>
       </nav>

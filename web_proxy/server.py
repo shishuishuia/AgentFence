@@ -31,7 +31,7 @@ def valid_shape(kind: str, status: int, body: dict) -> bool:
     return isinstance(body.get("events"), list) and isinstance(body.get("next_cursor"), str) and type(body.get("has_more")) is bool and all(isinstance(e, dict) and type(e.get("event_id")) is int and all(isinstance(e.get(k), str) for k in ("instance_id", "request_id", "timestamp", "event_type", "reason_code")) and type(e.get("allowed")) is bool and type(e.get("executed")) is bool for e in body["events"])
 
 
-def create_server(config: Config, *, demo=None) -> ThreadingHTTPServer:
+def create_server(config: Config, *, demo=None, manager=None) -> ThreadingHTTPServer:
     class Handler(BaseHTTPRequestHandler):
         server_version = "AgentFenceProxy"
 
@@ -43,7 +43,7 @@ def create_server(config: Config, *, demo=None) -> ThreadingHTTPServer:
                 return self.do_GET
             raise AttributeError(name)
 
-        def reply(self, status, data, content_type="application/json; charset=utf-8", request_id=None, allow=None):
+        def reply(self, status, data, content_type="application/json; charset=utf-8", request_id=None, allow=None, cookie=None):
             raw = json.dumps(data, ensure_ascii=False, allow_nan=False).encode() if isinstance(data, dict) else data
             self.send_response(status)
             self.send_header("Content-Type", content_type)
@@ -54,6 +54,8 @@ def create_server(config: Config, *, demo=None) -> ThreadingHTTPServer:
                 self.send_header("X-Request-Id", request_id)
             if allow:
                 self.send_header("Allow", allow)
+            if cookie:
+                self.send_header("Set-Cookie", cookie)
             self.end_headers()
             if self.command != "HEAD":
                 self.wfile.write(raw)
@@ -88,6 +90,9 @@ def create_server(config: Config, *, demo=None) -> ThreadingHTTPServer:
             return self.static(path)
 
         def api(self, path, query):
+            if path.startswith("/api/admin/") and manager is not None:
+                from .admin_api import handle_admin
+                return handle_admin(self, manager, path, query)
             if path in ("/api/demo/state", "/api/demo/control") and demo is not None:
                 return self.demo_api(path, query)
             match = re.fullmatch(r"/api/tasks/([A-Za-z0-9_-]{1,128})", path)
