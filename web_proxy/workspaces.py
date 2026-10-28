@@ -43,6 +43,8 @@ class NativePicker:
     def __call__(self):
         env = {k: v for k, v in os.environ.items() if k.upper() in {
             "SYSTEMROOT", "WINDIR", "PATH", "PATHEXT", "TEMP", "TMP", "HOME", "USERPROFILE",
+            "SYSTEMDRIVE", "HOMEDRIVE", "HOMEPATH", "APPDATA", "LOCALAPPDATA", "PROGRAMDATA",
+            "PROGRAMFILES", "PROGRAMFILES(X86)", "COMMONPROGRAMFILES", "COMMONPROGRAMFILES(X86)",
             "DISPLAY", "WAYLAND_DISPLAY", "XAUTHORITY", "TCL_LIBRARY", "TK_LIBRARY"}}
         try:
             with self.lock:

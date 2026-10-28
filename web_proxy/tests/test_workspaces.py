@@ -7,6 +7,7 @@ import time
 import unittest
 from unittest.mock import Mock, patch
 import subprocess
+import os
 
 from web_proxy.config import Config
 from web_proxy.server import create_server
@@ -202,12 +203,16 @@ class PickerLifecycleTests(unittest.TestCase):
         second.communicate.return_value = (b'{"path":null}', None)
         second.returncode = 0
         picker = NativePicker()
-        with patch("web_proxy.workspaces.subprocess.Popen", side_effect=[first, second]):
+        with patch.dict(os.environ, {"SystemDrive": "C:", "APPDATA": "C:/fixture/AppData", "AGENTFENCE_ADMIN_TOKEN": "not-for-child"}), patch("web_proxy.workspaces.subprocess.Popen", side_effect=[first, second]) as launch:
             with self.assertRaises(ManagementError):
                 picker()
             first.terminate.assert_called_once()
             self.assertFalse(picker.closed)
             self.assertIsNone(picker())
+            env = {k.upper(): v for k, v in launch.call_args.kwargs["env"].items()}
+            self.assertEqual(env["SYSTEMDRIVE"], "C:")
+            self.assertIn("APPDATA", env)
+            self.assertNotIn("AGENTFENCE_ADMIN_TOKEN", env)
 
 
 if __name__ == "__main__":
