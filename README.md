@@ -2,6 +2,8 @@
 
 基于 Rust 的任务感知型 AI Agent 工具调用权限控制与审计原型。
 
+**v2 成员 A 升级**：已增加管理员确认的工作区快照、不可升级的 readonly 任务和 Rust MCP stdio 三工具。构建、离线协议重放及 B 的选择器/UI 对接见 [v2 Rust MCP](docs/v2-rust-mcp.md) 与 [接口约定](docs/v2-a-contract.md)。下面保留的 DeepSeek 看板是 v1 演示；v2 管理界面及真实模型审查由 B 对接。
+
 目标是在 `inspect → edit → verify → done` 的任务流程中，通过阶段权限、明确的文件白名单、限时限次写入租约和审计日志，控制经过网关的文件工具操作。
 
 本项目是 **Tool Broker（工具调用网关）**，安全边界只覆盖经过网关的操作。它不能阻止 Agent 绕过网关直接访问宿主机，也不提供操作系统级沙箱隔离。

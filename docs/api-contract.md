@@ -1,3 +1,9 @@
+# v2 只读快照与 MCP 增量
+
+2026-10-28 增量见 [v2 Rust MCP](v2-rust-mcp.md) 与 [冻结接口](v2-a-contract.md)，OpenAPI 版本为 2.2.0。新增 Admin 工作区预览/确认/列表及任务身份的列表/状态查询。任务概要新增 permission_profile、snapshot_id、goal；read_file 新增 sha256，快照读取同时返回 snapshot_id。审计可增加 workspace_id、snapshot_id，以及 workspace_previewed/workspace_registered 事件。
+
+旧任务创建省略 profile 时为 controlled_edit，保留下述旧流程。新快照只接受显式 readonly，合法阶段 inspect→verify→done；edit、写租约、write 均由 Rust 拒绝。readonly 必须绑定导入快照。下文原有固定字段和四阶段说明针对 v1；增量差异以本段、OpenAPI 和新实现为准。
+
 # AgentFence Lite v2.1 HTTP 契约
 
 状态：成员 A 已实现，成员 B 于 2026-10-27 通过真实 Rust 客户端、只读代理及页面联调确认本批消费的响应形状。此确认不代替完整安全与性能验收。以下示例 ID、时间和耗时用于说明格式，非实验数据。
