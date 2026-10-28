@@ -22,8 +22,8 @@ const logoUrl = `${import.meta.env.BASE_URL}favicon.svg`
         <RouterLink to="/audit"><span class="nav-icon">◎</span>审计事件</RouterLink>
       </nav>
       <div class="sidebar-note">
-        <span class="status-dot"></span> 只读控制台
-        <p>任务授权与阶段变更由管理员执行。</p>
+        <span class="status-dot"></span> 本地任务控制台
+        <p>查询真实任务，现场演示权限控制。凭证仅保留在服务端。</p>
       </div>
     </aside>
     <div class="workspace">

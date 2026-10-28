@@ -1,6 +1,9 @@
 # Local artifact working files and dependency caches
 /tmp/
 
+# Microsoft Word temporary lock files
+~$*.docx
+
 # Credentials stay local
 .env
 .env.*

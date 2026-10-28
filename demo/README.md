@@ -1,5 +1,28 @@
 # 确定性最小演示
 
+## 真实 DeepSeek Agent
+
+已支持服务端环境变量 DEEPSEEK_API_KEY / DEEPSEEK_MODEL（默认 deepseek-flash）。配置后运行 `python -m demo.run_live_dashboard --mode dev --agent deepseek --step-delay 0`，在总览输入任务，模型自行选择工具并通过 Rust 执行。真实 API 实跑、密钥输入方法、工具权限和验证限制见 [DeepSeek Agent](../docs/deepseek-agent.md)。下面的固定 13 步流程仍作为离线模式保留，不混同于模型模式。
+
+## 网页交互任务演示
+
+推荐现场展示使用交互入口：先构建 release Rust，再在两个终端分别运行：
+
+```sh
+python -m demo.run_live_dashboard --mode dev
+npm --prefix front run dev
+```
+
+访问 http://127.0.0.1:5173/dashboard，在“现场执行一个 Agent 任务”点击“开始执行任务”。确定性 Agent 通过真实 Rust API 完成 13 步：检查文件、阶段外拒写、一次性租约写入、重复写/区外路径拦截、读回验证及结束后拒读。每步默认停留 2.5 秒；页面每秒查询进度，提供暂停/继续、任务租约和本次审计入口。预期拒绝属于通过的检查，不是流程失败。最终文件与 API/磁盘审计核验通过后才标记成功。
+
+该入口无需在线模型或 API Key，不接受自由任务、路径、文件内容、URL 或 Token。固定任务只修改本次创建的临时工作区中的 src/main.rs，不修改仓库源码。再运行会新建任务，并在开始前由演示控制器重置专用夹具；旧任务和审计仍保留，历史任务不代表独立保留了一份当前文件。只允许一个任务执行；重复请求键去重，旧 run_id 不能暂停新任务。暂停在当前 HTTP 请求完成后生效，租约仍按真实的 60 秒有效期到期，暂停过久应重新运行。
+
+Ctrl+C 停止自有服务；后台启动也可在终端输出的 stop_file 路径创建空文件以请求正常退出。不要直接重复启动占用同一 4173 的入口。已构建前端后，可使用 `python -m demo.run_live_dashboard --mode dist` 并访问 http://127.0.0.1:4173/dashboard。`--port` 指定本地端口，`--step-delay` 范围 0～10 秒。前端开发代理仍固定指向 4173。
+
+结果位于 results/local-live-*/：fixture 为本次专用夹具，每个 run_*/ 保存 dashboard_demo.json/events.json，失败保存仅含错误类型及安全快照的 failure.json。凭证仅在内存中，公开进度不含文件内容、绝对工作区路径或 Token。本入口只在显式启动时安装固定演示控制能力；独立 `python -m web_proxy` 和原 `demo.run_dashboard` 保持只读。
+
+此功能的回归：`python -m unittest demo.tests.test_live -v`；前端 LiveDemo.spec.ts 验证按钮提交、只读退化及失败后的请求键复用。历史浏览器只读验收和实验数据保留原受测版本，不作为此交互入口的重测证据。
+
 ## 34 场景独立 HTTP 黑盒
 
 ```sh

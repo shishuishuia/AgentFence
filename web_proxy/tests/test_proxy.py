@@ -103,6 +103,8 @@ class ProxyTests(unittest.TestCase):
         status, headers, raw = self.request("/api/tasks", method="HEAD")
         self.assertEqual((status, headers["Allow"], raw), (405, "GET", b""))
         self.reason("/api/unknown", 404, "ROUTE_NOT_FOUND", method="POST")
+        self.reason("/api/demo/control", 404, "ROUTE_NOT_FOUND", method="POST")
+        self.reason("/api/demo/state", 404, "ROUTE_NOT_FOUND")
         self.reason("/api", 404, "ROUTE_NOT_FOUND")
         self.assertEqual(self.requests, [])
 
