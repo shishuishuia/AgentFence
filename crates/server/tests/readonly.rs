@@ -126,6 +126,34 @@ async fn readonly_denies_write_grants_and_edit_with_task_audit() {
 }
 
 #[tokio::test]
+async fn readonly_agent_cannot_use_admin_routes_and_denial_is_audited() {
+    let f = Fixture::new();
+    let task = f.task().await;
+    let id = task["task_id"].as_str().unwrap();
+    let token = task["agent_token"].as_str().unwrap();
+    for (route, body) in [
+        (
+            format!("/v1/admin/tasks/{id}/phase"),
+            json!({"phase":"edit"}),
+        ),
+        (
+            format!("/v1/admin/tasks/{id}/grants"),
+            json!({"tool":"write_file","path":"main.rs"}),
+        ),
+    ] {
+        let (status, result) = f.call("POST", &route, token, body).await;
+        assert_eq!(status, 403);
+        assert_eq!(result["reason_code"], "ROLE_DENIED");
+        let log = fs::read_to_string(f.root.path().join("audit.jsonl")).unwrap();
+        let event: Value = serde_json::from_str(log.lines().last().unwrap()).unwrap();
+        assert_eq!(event["task_id"], id);
+        assert_eq!(event["request_id"], result["request_id"]);
+        assert_eq!(event["reason_code"], "ROLE_DENIED");
+        assert_eq!(event["executed"], false);
+    }
+}
+
+#[tokio::test]
 async fn readonly_advances_without_edit_and_done_blocks_reads() {
     let f = Fixture::new();
     let task = f.task().await;

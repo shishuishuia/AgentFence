@@ -261,6 +261,12 @@ impl Broker {
             .ok_or(ReasonCode::TaskNotFound)
     }
 
+    pub(crate) fn is_readonly_task(&self, id: &str) -> Result<bool, ReasonCode> {
+        let task = self.task(id)?;
+        let task = lock(&task)?;
+        Ok(task.profile == PermissionProfile::Readonly)
+    }
+
     fn append(&self, event: Event) -> Result<(), ReasonCode> {
         lock(&self.shared.audit)?.append(event)
     }

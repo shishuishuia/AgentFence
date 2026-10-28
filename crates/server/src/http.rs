@@ -97,8 +97,20 @@ async fn envelope(State(broker): State<Broker>, request: Request, next: Next) ->
             (Ok(Identity::Admin), true) => {}
             (Ok(Identity::Agent(task)), false) => ctx.agent_task = Some(task),
             (Ok(Identity::Agent(task)), true) => {
-                ctx.agent_task = Some(task);
-                return failure(broker, ctx, ReasonCode::RoleDenied, true).await;
+                let worker = broker.clone();
+                let task_id = task.clone();
+                let audit =
+                    match tokio::task::spawn_blocking(move || worker.is_readonly_task(&task_id))
+                        .await
+                    {
+                        Ok(Ok(readonly)) => readonly,
+                        Ok(Err(code)) => return failure(broker, ctx, code, true).await,
+                        Err(_) => return failure(broker, ctx, ReasonCode::IoError, true).await,
+                    };
+                if audit {
+                    ctx.agent_task = Some(task);
+                }
+                return failure(broker, ctx, ReasonCode::RoleDenied, audit).await;
             }
             (Ok(_), _) => return failure(broker, ctx, ReasonCode::RoleDenied, is_tool).await,
             (Err(code), _) => return failure(broker, ctx, code, is_tool).await,
