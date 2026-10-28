@@ -10,10 +10,12 @@ const denied = new Set([
   'LEASE_REVOKED',
   'LEASE_EXPIRED',
   'LEASE_USED_UP',
+  'READONLY_TASK',
+  'TASK_MISMATCH',
 ])
 
 export function classify(event: AuditEvent): Exclude<ResultFilter, 'all'> | null {
-  if (event.event_type !== 'result') return null
+  if (event.event_type !== 'result' && event.event_type !== 'management_denied') return null
   if (event.reason_code === 'OK' && event.executed) return 'allowed'
   return denied.has(event.reason_code) ? 'denied' : 'failed'
 }

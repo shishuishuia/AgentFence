@@ -57,6 +57,20 @@ const statuses: Record<GrantStatus, string> = {
           <dl>
             <dt>工作区</dt>
             <dd>{{ detail.data.value.workspace_id }}</dd>
+            <template v-if="detail.data.value.permission_profile">
+              <dt>任务权限</dt>
+              <dd>
+                {{
+                  detail.data.value.permission_profile === 'readonly'
+                    ? '只读（服务端策略）'
+                    : '受控编辑'
+                }}
+              </dd>
+              <dt>快照</dt>
+              <dd class="mono">{{ detail.data.value.snapshot_id || '—' }}</dd>
+              <dt>审查目标</dt>
+              <dd>{{ detail.data.value.goal || '—' }}</dd>
+            </template>
             <dt>创建时间</dt>
             <dd>{{ formatTime(detail.data.value.created_at) }}</dd>
             <dt>更新时间</dt>
@@ -77,7 +91,11 @@ const statuses: Record<GrantStatus, string> = {
         <h2>租约快照</h2>
         <p>状态由 Rust 计算。服务端采样时间：{{ formatTime(detail.data.value.server_time) }}</p>
         <p v-if="!detail.data.value.grants.length" class="empty-message">
-          暂无租约。只读页面不发放权限。
+          {{
+            detail.data.value.permission_profile === 'readonly'
+              ? '只读任务禁止发放写租约。'
+              : '暂无租约。'
+          }}
         </p>
         <div v-else class="table-scroll">
           <table>

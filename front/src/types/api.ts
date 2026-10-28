@@ -19,6 +19,9 @@ export interface TaskSummary {
   phase: Phase
   created_at: string
   updated_at: string
+  permission_profile?: 'readonly' | 'controlled_edit'
+  snapshot_id?: string
+  goal?: string
 }
 
 export interface Grant {
@@ -53,7 +56,15 @@ export interface AuditEvent {
   task_id: string | null
   timestamp: string
   event_type:
-    'task_created' | 'phase_changed' | 'grant_issued' | 'grant_revoked' | 'intent' | 'result'
+    | 'task_created'
+    | 'phase_changed'
+    | 'grant_issued'
+    | 'grant_revoked'
+    | 'intent'
+    | 'result'
+    | 'management_denied'
+    | 'workspace_registered'
+    | 'snapshot_created'
   phase: Phase | null
   tool: string | null
   path: string | null

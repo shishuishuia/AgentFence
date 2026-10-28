@@ -36,6 +36,12 @@ class Backend:
     def workspaces(self):
         return {"items": []}
 
+    def create_readonly_task(self, workspace_id, goal):
+        self.calls.append(("create", workspace_id, goal))
+        return {"task_id": "task_readonly", "workspace_id": workspace_id, "snapshot_id": "snap_test",
+                "goal": goal, "permission_profile": "readonly", "phase": "inspect", "agent_token": "private-" + "z" * 40,
+                "created_at": "2026-10-28T00:00:00Z", "updated_at": "2026-10-28T00:00:00Z", "instance_id": "inst_test"}
+
 
 class WorkspaceTests(unittest.TestCase):
     def setUp(self):
@@ -162,6 +168,20 @@ class WorkspaceTests(unittest.TestCase):
         for extra in ({"total_bytes": 21 * 1024 * 1024}, {"allowed_file_count": 1001}, {"allowed_file_count": True}, {"allowed_file_count": 0}):
             with self.assertRaises(ManagementError):
                 preview_shape({**PREVIEW, **extra})
+
+    def test_readonly_task_never_returns_credentials(self):
+        status, _, value = self.request("/api/admin/tasks", "POST", {
+            "workspace_id": "ws_test", "goal": "review", "permission_profile": "readonly"})
+        self.assertEqual(status, 201)
+        self.assertEqual(value["permission_profile"], "readonly")
+        self.assertNotIn("agent_token", value)
+        self.assertIn("task_readonly", self.manager.tasks)
+
+    def test_task_rejects_edit_and_extra_credentials(self):
+        for extra in ({"permission_profile": "controlled_edit"}, {"agent_token": "bad"}, {"goal": ""}, {"workspace_id": "../root"}):
+            body = {"workspace_id": "ws_test", "goal": "review", "permission_profile": "readonly", **extra}
+            self.assertEqual(self.request("/api/admin/tasks", "POST", body)[0], 400)
+        self.assertEqual(self.backend.calls, [])
 
 
 if __name__ == "__main__":

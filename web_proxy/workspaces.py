@@ -8,6 +8,7 @@ the mutating request (including uncertain timeouts). No automatic retries.
 from http.cookies import SimpleCookie, CookieError
 import json
 import os
+import re
 from pathlib import Path
 import secrets
 import subprocess
@@ -119,6 +120,16 @@ class WorkspaceBackend:
             raise invalid_response()
         return {"items": [workspace_shape(item) for item in value["items"]]}
 
+    def create_readonly_task(self, workspace_id, goal):
+        value = self.request("POST", "/v1/admin/tasks", {
+            "workspace_id": workspace_id, "goal": goal, "permission_profile": "readonly"})
+        if not all(isinstance(value.get(k), str) for k in
+                   ("task_id", "workspace_id", "snapshot_id", "goal", "agent_token", "created_at", "updated_at", "instance_id")):
+            raise invalid_response()
+        if value.get("permission_profile") != "readonly" or value.get("phase") != "inspect" or value["workspace_id"] != workspace_id or value["goal"] != goal or not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", value["task_id"]) or not 32 <= len(value["agent_token"]) <= 256 or any(not 33 <= ord(c) <= 126 for c in value["agent_token"]):
+            raise invalid_response()
+        return value
+
 
 class WorkspaceManager:
     """Bounded sessions and one-use dialog results; all shared state is locked."""
@@ -127,6 +138,7 @@ class WorkspaceManager:
         self.lock = threading.Lock()
         self.sessions = {}
         self.jobs = {}
+        self.tasks = {}  # Task credentials remain in this trusted process only.
         self.dialog_busy = False
 
     def _prune(self):
@@ -225,3 +237,21 @@ class WorkspaceManager:
             preview_id = job.pop("preview")["preview_id"]
         # Consume before I/O: an uncertain outcome must never be retried with this selection.
         return self.backend.confirm(preview_id, display_name)
+
+    def create_task(self, workspace_id, goal):
+        with self.lock:
+            if len(self.tasks) >= 128:
+                raise ManagementError(429, "TASK_LIMIT", "本次服务的任务数量已达上限，请重启后再创建。")
+            # Reserve capacity while the HTTP worker is in flight.
+            reservation = "pending_" + secrets.token_hex(16)
+            self.tasks[reservation] = None
+        try:
+            value = self.backend.create_readonly_task(workspace_id, goal)
+            clean = {k: value[k] for k in ("task_id", "workspace_id", "snapshot_id", "goal",
+                    "permission_profile", "phase", "created_at", "updated_at", "instance_id")}
+            with self.lock:
+                self.tasks[value["task_id"]] = {"token": value["agent_token"], "summary": clean}
+            return clean
+        finally:
+            with self.lock:
+                self.tasks.pop(reservation, None)

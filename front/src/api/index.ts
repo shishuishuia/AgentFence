@@ -13,6 +13,10 @@ const strings = (v: RecordValue, keys: string[]) => keys.every((key) => typeof v
 const task = (v: unknown) =>
   record(v) &&
   strings(v, ['task_id', 'workspace_id', 'created_at', 'updated_at']) &&
+  (v.permission_profile === undefined ||
+    (['readonly', 'controlled_edit'].includes(String(v.permission_profile)) &&
+      typeof v.goal === 'string' &&
+      (v.permission_profile !== 'readonly' || typeof v.snapshot_id === 'string'))) &&
   ['inspect', 'edit', 'verify', 'done'].includes(String(v.phase))
 async function checked<T>(
   path: string,

@@ -10,6 +10,7 @@ import {
   type Workspace,
 } from '@/api/workspaces'
 import { formatTime } from '@/utils/audit'
+import ReadonlyTaskForm from '@/components/ReadonlyTaskForm.vue'
 
 const selection = ref<Selection | null>(null)
 const workspaces = ref<Workspace[]>([])
@@ -138,6 +139,7 @@ async function confirm() {
         </p>
         <p class="mono">{{ workspace.workspace_id }} / {{ workspace.snapshot_id }}</p>
         <p class="mono">清单 SHA-256：{{ workspace.manifest_sha256 }}</p>
+        <ReadonlyTaskForm :workspace-id="workspace.workspace_id" />
       </article>
     </section>
   </section>

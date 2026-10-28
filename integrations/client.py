@@ -182,6 +182,13 @@ class AdminClient:
     def create_task(self, workspace_id: str) -> ApiResponse:
         return self._request("POST", "/v1/admin/tasks", {"workspace_id": _identifier(workspace_id)})
 
+    def create_readonly_task(self, workspace_id: str, goal: str) -> ApiResponse:
+        """v2 immutable profile; never fall back to creating a legacy edit task."""
+        if not isinstance(goal, str) or not 1 <= len(goal.strip()) <= 1000 or len(goal.encode("utf-8")) > 4000:
+            raise ValueError("goal must be nonempty and bounded")
+        return self._request("POST", "/v1/admin/tasks", {
+            "workspace_id": _identifier(workspace_id), "goal": goal.strip(), "permission_profile": "readonly"})
+
     def tasks(self, *, limit: int = 50) -> ApiResponse:
         return self._request("GET", "/v1/admin/tasks?" + urlencode({"limit": _limit(limit, 100)}))
 

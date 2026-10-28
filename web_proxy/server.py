@@ -22,6 +22,11 @@ def valid_shape(kind: str, status: int, body: dict) -> bool:
         return status >= 400 and all(isinstance(body.get(k), str) for k in ("request_id", "reason_code", "message")) and (body.get("instance_id") is None or isinstance(body.get("instance_id"), str))
     if not isinstance(body.get("instance_id"), str):
         return False
+    tasks = body.get("items", []) if kind == "tasks" else [body] if kind == "task" else []
+    if isinstance(tasks, list) and any(isinstance(t, dict) and "permission_profile" in t and (
+            t["permission_profile"] not in ("readonly", "controlled_edit") or not isinstance(t.get("goal"), str) or
+            (t["permission_profile"] == "readonly" and not isinstance(t.get("snapshot_id"), str))) for t in tasks):
+        return False
     if kind == "health":
         return body.get("status") == "ok"
     if kind == "tasks":

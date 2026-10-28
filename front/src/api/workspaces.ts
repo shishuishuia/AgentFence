@@ -1,4 +1,5 @@
 import { ApiError } from './client'
+import type { TaskSummary } from '@/types/api'
 
 export interface Preview {
   manifest_sha256: string
@@ -128,4 +129,23 @@ export async function getWorkspaces(signal?: AbortSignal) {
   if (!record(value) || !Array.isArray(value.items) || !value.items.every(isWorkspace))
     throw new ApiError(502, 'INVALID_RESPONSE', '工作区列表响应无效。')
   return { items: value.items }
+}
+
+export async function createReadonlyTask(workspaceId: string, goal: string, signal?: AbortSignal) {
+  const value = await management(
+    '/tasks',
+    { workspace_id: workspaceId, goal, permission_profile: 'readonly' },
+    signal,
+  )
+  if (
+    !record(value) ||
+    value.permission_profile !== 'readonly' ||
+    value.phase !== 'inspect' ||
+    value.workspace_id !== workspaceId ||
+    typeof value.task_id !== 'string' ||
+    typeof value.snapshot_id !== 'string' ||
+    typeof value.goal !== 'string'
+  )
+    throw new ApiError(502, 'INVALID_RESPONSE', '服务端未确认只读任务，已停止后续操作。')
+  return value as unknown as TaskSummary
 }

@@ -56,3 +56,17 @@ Rust 限额：最多 1000 个 UTF-8 普通文本文件，单文件 64 KiB、合�
 
 第一步覆盖本机 HTTP 会话、CSRF、目录选择/取消、跨会话和过期选择、重复确认、
 不确定确认结果、会话复用、响应字段过滤。Rust 集成另行记录，不用替身结果代替。
+
+## 只读任务创建
+
+POST `/api/admin/tasks` 接受 `{workspace_id,goal,permission_profile:"readonly"}`。
+代理只允许这三个字段，目标最多 1000 字符 / 4000 UTF-8 字节。
+助手向 POST `/v1/admin/tasks` 发出同一请求，不会失败后降级创建旧版任务。
+Rust 成功响应必须含 task_id、workspace_id、snapshot_id、goal、permission_profile、
+phase=inspect、created_at、updated_at、instance_id 和一次性 agent_token。
+助手严格检查 profile，并仅把 Token 留在本机内存，浏览器只收任务摘要。
+
+readonly 的阶段为 inspect → verify → done。由可信启动器推进阶段；MCP 三工具
+不含管理操作。Rust 必须对直接 HTTP edit/grant/write 返回 READONLY_TASK 并记
+`management_denied`（管理拒绝）或 `result`（工具结果）审计，关联 task_id/request_id。
+前端已将这两种结果中的 READONLY_TASK 计入策略拒绝。
