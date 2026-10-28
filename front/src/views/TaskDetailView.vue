@@ -7,6 +7,7 @@ import { useAuditEvents } from '@/composables/useAuditEvents'
 import RequestState from '@/components/RequestState.vue'
 import PhaseBadge from '@/components/PhaseBadge.vue'
 import AuditEventTable from '@/components/AuditEventTable.vue'
+import McpReviewPanel from '@/components/McpReviewPanel.vue'
 import { formatTime } from '@/utils/audit'
 import type { GrantStatus } from '@/types/api'
 const props = defineProps<{ taskId: string }>()
@@ -48,6 +49,11 @@ const statuses: Record<GrantStatus, string> = {
       当前实例不存在该任务。服务重启后，旧任务不会恢复。
     </p>
     <template v-if="detail.data.value">
+      <McpReviewPanel
+        v-if="detail.data.value.permission_profile === 'readonly'"
+        :key="taskId"
+        :task-id="taskId"
+      />
       <div class="detail-grid">
         <section class="panel">
           <div class="section-heading">

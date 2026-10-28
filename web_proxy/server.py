@@ -209,4 +209,10 @@ def create_server(config: Config, *, demo=None, manager=None) -> ThreadingHTTPSe
 
         do_HEAD = do_POST = do_PUT = do_DELETE = do_PATCH = do_OPTIONS = do_TRACE = do_CONNECT = do_GET
 
-    return ThreadingHTTPServer(("127.0.0.1", config.port), Handler)
+    class LocalServer(ThreadingHTTPServer):
+        def server_close(self):
+            if manager is not None:
+                manager.close()
+            super().server_close()
+
+    return LocalServer(("127.0.0.1", config.port), Handler)

@@ -11,7 +11,8 @@ const denied = new Set([
   'LEASE_EXPIRED',
   'LEASE_USED_UP',
   'READONLY_TASK',
-  'TASK_MISMATCH',
+  'TASK_TOKEN_MISMATCH',
+  'ROLE_DENIED',
 ])
 
 export function classify(event: AuditEvent): Exclude<ResultFilter, 'all'> | null {

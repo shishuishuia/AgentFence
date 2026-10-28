@@ -11,11 +11,12 @@ from web_proxy.server import create_server
 from web_proxy.workspaces import WorkspaceManager, ManagementError, preview_shape, workspace_shape
 
 PREVIEW = {"preview_id": "pre_test", "manifest_sha256": "a" * 64, "expires_at": "2026-10-29T00:00:00Z",
-           "allowed_file_count": 3, "excluded_file_count": 1, "total_bytes": 50,
-           "excluded": [{"path": ".env", "reason_code": "SENSITIVE_FILE"}]}
+           "allowed_file_count": 3, "excluded_entry_count": 1, "total_bytes": 50,
+           "files": [{"path": p, "bytes": 10, "sha256": "a" * 64} for p in ("Cargo.toml", "src/main.rs", "src/lib.rs")],
+           "excluded": [{"path": ".env", "reason": "sensitive_name"}]}
 WORKSPACE = {"workspace_id": "ws_test", "snapshot_id": "snap_test", "display_name": "test",
              "manifest_sha256": "a" * 64, "imported_at": "2026-10-28T00:00:00Z", "import_mode": "readonly_snapshot",
-             "allowed_file_count": 3, "excluded_file_count": 1, "total_bytes": 50}
+             "allowed_file_count": 3, "excluded_entry_count": 1, "total_bytes": 50}
 
 
 class Backend:
@@ -25,13 +26,13 @@ class Backend:
 
     def preview(self, root):
         self.calls.append(("preview", root))
-        return PREVIEW.copy()
+        return preview_shape(PREVIEW)
 
     def confirm(self, preview_id, name):
         self.calls.append(("confirm", preview_id, name))
         if self.fail_confirm:
             raise ManagementError(502, "BROKER_UNAVAILABLE", "uncertain")
-        return {**WORKSPACE, "display_name": name}
+        return workspace_shape({**WORKSPACE, "display_name": name})
 
     def workspaces(self):
         return {"items": []}

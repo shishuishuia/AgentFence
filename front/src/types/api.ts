@@ -50,6 +50,8 @@ export interface TaskDetailResponse extends TaskSummary {
 }
 
 export interface AuditEvent {
+  workspace_id?: string | null
+  snapshot_id?: string | null
   event_id: number
   instance_id: string
   request_id: string

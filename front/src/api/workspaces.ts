@@ -2,6 +2,7 @@ import { ApiError } from './client'
 import type { TaskSummary } from '@/types/api'
 
 export interface Preview {
+  files: { path: string; bytes: number; sha256: string }[]
   manifest_sha256: string
   expires_at: string
   allowed_file_count: number
@@ -102,6 +103,14 @@ function checkedSelection(v: unknown): Selection {
         counts(v.preview) &&
         typeof v.preview.expires_at === 'string' &&
         typeof v.preview.manifest_sha256 === 'string' &&
+        Array.isArray(v.preview.files) &&
+        v.preview.files.every(
+          (f) =>
+            record(f) &&
+            typeof f.path === 'string' &&
+            Number.isSafeInteger(f.bytes) &&
+            typeof f.sha256 === 'string',
+        ) &&
         Array.isArray(v.preview.excluded) &&
         v.preview.excluded.every(
           (x) => record(x) && typeof x.path === 'string' && typeof x.reason_code === 'string',
@@ -129,6 +138,28 @@ export async function getWorkspaces(signal?: AbortSignal) {
   if (!record(value) || !Array.isArray(value.items) || !value.items.every(isWorkspace))
     throw new ApiError(502, 'INVALID_RESPONSE', '工作区列表响应无效。')
   return { items: value.items }
+}
+
+export async function getExclusions(id: string, offset: number, signal?: AbortSignal) {
+  const value = await management(
+    `/picker/${encodeURIComponent(id)}/excluded?offset=${offset}`,
+    undefined,
+    signal,
+  )
+  if (
+    !record(value) ||
+    !Array.isArray(value.items) ||
+    !value.items.every(
+      (x) => record(x) && typeof x.path === 'string' && typeof x.reason_code === 'string',
+    ) ||
+    (value.next_offset !== null &&
+      (!Number.isSafeInteger(value.next_offset) || Number(value.next_offset) <= offset))
+  )
+    throw new ApiError(502, 'INVALID_RESPONSE', '排除项分页响应无效。')
+  return value as unknown as {
+    items: { path: string; reason_code: string }[]
+    next_offset: number | null
+  }
 }
 
 export async function createReadonlyTask(workspaceId: string, goal: string, signal?: AbortSignal) {

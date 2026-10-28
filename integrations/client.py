@@ -85,7 +85,7 @@ def _limit(value: int, maximum: int) -> int:
 class BrokerHttp:
     """Bounded JSON transport to a numeric loopback HTTP address only."""
 
-    def __init__(self, base_url: str = "http://127.0.0.1:8080", *, timeout: float = 5.0):
+    def __init__(self, base_url: str = "http://127.0.0.1:8080", *, timeout: float = 5.0, max_response_bytes: int = MAX_RESPONSE_BYTES):
         parsed = urlsplit(base_url)
         try:
             loopback = ipaddress.ip_address(parsed.hostname or "").is_loopback
@@ -107,6 +107,9 @@ class BrokerHttp:
             raise ValueError("timeout must be finite and positive")
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
+        if type(max_response_bytes) is not int or not 1024 <= max_response_bytes <= 2 * MAX_RESPONSE_BYTES:
+            raise ValueError("response limit must be between 1 KiB and 2 MiB")
+        self.max_response_bytes = max_response_bytes
         self._opener = build_opener(ProxyHandler({}), _NoRedirect())
 
     def request(
@@ -139,7 +142,7 @@ class BrokerHttp:
                 status = response.code
                 content_length = response.headers.get("Content-Length")
                 request_id = response.headers.get("X-Request-Id")
-                raw = response.read(MAX_RESPONSE_BYTES + 1)
+                raw = response.read(self.max_response_bytes + 1)
         except (TimeoutError, socket.timeout):
             raise BrokerTimeout("broker request timed out; write execution may be unknown; do not retry automatically") from None
         except URLError as error:
@@ -150,7 +153,7 @@ class BrokerHttp:
             raise BrokerInvalidResponse("broker returned an incomplete HTTP response") from None
         except OSError:
             raise BrokerUnavailable("broker connection failed; write execution may be unknown; do not retry automatically") from None
-        if len(raw) > MAX_RESPONSE_BYTES:
+        if len(raw) > self.max_response_bytes:
             raise BrokerInvalidResponse("broker response exceeds the client size limit")
         if content_length is not None:
             if not content_length.isdecimal() or int(content_length) != len(raw):

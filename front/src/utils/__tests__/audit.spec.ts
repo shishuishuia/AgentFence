@@ -14,6 +14,14 @@ const event = (values: Partial<AuditEvent> = {}) =>
   }) as AuditEvent
 
 describe('审计结果分类', () => {
+  it('只读拒绝和任务身份拒绝计入拦截', () => {
+    expect(
+      statistics([
+        event({ reason_code: 'READONLY_TASK', allowed: false, executed: false }),
+        event({ reason_code: 'TASK_TOKEN_MISMATCH', allowed: false, executed: false }),
+      ]),
+    ).toEqual({ allowed: 0, denied: 2, failed: 0 })
+  })
   it('只统计 result，区分策略拒绝与输入及执行失败', () => {
     const events = [
       event(),

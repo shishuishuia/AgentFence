@@ -6,6 +6,7 @@ import {
   getSelection,
   confirmWorkspace,
   getWorkspaces,
+  getExclusions,
   type Selection,
   type Workspace,
 } from '@/api/workspaces'
@@ -84,6 +85,33 @@ async function confirm() {
     busy.value = false
   }
 }
+async function loadExcluded() {
+  const current = selection.value
+  if (!current?.preview || current.state !== 'ready' || busy.value) return
+  busy.value = true
+  error.value = ''
+  try {
+    for (
+      let page = 0;
+      page < 100 && current.preview.excluded.length < current.preview.excluded_file_count;
+      page++
+    ) {
+      const result = await getExclusions(
+        current.selection_id,
+        current.preview.excluded.length,
+        controller.signal,
+      )
+      current.preview.excluded.push(...result.items)
+      if (result.next_offset === null) break
+      if (result.next_offset !== current.preview.excluded.length)
+        throw new Error('排除项分页不连续，请重新选择目录。')
+    }
+  } catch (e) {
+    if (!controller.signal.aborted) error.value = message(e)
+  } finally {
+    busy.value = false
+  }
+}
 </script>
 
 <template>
@@ -111,6 +139,14 @@ async function confirm() {
         </p>
         <p>预览有效期至 {{ formatTime(selection.preview.expires_at) }}；源文件变化需要重新预览。</p>
         <details>
+          <summary>允许导入的文件</summary>
+          <ul>
+            <li v-for="file in selection.preview.files" :key="file.path">
+              {{ file.path }} · {{ file.bytes }} 字节
+            </li>
+          </ul>
+        </details>
+        <details>
           <summary>排除项</summary>
           <ul>
             <li v-for="item in selection.preview.excluded" :key="item.path">
@@ -118,10 +154,27 @@ async function confirm() {
             </li>
           </ul>
         </details>
+        <button
+          v-if="selection.preview.excluded.length < selection.preview.excluded_file_count"
+          :disabled="busy"
+          @click="loadExcluded"
+        >
+          加载全部排除项（已加载 {{ selection.preview.excluded.length }} /
+          {{ selection.preview.excluded_file_count }}）
+        </button>
         <label
           >工作区名称 <input v-model="name" maxlength="80" placeholder="例如：示例 Rust 项目"
         /></label>
-        <button :disabled="busy || !name.trim()" @click="confirm">确认导入只读快照</button>
+        <button
+          :disabled="
+            busy ||
+            !name.trim() ||
+            selection.preview.excluded.length < selection.preview.excluded_file_count
+          "
+          @click="confirm"
+        >
+          确认导入只读快照
+        </button>
       </template>
     </section>
     <section class="panel section-gap">

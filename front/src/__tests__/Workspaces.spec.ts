@@ -9,6 +9,7 @@ vi.mock('@/api/workspaces', () => ({
   getSelection: vi.fn<typeof api.getSelection>(),
   confirmWorkspace: vi.fn<typeof api.confirmWorkspace>(),
   getWorkspaces: vi.fn<typeof api.getWorkspaces>(),
+  getExclusions: vi.fn<typeof api.getExclusions>(),
 }))
 const id = `sel_${'a'.repeat(32)}`
 const ready: api.Selection = {
@@ -16,6 +17,7 @@ const ready: api.Selection = {
   state: 'ready',
   display_path: 'C:/fixture',
   preview: {
+    files: [{ path: 'src/main.rs', bytes: 50, sha256: 'a'.repeat(64) }],
     allowed_file_count: 3,
     excluded_file_count: 1,
     total_bytes: 50,

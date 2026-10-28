@@ -2,6 +2,7 @@
 
 import json
 import re
+from urllib.parse import parse_qsl
 
 from .workspaces import COOKIE, ManagementError
 
@@ -35,10 +36,18 @@ def handle_admin(handler, manager, path, query):
     """Dispatch only explicitly listed routes, never a generic Admin proxy."""
     try:
         selection = re.fullmatch(r"/api/admin/picker/(sel_[a-f0-9]{32})", path)
-        expected = "GET" if selection or path == "/api/admin/workspaces" else "POST"
-        if path not in {"/api/admin/session", "/api/admin/picker/start", "/api/admin/workspaces/confirm", "/api/admin/workspaces", "/api/admin/tasks"} and selection is None:
+        exclusions = re.fullmatch(r"/api/admin/picker/(sel_[a-f0-9]{32})/excluded", path)
+        review = re.fullmatch(r"/api/admin/tasks/([A-Za-z0-9_-]{1,128})/review(/start)?", path)
+        expected = "GET" if selection or exclusions or path == "/api/admin/workspaces" or (review and not review.group(2)) else "POST"
+        if path not in {"/api/admin/session", "/api/admin/picker/start", "/api/admin/workspaces/confirm", "/api/admin/workspaces", "/api/admin/tasks"} and selection is None and exclusions is None and review is None:
             raise ManagementError(404, "ROUTE_NOT_FOUND", "未知管理接口。")
-        if query or handler.command != expected:
+        offset = None
+        if exclusions:
+            pairs = parse_qsl(query, strict_parsing=True, max_num_fields=1)
+            if len(pairs) != 1 or pairs[0][0] != "offset" or not re.fullmatch(r"[0-9]{1,5}", pairs[0][1]):
+                raise ManagementError(400, "INVALID_REQUEST", "排除项分页参数无效。")
+            offset = int(pairs[0][1])
+        if (query and not exclusions) or handler.command != expected:
             raise ManagementError(400 if query else 405, "INVALID_REQUEST", "请求方法或查询参数无效。")
         if expected == "POST":
             origins = handler.headers.get_all("Origin", [])
@@ -57,12 +66,18 @@ def handle_admin(handler, manager, path, query):
         if len(cookies) != 1 or (expected == "POST" and len(csrf) != 1):
             raise ManagementError(403, "CSRF_DENIED", "管理请求缺少会话或校验信息。")
         sid = manager.authenticate(cookies[0], csrf[0] if expected == "POST" else None)
+        if review:
+            if body:
+                raise ManagementError(400, "INVALID_REQUEST", "审查启动不接受额外参数。")
+            return handler.reply(202 if review.group(2) else 200, manager.start_review(review.group(1)) if review.group(2) else manager.review_status(review.group(1)))
         if path == "/api/admin/picker/start":
             if body:
                 raise ManagementError(400, "INVALID_REQUEST", "目录仅由系统选择器提供。")
             return handler.reply(202, manager.start(sid))
         if selection:
             return handler.reply(200, manager.status(sid, selection.group(1)))
+        if exclusions:
+            return handler.reply(200, manager.exclusions(sid, exclusions.group(1), offset))
         if path == "/api/admin/workspaces":
             return handler.reply(200, manager.backend.workspaces())
         if path == "/api/admin/tasks":
