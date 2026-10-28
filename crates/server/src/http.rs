@@ -5,7 +5,7 @@ use crate::{
     broker::{Identity, RequestContext, ToolRequest, ToolResponse},
     config::valid_id,
 };
-use agentfence_core::{Phase, ReasonCode};
+use agentfence_core::{PermissionProfile, Phase, ReasonCode};
 use axum::{
     Json, Router,
     body::{Body, to_bytes},
@@ -22,6 +22,7 @@ use serde::Deserialize;
 use serde_json::{Value, json};
 
 const BODY_LIMIT: usize = 512 * 1024;
+mod v2;
 
 /// Build the v2.1 routes with bounded bodies and role authentication.
 ///
@@ -36,6 +37,17 @@ pub fn app(broker: Broker) -> Router {
         .route("/v1/admin/tasks/{id}/grants", post(issue_grant))
         .route("/v1/admin/tasks/{id}/grants/{gid}", delete(revoke))
         .route("/v1/admin/events", get(events))
+        .route("/v1/admin/workspace-previews", post(v2::preview_workspace))
+        .route(
+            "/v1/admin/workspace-previews/{id}/excluded",
+            get(v2::preview_exclusions),
+        )
+        .route(
+            "/v1/admin/workspaces",
+            get(v2::workspaces).post(v2::register_workspace),
+        )
+        .route("/v1/agent/tasks/{id}", get(v2::agent_status))
+        .route("/v1/agent/tasks/{id}/files", get(v2::agent_files))
         .route("/v1/tool/execute", post(execute))
         .fallback(not_found)
         .method_not_allowed_fallback(method_not_allowed)
@@ -63,7 +75,7 @@ fn bearer(headers: &HeaderMap) -> Option<&str> {
 async fn envelope(State(broker): State<Broker>, request: Request, next: Next) -> Response {
     let mut ctx = broker.context();
     let path = request.uri().path().to_owned();
-    let is_tool = path == "/v1/tool/execute";
+    let is_tool = path == "/v1/tool/execute" || path.starts_with("/v1/agent/");
     let is_admin = path.starts_with("/v1/admin/");
     let (parts, body) = request.into_parts();
     // Enforce the transport byte bound before credentials. Structure validation
@@ -88,6 +100,22 @@ async fn envelope(State(broker): State<Broker>, request: Request, next: Next) ->
         match (identity, is_admin) {
             (Ok(Identity::Admin), true) => {}
             (Ok(Identity::Agent(task)), false) => ctx.agent_task = Some(task),
+            (Ok(Identity::Agent(task)), true) => {
+                let worker = broker.clone();
+                let task_id = task.clone();
+                let audit =
+                    match tokio::task::spawn_blocking(move || worker.is_readonly_task(&task_id))
+                        .await
+                    {
+                        Ok(Ok(readonly)) => readonly,
+                        Ok(Err(code)) => return failure(broker, ctx, code, true).await,
+                        Err(_) => return failure(broker, ctx, ReasonCode::IoError, true).await,
+                    };
+                if audit {
+                    ctx.agent_task = Some(task);
+                }
+                return failure(broker, ctx, ReasonCode::RoleDenied, audit).await;
+            }
             (Ok(_), _) => return failure(broker, ctx, ReasonCode::RoleDenied, is_tool).await,
             (Err(code), _) => return failure(broker, ctx, code, is_tool).await,
         }
@@ -144,6 +172,10 @@ async fn health(State(broker): State<Broker>) -> Response {
 #[serde(deny_unknown_fields)]
 struct CreateTask {
     workspace_id: String,
+    #[serde(default)]
+    permission_profile: PermissionProfile,
+    #[serde(default)]
+    goal: String,
 }
 
 async fn create_task(
@@ -154,10 +186,18 @@ async fn create_task(
     let Ok(Json(body)) = body else {
         return failure(broker, ctx, ReasonCode::InvalidRequest, false).await;
     };
+    if body.goal.len() > 4000 || body.goal.chars().count() > 1000 {
+        return failure(broker, ctx, ReasonCode::InvalidRequest, false).await;
+    }
     let worker = broker.clone();
     let request = ctx.clone();
     run(broker, ctx, StatusCode::CREATED, move || {
-        worker.create_task(&request, &body.workspace_id)
+        worker.create_task(
+            &request,
+            &body.workspace_id,
+            body.permission_profile,
+            body.goal,
+        )
     })
     .await
 }

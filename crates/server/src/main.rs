@@ -20,7 +20,11 @@ async fn main() -> Result<(), Box<dyn Error>> {
         std::env::var("AGENTFENCE_POLICY").unwrap_or_else(|_| "config/policy.json".into());
     let audit_path =
         std::env::var("AGENTFENCE_AUDIT").unwrap_or_else(|_| "results/audit.jsonl".into());
-    let config = Configuration::load(Path::new(&policy_path))?;
+    let config = if std::env::var("AGENTFENCE_EMPTY_REGISTRY").as_deref() == Ok("1") {
+        Configuration::empty()
+    } else {
+        Configuration::load(Path::new(&policy_path))?
+    };
     let broker = Broker::open(config, &admin, Path::new(&audit_path))?;
     let listener = tokio::net::TcpListener::bind(address).await?;
     eprintln!("AgentFence listening on http://{}", listener.local_addr()?);

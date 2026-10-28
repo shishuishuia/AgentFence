@@ -1,0 +1,87 @@
+{
+  "aggregate": {
+    "direct_http": {
+      "count": 300,
+      "p50_ns": 4310300,
+      "p95_ns": 5260900,
+      "p99_ns": 6003500
+    },
+    "mcp_stdio": {
+      "count": 300,
+      "p50_ns": 5631400,
+      "p95_ns": 6871400,
+      "p99_ns": 8291300
+    }
+  },
+  "api_disk_audit_equal": true,
+  "arch": "x86_64",
+  "audit_file": "audit.jsonl",
+  "benchmark_binary_sha256": "7499249a620677b46e9fc2ac58fab721523a92c16c7cebe538cb9e5f0cb0349c",
+  "concurrency": 1,
+  "dirty_tree": false,
+  "events_file": "events.json",
+  "fixture_bytes": 4096,
+  "fixture_sha256": "0a6704488fafb4ba7be2a66ec002f9f61a0ae712ccecb406901b6b581f74998a",
+  "kind": "paired_mcp_read_overhead",
+  "limitations": "One host, one 4096-byte synthetic read, persistent HTTP connections. The direct client and broker run in the benchmark process; MCP runs in its own process. Includes JSON-RPC, numbered output and adapter overhead. No LLM/network/CPU/RSS or significance claim.",
+  "mcp_binary_sha256": "5a88085f11e01b617f814a78210c5f6cea8c6e85e792f9f5c4a40b3398666efa",
+  "os": "windows",
+  "per_round": [
+    {
+      "direct_http": {
+        "count": 100,
+        "p50_ns": 4181300,
+        "p95_ns": 5257700,
+        "p99_ns": 5919400
+      },
+      "mcp_stdio": {
+        "count": 100,
+        "p50_ns": 5533000,
+        "p95_ns": 6595100,
+        "p99_ns": 8096800
+      },
+      "round": 1
+    },
+    {
+      "direct_http": {
+        "count": 100,
+        "p50_ns": 3894500,
+        "p95_ns": 5253300,
+        "p99_ns": 5778600
+      },
+      "mcp_stdio": {
+        "count": 100,
+        "p50_ns": 5198900,
+        "p95_ns": 6575900,
+        "p99_ns": 8291300
+      },
+      "round": 2
+    },
+    {
+      "direct_http": {
+        "count": 100,
+        "p50_ns": 4638200,
+        "p95_ns": 5301000,
+        "p99_ns": 6003500
+      },
+      "mcp_stdio": {
+        "count": 100,
+        "p50_ns": 6056100,
+        "p95_ns": 7000200,
+        "p99_ns": 9698100
+      },
+      "round": 3
+    }
+  ],
+  "rmcp_version": "3.8.0",
+  "rounds": 3,
+  "rust_version_requirement": "1.98.1",
+  "rustc": "rustc 1.98.1 (48a229cea 2026-09-01)",
+  "samples_file": "samples.jsonl",
+  "samples_per_mode_per_round": 100,
+  "snapshot_id": "snap_728ecd595f7a71771b56cad3cb845410",
+  "source_commit": "77d3c8e28540c8c683d8179507730c4db652f56a",
+  "status": "passed",
+  "task_id": "task_c4e77a748cb2f007b74745b445ec536c",
+  "warmups_per_mode": 60
+}

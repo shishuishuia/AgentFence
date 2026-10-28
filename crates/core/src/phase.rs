@@ -1,5 +1,6 @@
 //! The ordered lifecycle of a coding task.
 
+use crate::PermissionProfile;
 use serde::{Deserialize, Serialize};
 
 /// A task's current stage, encoded as a lowercase string in JSON.
@@ -20,6 +21,26 @@ pub enum Phase {
 }
 
 impl Phase {
+    /// Return the next stage for an immutable task capability profile.
+    ///
+    /// ```
+    /// use agentfence_core::{PermissionProfile, Phase};
+    /// assert_eq!(Phase::Inspect.next_for(PermissionProfile::Readonly), Some(Phase::Verify));
+    /// assert_eq!(Phase::Edit.next_for(PermissionProfile::Readonly), None);
+    /// ```
+    #[must_use]
+    pub const fn next_for(self, profile: PermissionProfile) -> Option<Self> {
+        if matches!(profile, PermissionProfile::Readonly) {
+            match self {
+                Self::Inspect => Some(Self::Verify),
+                Self::Verify => Some(Self::Done),
+                Self::Edit | Self::Done => None,
+            }
+        } else {
+            self.next()
+        }
+    }
+
     /// Return the only permitted next stage, or `None` for a completed task.
     ///
     /// This describes ordering only; it does not authorize a transition.

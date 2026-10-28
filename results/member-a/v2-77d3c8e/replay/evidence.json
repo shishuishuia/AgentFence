@@ -1,0 +1,212 @@
+{
+  "arch": "x86_64",
+  "audit_file": "audit.jsonl",
+  "dirty_tree": false,
+  "kind": "deterministic_mcp_replay",
+  "model_used": false,
+  "os": "windows",
+  "passed": true,
+  "rmcp_version": "3.8.0",
+  "runs": [
+    {
+      "calls": [
+        {
+          "allowed": true,
+          "path": "Cargo.toml",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_5",
+          "sha256": "29ff13ed4c0f2255818a9bc6450fbfff1e1bcc88c913fb4c74b96d9562488e93",
+          "tool": "agentfence_read_file"
+        },
+        {
+          "allowed": true,
+          "path": "src/lib.rs",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_6",
+          "sha256": "1023500c5cad56dd39fa076a82b4339e02945ede14ff44e3b3b94eabeab416d0",
+          "tool": "agentfence_read_file"
+        },
+        {
+          "allowed": true,
+          "path": "src/main.rs",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_7",
+          "sha256": "536e506bb90914c243a12b397b9a998f85ae2cbd9ba02dfd03a9e155ca5ca0f4",
+          "tool": "agentfence_read_file"
+        },
+        {
+          "allowed": false,
+          "path": "../outside.txt",
+          "reason_code": "PATH_DENIED",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_8",
+          "tool": "agentfence_read_file"
+        },
+        {
+          "allowed": false,
+          "path": ".env",
+          "reason_code": "PATH_DENIED",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_9",
+          "tool": "agentfence_read_file"
+        },
+        {
+          "allowed": false,
+          "reason_code": "READONLY_TASK",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_10",
+          "route": "/v1/admin/tasks/task_342d13811c82100d6492f9050f5ab193/phase"
+        },
+        {
+          "allowed": false,
+          "reason_code": "READONLY_TASK",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_11",
+          "route": "/v1/admin/tasks/task_342d13811c82100d6492f9050f5ab193/grants"
+        },
+        {
+          "allowed": false,
+          "reason_code": "READONLY_TASK",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_12",
+          "tool": "write_file"
+        }
+      ],
+      "files": [
+        {
+          "bytes": 27,
+          "path": "Cargo.toml",
+          "sha256": "29ff13ed4c0f2255818a9bc6450fbfff1e1bcc88c913fb4c74b96d9562488e93"
+        },
+        {
+          "bytes": 24,
+          "path": "src/lib.rs",
+          "sha256": "1023500c5cad56dd39fa076a82b4339e02945ede14ff44e3b3b94eabeab416d0"
+        },
+        {
+          "bytes": 13,
+          "path": "src/main.rs",
+          "sha256": "536e506bb90914c243a12b397b9a998f85ae2cbd9ba02dfd03a9e155ca5ca0f4"
+        }
+      ],
+      "listed_files": 3,
+      "manifest_sha256": "33f1db3238997574b8e4d14d17ecda6cd4ae2dd5fda2fd2dd20b9330b292a6d2",
+      "project": "project-a",
+      "snapshot_id": "snap_e839d81a19e83eae0af9c3df59f4cf26",
+      "source_unchanged": true,
+      "task": {
+        "created_at": "2026-10-28T14:14:07.700007700Z",
+        "goal": "Review the generated fixture",
+        "instance_id": "inst_8a416acfe7260018501e59dee5b67d1e",
+        "permission_profile": "readonly",
+        "phase": "inspect",
+        "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_2",
+        "snapshot_id": "snap_e839d81a19e83eae0af9c3df59f4cf26",
+        "task_id": "task_342d13811c82100d6492f9050f5ab193",
+        "updated_at": "2026-10-28T14:14:07.700007700Z",
+        "workspace_id": "ws_0331cdfd7b239d397fc722e7120a4e04"
+      },
+      "verified_read": {
+        "bytes_read": 13,
+        "instance_id": "inst_8a416acfe7260018501e59dee5b67d1e",
+        "path": "src/main.rs",
+        "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_14",
+        "sha256": "536e506bb90914c243a12b397b9a998f85ae2cbd9ba02dfd03a9e155ca5ca0f4",
+        "snapshot_id": "snap_e839d81a19e83eae0af9c3df59f4cf26"
+      }
+    },
+    {
+      "calls": [
+        {
+          "allowed": true,
+          "path": "README.md",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_22",
+          "sha256": "5a90d2aa22aefb1906cbdc0f831a312029e995b00a8e788462c74b57f3e8cd08",
+          "tool": "agentfence_read_file"
+        },
+        {
+          "allowed": true,
+          "path": "config.yaml",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_23",
+          "sha256": "58b2e0c9e66599dd94f77b2ab49ca64f0b6841d32f4b0874c4c4b8fd5b9fb862",
+          "tool": "agentfence_read_file"
+        },
+        {
+          "allowed": true,
+          "path": "packages/worker.rs",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_24",
+          "sha256": "4fd28541a2d139f113d316fbe933ce7be42cd33cca70188e3ebd6bd34bcc9293",
+          "tool": "agentfence_read_file"
+        },
+        {
+          "allowed": false,
+          "path": "../outside.txt",
+          "reason_code": "PATH_DENIED",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_25",
+          "tool": "agentfence_read_file"
+        },
+        {
+          "allowed": false,
+          "path": ".env",
+          "reason_code": "PATH_DENIED",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_26",
+          "tool": "agentfence_read_file"
+        },
+        {
+          "allowed": false,
+          "reason_code": "READONLY_TASK",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_27",
+          "route": "/v1/admin/tasks/task_726b2e77a57a6fe7af484f28317b3c22/phase"
+        },
+        {
+          "allowed": false,
+          "reason_code": "READONLY_TASK",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_28",
+          "route": "/v1/admin/tasks/task_726b2e77a57a6fe7af484f28317b3c22/grants"
+        },
+        {
+          "allowed": false,
+          "reason_code": "READONLY_TASK",
+          "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_29",
+          "tool": "write_file"
+        }
+      ],
+      "files": [
+        {
+          "bytes": 12,
+          "path": "README.md",
+          "sha256": "5a90d2aa22aefb1906cbdc0f831a312029e995b00a8e788462c74b57f3e8cd08"
+        },
+        {
+          "bytes": 14,
+          "path": "config.yaml",
+          "sha256": "58b2e0c9e66599dd94f77b2ab49ca64f0b6841d32f4b0874c4c4b8fd5b9fb862"
+        },
+        {
+          "bytes": 19,
+          "path": "packages/worker.rs",
+          "sha256": "4fd28541a2d139f113d316fbe933ce7be42cd33cca70188e3ebd6bd34bcc9293"
+        }
+      ],
+      "listed_files": 3,
+      "manifest_sha256": "128e26ebbaec26f5ec0c5416a5d5d1b0fa98c4ad2661533a3912ed1d77001d35",
+      "project": "project-b",
+      "snapshot_id": "snap_ec792f78e32e74e9beb9f3c42edf1ea5",
+      "source_unchanged": true,
+      "task": {
+        "created_at": "2026-10-28T14:14:08.961053900Z",
+        "goal": "Review the generated fixture",
+        "instance_id": "inst_8a416acfe7260018501e59dee5b67d1e",
+        "permission_profile": "readonly",
+        "phase": "inspect",
+        "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_19",
+        "snapshot_id": "snap_ec792f78e32e74e9beb9f3c42edf1ea5",
+        "task_id": "task_726b2e77a57a6fe7af484f28317b3c22",
+        "updated_at": "2026-10-28T14:14:08.961053900Z",
+        "workspace_id": "ws_8f9b8cb8a0bfa75f16ef1bc8e7b506cd"
+      },
+      "verified_read": {
+        "bytes_read": 19,
+        "instance_id": "inst_8a416acfe7260018501e59dee5b67d1e",
+        "path": "packages/worker.rs",
+        "request_id": "req_inst_8a416acfe7260018501e59dee5b67d1e_31",
+        "sha256": "4fd28541a2d139f113d316fbe933ce7be42cd33cca70188e3ebd6bd34bcc9293",
+        "snapshot_id": "snap_ec792f78e32e74e9beb9f3c42edf1ea5"
+      }
+    }
+  ],
+  "scope": "Generated fixtures; official rmcp client and real MCP subprocess; no LLM review, OS isolation or performance claim",
+  "source_commit": "77d3c8e28540c8c683d8179507730c4db652f56a"
+}

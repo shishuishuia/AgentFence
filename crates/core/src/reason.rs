@@ -1,9 +1,9 @@
 //! Stable machine-readable outcomes shared by core rules and HTTP adapters.
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 /// A stable outcome. Clients should use this enum's JSON spelling, not messages.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ReasonCode {
     /// The operation completed successfully.
@@ -22,6 +22,14 @@ pub enum ReasonCode {
     TaskTokenMismatch,
     /// The current task stage forbids this tool.
     InvalidStage,
+    /// The immutable task profile forbids editing or issuing write grants.
+    ReadonlyTask,
+    /// A workspace preview expired, was consumed or is unknown.
+    PreviewExpired,
+    /// Source contents changed after administrator preview.
+    SnapshotChanged,
+    /// A configured import/traversal/count/size budget was exceeded.
+    ImportLimitExceeded,
     /// The path is not an exact allowed regular-file resource.
     PathDenied,
     /// The write request did not supply a grant ID.
@@ -69,6 +77,7 @@ impl ReasonCode {
             Self::RoleDenied
             | Self::TaskTokenMismatch
             | Self::InvalidStage
+            | Self::ReadonlyTask
             | Self::PathDenied
             | Self::LeaseRequired
             | Self::LeaseNotFound
@@ -78,8 +87,11 @@ impl ReasonCode {
             | Self::LeaseUsedUp => 403,
             Self::TaskNotFound | Self::FileNotFound | Self::NotFound => 404,
             Self::MethodNotAllowed => 405,
-            Self::InvalidTransition | Self::GrantConflict => 409,
-            Self::PayloadTooLarge => 413,
+            Self::InvalidTransition
+            | Self::GrantConflict
+            | Self::PreviewExpired
+            | Self::SnapshotChanged => 409,
+            Self::PayloadTooLarge | Self::ImportLimitExceeded => 413,
             Self::NonUtf8Content => 422,
             Self::IoError => 500,
             Self::AuditUnavailable => 503,
@@ -98,6 +110,12 @@ impl ReasonCode {
             Self::RoleDenied => "token role cannot access this endpoint",
             Self::TaskTokenMismatch => "agent token is bound to another task",
             Self::InvalidStage => "tool is not permitted in the current phase",
+            Self::ReadonlyTask => "readonly tasks cannot edit or receive write grants",
+            Self::PreviewExpired => "workspace preview expired, consumed or unknown; preview again",
+            Self::SnapshotChanged => "source changed since approval preview; preview again",
+            Self::ImportLimitExceeded => {
+                "workspace import exceeds a file, byte, entry or preview budget"
+            }
             Self::PathDenied => "path is not an allowed regular file",
             Self::LeaseRequired => "write_file requires an explicit grant_id",
             Self::LeaseNotFound => "grant not found in this task",

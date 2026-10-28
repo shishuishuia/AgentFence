@@ -19,6 +19,12 @@ pub struct Event {
     pub request_id: String,
     /// Owning task, or null if untrusted/unknown.
     pub task_id: Option<String>,
+    /// Registered workspace identity, when known; never an absolute root.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub workspace_id: Option<String>,
+    /// Immutable imported version, when this operation uses a snapshot.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub snapshot_id: Option<String>,
     /// Server UTC RFC3339 timestamp.
     pub timestamp: String,
     /// Phase observed within the task execution lock.
@@ -56,6 +62,8 @@ impl Event {
             instance_id: String::new(),
             request_id: request_id.into(),
             task_id: None,
+            workspace_id: None,
+            snapshot_id: None,
             timestamp: now.utc.to_rfc3339(),
             phase: None,
             event_type: kind.into(),

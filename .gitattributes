@@ -13,3 +13,7 @@
 /results/member-a/permission-rss/** -text
 /results/member-a/permission-rss/**/*.csv whitespace=cr-at-eol
 
+
+# Preserve raw v2 evidence bytes and its fixed-length synthetic fixture.
+/results/member-a/v2-77d3c8e/** -text
+/results/member-a/v2-77d3c8e/benchmark/project/benchmark.rs -whitespace
