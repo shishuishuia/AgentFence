@@ -14,6 +14,7 @@ pub mod grant;
 pub mod path;
 mod phase;
 pub mod policy;
+mod profile;
 pub mod reason;
 pub mod time;
 
@@ -21,5 +22,6 @@ pub use grant::{Grant, GrantSpec, GrantStatus};
 pub use path::{PathError, resolve_existing, validate_relative};
 pub use phase::Phase;
 pub use policy::{Policy, Tool, ToolCall};
+pub use profile::PermissionProfile;
 pub use reason::ReasonCode;
 pub use time::TimePoint;
