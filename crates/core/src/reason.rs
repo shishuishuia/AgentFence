@@ -1,9 +1,9 @@
 //! Stable machine-readable outcomes shared by core rules and HTTP adapters.
 
-use serde::Serialize;
+use serde::{Deserialize, Serialize};
 
 /// A stable outcome. Clients should use this enum's JSON spelling, not messages.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 pub enum ReasonCode {
     /// The operation completed successfully.
