@@ -77,6 +77,16 @@ cargo run --release --locked --target-dir target/v2 -p agentfence-mcp-server --e
 
 这是单机、单文件端到端读操作的观测。直接客户端与 Broker 运行在基准进程中，MCP 为独立进程；差值包括 JSON-RPC、进程通信、带行号输出和适配处理，不能说是纯协议开销。它不包含远程模型、真实网络、CPU/RSS 或统计显著性结论，不能与不同提交的历史实验直接比较。
 
+## 独立核验证据
+
+在仓库根目录使用 Python 3.9 或以上版本，分别对重放目录和基准目录执行：
+
+```powershell
+python bench/verify_mcp_v2.py <结果目录> --self-test --source-match .
+```
+
+验证器读取原始文件和审计记录，重算文件哈希、请求关联和基准分位数；`--self-test` 检查篡改后的数据会被拒绝，`--source-match .` 比较当前 Cargo 配置和 Rust 源码与证据所记提交。验证结果不能证明模型建议正确，也不能替代真实模型审查。
+
 ## 验证
 
 ```powershell
