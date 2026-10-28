@@ -64,7 +64,9 @@ async function start() {
     <h2>MCP 只读审查</h2>
     <p v-if="error" class="notice" role="alert">{{ error }}</p>
     <template v-if="value">
-      <button v-if="value.state === 'idle'" :disabled="busy" @click="start">开始 MCP 审查</button>
+      <button class="button primary" v-if="value.state === 'idle'" :disabled="busy" @click="start">
+        开始 MCP 审查
+      </button>
       <p role="status">
         状态：{{ value.state }} · 工具调用 {{ value.call_count || 0 }} 次 · 已读
         {{ value.read_file_count || 0 }} 个文件
@@ -90,5 +92,16 @@ async function start() {
   white-space: pre-wrap;
   overflow-wrap: anywhere;
   font: inherit;
+}
+button {
+  margin-top: 16px;
+}
+ul {
+  max-height: 360px;
+  overflow-y: auto;
+  overflow-wrap: anywhere;
+  font-size: 13px;
+  line-height: 1.9;
+  padding-left: 20px;
 }
 </style>

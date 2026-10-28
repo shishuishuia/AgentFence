@@ -5,10 +5,12 @@ import json
 import threading
 import time
 import unittest
+from unittest.mock import Mock, patch
+import subprocess
 
 from web_proxy.config import Config
 from web_proxy.server import create_server
-from web_proxy.workspaces import WorkspaceManager, ManagementError, preview_shape, workspace_shape
+from web_proxy.workspaces import WorkspaceManager, ManagementError, NativePicker, preview_shape, workspace_shape
 
 PREVIEW = {"preview_id": "pre_test", "manifest_sha256": "a" * 64, "expires_at": "2026-10-29T00:00:00Z",
            "allowed_file_count": 3, "excluded_entry_count": 1, "total_bytes": 50,
@@ -183,6 +185,29 @@ class WorkspaceTests(unittest.TestCase):
             body = {"workspace_id": "ws_test", "goal": "review", "permission_profile": "readonly", **extra}
             self.assertEqual(self.request("/api/admin/tasks", "POST", body)[0], 400)
         self.assertEqual(self.backend.calls, [])
+
+    def test_workspace_name_enforces_rust_byte_bound(self):
+        sid, _ = self.select()
+        status, _, _ = self.request("/api/admin/workspaces/confirm", "POST", {
+            "selection_id": sid, "display_name": "😀" * 80, "profile": "readonly_snapshot"})
+        self.assertEqual(status, 400)
+        self.assertEqual([x[0] for x in self.backend.calls], ["preview"])
+
+
+class PickerLifecycleTests(unittest.TestCase):
+    def test_timed_out_dialog_is_reaped_and_can_be_opened_again(self):
+        first, second = Mock(), Mock()
+        first.communicate.side_effect = subprocess.TimeoutExpired("owned-picker", 180)
+        first.poll.return_value = None
+        second.communicate.return_value = (b'{"path":null}', None)
+        second.returncode = 0
+        picker = NativePicker()
+        with patch("web_proxy.workspaces.subprocess.Popen", side_effect=[first, second]):
+            with self.assertRaises(ManagementError):
+                picker()
+            first.terminate.assert_called_once()
+            self.assertFalse(picker.closed)
+            self.assertIsNone(picker())
 
 
 if __name__ == "__main__":

@@ -122,7 +122,7 @@ async function loadExcluded() {
     <p v-if="error" class="notice" role="alert">{{ error }}</p>
     <section class="panel">
       <h2>导入项目</h2>
-      <button :disabled="busy || !connected" @click="choose">
+      <button class="button primary" :disabled="busy || !connected" @click="choose">
         {{ busy ? '正在处理…' : '选择本机文件夹' }}
       </button>
       <p v-if="selection?.state === 'pending'" role="status">
@@ -155,6 +155,7 @@ async function loadExcluded() {
           </ul>
         </details>
         <button
+          class="button"
           v-if="selection.preview.excluded.length < selection.preview.excluded_file_count"
           :disabled="busy"
           @click="loadExcluded"
@@ -166,6 +167,7 @@ async function loadExcluded() {
           >工作区名称 <input v-model="name" maxlength="80" placeholder="例如：示例 Rust 项目"
         /></label>
         <button
+          class="button primary"
           :disabled="
             busy ||
             !name.trim() ||
@@ -197,3 +199,33 @@ async function loadExcluded() {
     </section>
   </section>
 </template>
+<style scoped>
+.panel > button {
+  margin-top: 16px;
+}
+.mono {
+  overflow-wrap: anywhere;
+}
+details {
+  margin: 16px 0;
+  font-size: 13px;
+}
+details ul {
+  max-height: 320px;
+  overflow-y: auto;
+  padding-left: 20px;
+  overflow-wrap: anywhere;
+  line-height: 1.9;
+}
+label {
+  display: block;
+  margin-top: 20px;
+  font-size: 13px;
+}
+input {
+  display: block;
+  width: min(100%, 360px);
+  margin-top: 8px;
+  box-sizing: border-box;
+}
+</style>

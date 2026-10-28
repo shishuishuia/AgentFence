@@ -84,7 +84,7 @@ def handle_admin(handler, manager, path, query):
             if set(body) != {"workspace_id", "goal", "permission_profile"} or body["permission_profile"] != "readonly" or not isinstance(body["workspace_id"], str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", body["workspace_id"]) or not isinstance(body["goal"], str) or not 1 <= len(body["goal"].strip()) <= 1000 or len(body["goal"].encode("utf-8")) > 4000 or any(ord(x) < 32 and x not in "\n\t" for x in body["goal"]):
                 raise ManagementError(400, "INVALID_REQUEST", "只读任务参数无效。")
             return handler.reply(201, manager.create_task(body["workspace_id"], body["goal"].strip()))
-        if set(body) != {"selection_id", "display_name", "profile"} or body["profile"] != "readonly_snapshot" or not isinstance(body["selection_id"], str) or not re.fullmatch(r"sel_[a-f0-9]{32}", body["selection_id"]) or not isinstance(body["display_name"], str) or not 1 <= len(body["display_name"].strip()) <= 80 or any(ord(x) < 32 for x in body["display_name"]):
+        if set(body) != {"selection_id", "display_name", "profile"} or body["profile"] != "readonly_snapshot" or not isinstance(body["selection_id"], str) or not re.fullmatch(r"sel_[a-f0-9]{32}", body["selection_id"]) or not isinstance(body["display_name"], str) or not 1 <= len(body["display_name"].strip()) <= 80 or len(body["display_name"].encode("utf-8")) > 256 or any(ord(x) < 32 for x in body["display_name"]):
             raise ManagementError(400, "INVALID_REQUEST", "工作区确认参数无效。")
         return handler.reply(201, manager.confirm(sid, body["selection_id"], body["display_name"].strip()))
     except ManagementError as error:

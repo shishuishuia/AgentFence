@@ -75,6 +75,16 @@ def run(server_bin, mcp_bin, output, *, model=None):
             if status != 200:
                 raise RuntimeError("session failed")
             cookie, csrf = headers["Set-Cookie"].split(";")[0], value["csrf_token"]
+            for label, route, body, override, expected in (
+                ("foreign-origin", "/picker/start", {}, {"Origin": "https://evil.example"}, 403),
+                ("bad-csrf", "/picker/start", {}, {"X-AgentFence-CSRF": "wrong"}, 403),
+                ("arbitrary-root", "/picker/start", {"root": "/"}, {}, 400),
+                ("unbound-session", "/workspaces", None, {"Cookie": "agentfence_admin=unknown"}, 401),
+                ("editable-profile", "/tasks", {"workspace_id": "ws_test", "goal": "review", "permission_profile": "controlled_edit"}, {}, 400),
+                ("browser-token-injection", "/tasks", {"workspace_id": "ws_test", "goal": "review", "permission_profile": "readonly", "agent_token": "test-only"}, {}, 400),
+            ):
+                status, _, value = request(route, body, override)
+                denied(label, status, value, expected)
             for project in projects:
                 before = digest_tree(project)
                 status, _, value = request("/picker/start", {})
@@ -88,9 +98,13 @@ def run(server_bin, mcp_bin, output, *, model=None):
                     time.sleep(.02)
                 if preview["state"] != "ready" or preview["preview"]["allowed_file_count"] < 3:
                     raise RuntimeError("preview failed")
+                status, _, value = request("/picker/" + selection, headers={"Cookie": "agentfence_admin=unknown"})
+                denied(project.name + ":selection-session", status, value, 401)
                 status, _, workspace = request("/workspaces/confirm", {"selection_id": selection, "display_name": project.name, "profile": "readonly_snapshot"})
                 if status != 201:
                     raise RuntimeError("import failed")
+                status, _, value = request("/workspaces/confirm", {"selection_id": selection, "display_name": project.name, "profile": "readonly_snapshot"})
+                denied(project.name + ":selection-replay", status, value, 409)
                 status, _, public_task = request("/tasks", {"workspace_id": workspace["workspace_id"], "goal": "检查代码问题，引用文件路径和行号，提出修改建议。", "permission_profile": "readonly"})
                 if status != 201 or "agent_token" in public_task:
                     raise RuntimeError("task creation or credential boundary failed")

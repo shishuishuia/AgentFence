@@ -96,7 +96,7 @@ def preview_shape(value):
     for key in ("allowed_file_count", "excluded_entry_count", "total_bytes"):
         if type(value.get(key)) is not int or value[key] < 0:
             raise invalid_response()
-    if not 1 <= value["allowed_file_count"] <= 1000 or value["total_bytes"] > 20 * 1024 * 1024:
+    if not 1 <= value["allowed_file_count"] <= 1000 or value["total_bytes"] > 20 * 1024 * 1024 or value["excluded_entry_count"] > 20000:
         raise invalid_response()
     excluded = value.get("excluded", [])
     if not isinstance(excluded, list) or len(excluded) > 200 or any(
@@ -166,7 +166,7 @@ class WorkspaceBackend:
 
     def workspaces(self):
         value = self.request("GET", "/v1/admin/workspaces")
-        if not isinstance(value.get("items"), list):
+        if not isinstance(value.get("items"), list) or len(value["items"]) > 32 or any(not isinstance(x, dict) for x in value["items"]):
             raise invalid_response()
         return {"items": [workspace_shape(item) for item in value["items"] if item.get("import_mode") != "configured"]}
 

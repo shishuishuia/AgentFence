@@ -2,6 +2,7 @@
 
 import asyncio
 import importlib.util
+import json
 import os
 from pathlib import Path
 import secrets
@@ -57,6 +58,22 @@ class RustMcpTests(unittest.TestCase):
                 self.assertFalse(value["report"])
                 from integrations.client import AdminClient, BrokerHttp
                 self.assertEqual(AdminClient(BrokerHttp(broker.base_url), token).task(task["task_id"]).require(200)["phase"], "done")
+                next_task = backend.create_readonly_task(workspace["workspace_id"], "controlled model test")
+
+                class ControlledModel:
+                    """Test double only; this is not evidence of a live LLM call."""
+                    rounds = 0
+                    def complete(self, messages, tools):
+                        if token in json.dumps(messages) or next_task["agent_token"] in json.dumps(messages):
+                            raise AssertionError("credential entered model context")
+                        self.rounds += 1
+                        if self.rounds == 1:
+                            return {"role": "assistant", "content": None, "tool_calls": [{"id": "call_test", "type": "function", "function": {"name": "agentfence_read_file", "arguments": '{"path":"main.rs"}'}}]}, {}
+                        return {"role": "assistant", "content": "Controlled test report: main.rs:1, lib.rs:1, README.md:1."}, {}
+                client = ReviewClient(BIN / ("agentfence-mcp-server" + SUFFIX), broker.base_url, next_task, next_task["agent_token"], token, model=ControlledModel())
+                result = asyncio.run(client.run())
+                self.assertEqual(len(result["calls"]), 6)
+                self.assertIn("Controlled test report", result["report"])
 
 
 if __name__ == "__main__":

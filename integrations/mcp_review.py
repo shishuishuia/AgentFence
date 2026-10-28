@@ -84,6 +84,8 @@ class ReviewClient:
             return safe
         if value.get("snapshot_id") != self.summary["snapshot_id"] or value.get("instance_id") != self.summary["instance_id"] or not isinstance(value.get("request_id"), str):
             raise ReviewError("MCP 任务快照或服务实例发生变化。")
+        if name != "agentfence_read_file" and value.get("task_id") != self.summary["task_id"]:
+            raise ReviewError("MCP 返回了其他任务的信息。")
         evidence = {"tool": name, "request_id": value["request_id"], "ok": True}
         if name == "agentfence_read_file":
             content, path = value.get("content"), arguments.get("path")
@@ -104,6 +106,19 @@ class ReviewClient:
         except BaseException as error:
             if isinstance(error, (KeyboardInterrupt, SystemExit)):
                 raise
+            def public_failure(value):
+                if isinstance(value, (ReviewError, ModelError)):
+                    return str(value)
+                if isinstance(value, OSError) and getattr(value, "winerror", None) == 4551:
+                    return "Windows 应用程序控制策略阻止启动 Rust MCP；请使用已验证可运行的演示环境。"
+                for child in getattr(value, "exceptions", []):
+                    result = public_failure(child)
+                    if result:
+                        return result
+                return None
+            safe_message = public_failure(error)
+            if safe_message:
+                raise ReviewError(safe_message) from None
             raise ReviewError("MCP 审查连接失败、超时或协议无效，本次运行已停止。") from None
 
     async def _run(self):
