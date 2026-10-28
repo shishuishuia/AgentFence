@@ -131,6 +131,12 @@ fn excluded_name(name: &str) -> bool {
             "service-account",
             "id_rsa",
             "id_ed25519",
+            "id_ecdsa",
+            "id_dsa",
+            "auth.json",
+            "token",
+            "password",
+            "keystore",
             "kubeconfig",
         ]
         .iter()

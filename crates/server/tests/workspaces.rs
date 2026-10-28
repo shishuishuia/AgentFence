@@ -209,6 +209,8 @@ async fn exclusions_are_visible_and_never_readable_by_agents() {
             ("main.rs", "safe"),
             (".env", "SIMULATED_KEY"),
             ("credentials.json", "SIMULATED_CREDENTIAL"),
+            ("auth.json", "SIMULATED_AUTH"),
+            ("token.json", "SIMULATED_TOKEN"),
             (".git/config", "private"),
             ("target/generated.rs", "generated"),
             ("node_modules/package/index.rs", "dependency"),
@@ -218,11 +220,13 @@ async fn exclusions_are_visible_and_never_readable_by_agents() {
     fs::write(source.join("broken.txt"), [0xff, 0xfe]).unwrap();
     let w = f.import(&source).await;
     assert_eq!(w["allowed_file_count"], 1);
-    assert_eq!(w["excluded_entry_count"], 7);
+    assert_eq!(w["excluded_entry_count"], 9);
     let task = f.task(&w).await;
     for path in [
         ".env",
         "credentials.json",
+        "auth.json",
+        "token.json",
         "target/generated.rs",
         "broken.txt",
         "../outside.txt",
@@ -476,5 +480,73 @@ async fn directory_links_are_excluded_and_cannot_be_selected_as_roots() {
         .await
         .1["reason_code"],
         "PATH_DENIED"
+    );
+}
+
+#[tokio::test]
+async fn one_preview_can_commit_exactly_one_workspace_under_concurrent_confirmation() {
+    let f = Fixture::new();
+    let source = f.project("project", &[("main.rs", "safe")]);
+    let preview = f.preview(&source).await;
+    let (a, b) = tokio::join!(f.confirm(&preview), f.confirm(&preview));
+    let mut statuses = [a.0, b.0];
+    statuses.sort();
+    assert_eq!(statuses, [201, 409]);
+    let (_, list) = f
+        .call("GET", "/v1/admin/workspaces", ADMIN, Value::Null)
+        .await;
+    assert_eq!(list["items"].as_array().unwrap().len(), 1);
+}
+
+struct GateSink(Arc<std::sync::atomic::AtomicBool>);
+impl agentfence_server::audit::AuditSink for GateSink {
+    fn append(&mut self, _: &[u8]) -> std::io::Result<()> {
+        if self.0.load(Ordering::SeqCst) {
+            Err(std::io::Error::other("injected audit failure"))
+        } else {
+            Ok(())
+        }
+    }
+}
+
+#[tokio::test]
+async fn failed_registration_audit_does_not_commit_a_workspace_and_closes_imports() {
+    let root = tempfile::tempdir().unwrap();
+    let clock = Arc::new(ManualClock::default());
+    let fail = Arc::new(std::sync::atomic::AtomicBool::new(false));
+    let broker = Broker::with_dependencies(
+        Configuration::empty(),
+        ADMIN,
+        clock.clone(),
+        Box::new(GateSink(fail.clone())),
+        Arc::new(LocalFiles),
+    )
+    .unwrap();
+    let f = Fixture {
+        root,
+        router: app(broker),
+        clock,
+    };
+    let source = f.project("project", &[("main.rs", "safe")]);
+    let preview = f.preview(&source).await;
+    fail.store(true, Ordering::SeqCst);
+    assert_eq!(
+        f.confirm(&preview).await.1["reason_code"],
+        "AUDIT_UNAVAILABLE"
+    );
+    let (_, list) = f
+        .call("GET", "/v1/admin/workspaces", ADMIN, Value::Null)
+        .await;
+    assert!(list["items"].as_array().unwrap().is_empty());
+    assert_eq!(
+        f.call(
+            "POST",
+            "/v1/admin/workspace-previews",
+            ADMIN,
+            json!({"source_path":f.root.path().join("missing")})
+        )
+        .await
+        .1["reason_code"],
+        "AUDIT_UNAVAILABLE"
     );
 }

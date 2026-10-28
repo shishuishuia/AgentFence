@@ -1,4 +1,4 @@
-//! Authenticated HTTP tool broker for trusted static workspaces.
+//! Authenticated HTTP tool broker for configured roots and approved snapshots.
 //!
 //! The core supplies deterministic rules; this crate supplies HTTP validation,
 //! task-serialized I/O, intent/result audit and read-only snapshots. This is a
