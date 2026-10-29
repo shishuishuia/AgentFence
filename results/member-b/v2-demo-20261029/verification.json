@@ -1,0 +1,59 @@
+{
+  "recorded_at": "2026-10-29T07:05:26.062065+00:00",
+  "platform": "Windows-11-10.0.26200-SP0",
+  "python": "3.12.14",
+  "git_base": "c5e9685992758ba03a689c6b355c8ab5bb28c0b8",
+  "working_tree_dirty": true,
+  "source_files": {
+    "front/src/components/McpReviewPanel.vue": "99187afcebaec20efdbe042ebd838e28dae4b78133f325a9e7294ff7ec0ff793",
+    "front/src/__tests__/McpReview.spec.ts": "6792918759afcba1f610055c86b0d42a23ff427c79799949a1f4e79f574fcb84"
+  },
+  "frontend": {
+    "tests_passed": 53,
+    "lint": "passed",
+    "type_check": "passed",
+    "production_build": "passed"
+  },
+  "real_sdk_tests": {
+    "tests_passed": 3,
+    "controlled_model_is_live_api": false
+  },
+  "acceptance": {
+    "projects": 2,
+    "negative_requests": 22,
+    "mode": "offline_mcp_replay",
+    "run_id": "local-v2-b-20261029T044746Z-3b1202d9",
+    "native_dialog": "deterministic double"
+  },
+  "native_ui": {
+    "picker_observation": "user confirmed visible native dialog and selected directory",
+    "project": "demo/fixtures/v2-project-a",
+    "task_id": "task_4e1a1ef78623fcef082ac29df08bf8ca",
+    "workspace_id": "ws_309d95417b52c5cf33b7e4f3c7b7a012",
+    "snapshot_id": "snap_a1067c648277ada0d320c69e2c36b8f1",
+    "state": "completed",
+    "phase": "done",
+    "displayed_calls": 5,
+    "read_files": 3,
+    "task_audit_events": 12,
+    "mode": "offline_mcp_replay"
+  },
+  "execution": {
+    "normal_local_execution_passed": true,
+    "restricted_execution_health_failed": true,
+    "windows_security_settings_changed": false,
+    "winerror_4551_reproduced_in_this_run": false
+  },
+  "limits": [
+    "not a clean install",
+    "no live DeepSeek API run",
+    "no complete demo recording",
+    "native UI run predates final startup-error-message-only adjustment"
+  ],
+  "archive_sha256": {
+    "acceptance-evidence.json": "06cc89b281654efa2e2874dbb987e040844a7be09df2679decf998086159738f",
+    "acceptance-manifest.json": "d1d98991ded597ec0dba868f04769fb6b3c7d6c923f45cc943d9b40be8cc2738",
+    "acceptance-audit.jsonl": "523abe835dd4e5cb12b3bd647e5e2a27c87d15b45bb2515af4b99c5f9beb7951",
+    "native-ui-audit.jsonl": "7c41f68c0592b1dfcc5b9fe773e31959eb8bb663675d55e066ae65535c2d7168"
+  }
+}

@@ -1,7 +1,8 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { flushPromises, mount } from '@vue/test-utils'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
+import { enableAutoUnmount, flushPromises, mount } from '@vue/test-utils'
 import McpReviewPanel from '@/components/McpReviewPanel.vue'
 import { management, openManagement } from '@/api/workspaces'
+import { ApiError } from '@/api/client'
 vi.mock('@/api/workspaces', () => ({
   management: vi.fn<typeof management>(),
   openManagement: vi.fn<typeof openManagement>(),
@@ -10,6 +11,8 @@ beforeEach(() => {
   vi.resetAllMocks()
   vi.mocked(openManagement).mockResolvedValue(undefined)
 })
+enableAutoUnmount(afterEach)
+afterEach(() => vi.useRealTimers())
 describe('MCP 审查状态', () => {
   it('离线重放明确标注未调用模型', async () => {
     vi.mocked(management).mockResolvedValue({
@@ -48,5 +51,188 @@ describe('MCP 审查状态', () => {
     await button.trigger('click')
     expect(management).toHaveBeenCalledTimes(2)
     wrapper.unmount()
+  })
+  it('运行中一次查询断线后自动恢复，并清除旧错误', async () => {
+    vi.useFakeTimers()
+    vi.mocked(management)
+      .mockResolvedValueOnce({ state: 'running', call_count: 2 })
+      .mockRejectedValueOnce(new ApiError(0, 'NETWORK_ERROR', '连接中断'))
+      .mockResolvedValueOnce({ state: 'completed', call_count: 5 })
+    const wrapper = mount(McpReviewPanel, { props: { taskId: 'task_test' } })
+    await flushPromises()
+    await vi.advanceTimersByTimeAsync(1000)
+    expect(wrapper.text()).toContain('连接中断')
+    expect(wrapper.text()).toContain('running')
+    await vi.advanceTimersByTimeAsync(1000)
+    expect(wrapper.text()).toContain('completed')
+    expect(wrapper.find('[role="alert"]').exists()).toBe(false)
+    await vi.advanceTimersByTimeAsync(10000)
+    expect(management).toHaveBeenCalledTimes(3)
+    expect(openManagement).toHaveBeenCalledTimes(1)
+  })
+  it('连续失败仅退避重试三次，手动查询后可以恢复', async () => {
+    vi.useFakeTimers()
+    vi.mocked(management).mockRejectedValue(new Error('暂时离线'))
+    const wrapper = mount(McpReviewPanel, { props: { taskId: 'task_test' } })
+    await flushPromises()
+    expect(management).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(999)
+    expect(management).toHaveBeenCalledTimes(1)
+    await vi.advanceTimersByTimeAsync(1)
+    expect(management).toHaveBeenCalledTimes(2)
+    await vi.advanceTimersByTimeAsync(1999)
+    expect(management).toHaveBeenCalledTimes(2)
+    await vi.advanceTimersByTimeAsync(1)
+    expect(management).toHaveBeenCalledTimes(3)
+    await vi.advanceTimersByTimeAsync(4000)
+    expect(management).toHaveBeenCalledTimes(4)
+    expect(wrapper.text()).toContain('自动查询已暂停')
+    await vi.advanceTimersByTimeAsync(60000)
+    expect(management).toHaveBeenCalledTimes(4)
+    vi.mocked(management).mockResolvedValue({ state: 'completed' })
+    await wrapper.get('button').trigger('click')
+    await flushPromises()
+    expect(wrapper.text()).toContain('completed')
+    expect(wrapper.find('[role="alert"]').exists()).toBe(false)
+  })
+  it('手动查询替换待执行轮询且不产生并发请求', async () => {
+    vi.useFakeTimers()
+    let finish!: (value: unknown) => void
+    vi.mocked(management)
+      .mockResolvedValueOnce({ state: 'running' })
+      .mockImplementationOnce(
+        () =>
+          new Promise((resolve) => {
+            finish = resolve
+          }),
+      )
+      .mockResolvedValue({ state: 'completed' })
+    const wrapper = mount(McpReviewPanel, { props: { taskId: 'task_test' } })
+    await flushPromises()
+    await wrapper.get('button').trigger('click')
+    await wrapper.get('button').trigger('click')
+    await vi.advanceTimersByTimeAsync(1000)
+    expect(management).toHaveBeenCalledTimes(2)
+    finish({ state: 'running' })
+    await flushPromises()
+    await vi.advanceTimersByTimeAsync(1000)
+    expect(management).toHaveBeenCalledTimes(3)
+    expect(wrapper.text()).toContain('completed')
+    expect(vi.getTimerCount()).toBe(0)
+  })
+  it('查询超时取消请求，并能通过后续查询恢复', async () => {
+    vi.useFakeTimers()
+    vi.mocked(management)
+      .mockImplementationOnce(() => new Promise(() => {}))
+      .mockResolvedValueOnce({ state: 'completed' })
+    const wrapper = mount(McpReviewPanel, { props: { taskId: 'task_test' } })
+    await flushPromises()
+    const signal = vi.mocked(management).mock.calls[0]![2]!
+    await vi.advanceTimersByTimeAsync(10000)
+    expect(signal.aborted).toBe(true)
+    expect(wrapper.text()).toContain('请求超时')
+    await vi.advanceTimersByTimeAsync(1000)
+    expect(wrapper.text()).toContain('completed')
+    expect(management).toHaveBeenCalledTimes(2)
+  })
+  it('管理会话初始化失败后允许手动恢复，不自动重发初始化', async () => {
+    vi.useFakeTimers()
+    vi.mocked(openManagement)
+      .mockRejectedValueOnce(new Error('会话连接失败'))
+      .mockResolvedValue(undefined)
+    vi.mocked(management).mockResolvedValue({ state: 'completed' })
+    const wrapper = mount(McpReviewPanel, { props: { taskId: 'task_test' } })
+    await flushPromises()
+    await vi.advanceTimersByTimeAsync(60000)
+    expect(openManagement).toHaveBeenCalledTimes(1)
+    expect(management).not.toHaveBeenCalled()
+    await wrapper.get('button').trigger('click')
+    await flushPromises()
+    expect(openManagement).toHaveBeenCalledTimes(2)
+    expect(wrapper.text()).toContain('completed')
+  })
+  it('会话失效时停止自动查询，手动刷新重新建立会话', async () => {
+    vi.useFakeTimers()
+    vi.mocked(management)
+      .mockRejectedValueOnce(new ApiError(401, 'SESSION_EXPIRED', '会话已失效'))
+      .mockResolvedValue({ state: 'completed' })
+    const wrapper = mount(McpReviewPanel, { props: { taskId: 'task_test' } })
+    await flushPromises()
+    await vi.advanceTimersByTimeAsync(60000)
+    expect(management).toHaveBeenCalledTimes(1)
+    await wrapper.get('button').trigger('click')
+    await flushPromises()
+    expect(openManagement).toHaveBeenCalledTimes(2)
+    expect(wrapper.text()).toContain('completed')
+  })
+  it('启动结果未知后只查询状态，断线恢复也不重发启动', async () => {
+    vi.useFakeTimers()
+    vi.mocked(management)
+      .mockResolvedValueOnce({ state: 'idle' })
+      .mockImplementationOnce(() => new Promise(() => {}))
+      .mockRejectedValueOnce(new Error('查询断线'))
+      .mockResolvedValueOnce({ state: 'completed' })
+    const wrapper = mount(McpReviewPanel, { props: { taskId: 'task_test' } })
+    await flushPromises()
+    await wrapper.get('button.primary').trigger('click')
+    await vi.advanceTimersByTimeAsync(10000)
+    await vi.advanceTimersByTimeAsync(1000)
+    expect(wrapper.text()).toContain('completed')
+    const calls = vi.mocked(management).mock.calls
+    expect(calls.filter(([path]) => path.endsWith('/start'))).toHaveLength(1)
+    expect(calls.filter(([, body]) => body !== undefined)).toHaveLength(1)
+    expect(calls[1]![2]!.aborted).toBe(true)
+  })
+  it.each([403, 409, 503])('启动被拒绝 HTTP %s 后保留原因，直到状态确认已启动', async (status) => {
+    vi.mocked(management)
+      .mockResolvedValueOnce({ state: 'idle' })
+      .mockRejectedValueOnce(new ApiError(status, 'REVIEW_UNAVAILABLE', '审查暂时无法启动'))
+      .mockResolvedValueOnce({ state: 'idle' })
+      .mockResolvedValueOnce({ state: 'idle' })
+      .mockResolvedValueOnce({ state: 'completed' })
+    const wrapper = mount(McpReviewPanel, { props: { taskId: 'task_test' } })
+    await flushPromises()
+    await wrapper.get('button.primary').trigger('click')
+    await flushPromises()
+    expect(wrapper.text()).toContain('idle')
+    expect(wrapper.get('[role="alert"]').text()).toBe('审查暂时无法启动')
+    await wrapper.get('button:not(.primary)').trigger('click')
+    await flushPromises()
+    expect(wrapper.get('[role="alert"]').text()).toBe('审查暂时无法启动')
+    await wrapper.get('button:not(.primary)').trigger('click')
+    await flushPromises()
+    expect(wrapper.text()).toContain('completed')
+    expect(wrapper.find('[role="alert"]').exists()).toBe(false)
+    expect(vi.mocked(management).mock.calls.filter(([path]) => path.endsWith('/start'))).toHaveLength(1)
+  })
+  it('卸载取消在途请求，即使请求迟到也不继续轮询', async () => {
+    vi.useFakeTimers()
+    let finish!: (value: unknown) => void
+    vi.mocked(management).mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          finish = resolve
+        }),
+    )
+    const wrapper = mount(McpReviewPanel, { props: { taskId: 'task_test' } })
+    await flushPromises()
+    const signal = vi.mocked(management).mock.calls[0]![2]!
+    wrapper.unmount()
+    expect(signal.aborted).toBe(true)
+    finish({ state: 'running' })
+    await flushPromises()
+    await vi.advanceTimersByTimeAsync(60000)
+    expect(management).toHaveBeenCalledTimes(1)
+    expect(vi.getTimerCount()).toBe(0)
+  })
+  it('卸载会清理待执行的断线重试', async () => {
+    vi.useFakeTimers()
+    vi.mocked(management).mockRejectedValue(new Error('连接中断'))
+    const wrapper = mount(McpReviewPanel, { props: { taskId: 'task_test' } })
+    await flushPromises()
+    wrapper.unmount()
+    await vi.advanceTimersByTimeAsync(60000)
+    expect(management).toHaveBeenCalledTimes(1)
+    expect(vi.getTimerCount()).toBe(0)
   })
 })
