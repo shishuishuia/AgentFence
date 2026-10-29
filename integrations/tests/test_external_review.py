@@ -1,6 +1,7 @@
 """Unit tests for explicit Harness configuration and audit reconciliation."""
 
 import json
+import os
 import subprocess
 import sys
 import tempfile
@@ -197,6 +198,7 @@ class ComposeGoalTests(unittest.TestCase):
         self.assertEqual(compose_goal(goal, True), goal)
 
 
+@unittest.skipUnless(os.name == "nt", "pipe relay is Windows-only")
 class RelayInjectionTests(unittest.TestCase):
     def setUp(self):
         self.relay = TaskPipeRelay(
