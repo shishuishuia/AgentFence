@@ -118,7 +118,7 @@ async function loadExcluded() {
   <section>
     <p class="eyebrow">READONLY WORKSPACES</p>
     <h1>工作区管理</h1>
-    <p class="page-description">选择本机项目，预览后导入只读快照。审查使用导入时的副本。</p>
+    <p class="page-description">选择本机项目并预览后导入项目快照。只读任务读取快照；读写任务先修改独立副本，确认后才应用到原项目。</p>
     <p v-if="error" class="notice" role="alert">{{ error }}</p>
     <section class="panel">
       <h2>导入项目</h2>
@@ -175,7 +175,7 @@ async function loadExcluded() {
           "
           @click="confirm"
         >
-          确认导入只读快照
+          确认导入项目快照
         </button>
       </template>
     </section>
