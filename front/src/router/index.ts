@@ -1,19 +1,14 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 export const routes: RouteRecordRaw[] = [
-  { path: '/', redirect: '/dashboard' },
+  { path: '/', redirect: '/workspaces' },
   {
     path: '/workspaces',
     name: 'workspaces',
     component: () => import('@/views/WorkspacesView.vue'),
     meta: { title: '工作区管理' },
   },
-  {
-    path: '/dashboard',
-    name: 'dashboard',
-    component: () => import('@/views/DashboardView.vue'),
-    meta: { title: '项目总览' },
-  },
+  { path: '/dashboard', redirect: '/workspaces' },
   {
     path: '/tasks',
     name: 'tasks',

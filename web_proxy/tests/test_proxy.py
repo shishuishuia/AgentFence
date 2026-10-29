@@ -4,6 +4,7 @@ from http.client import HTTPConnection
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 import json
 from pathlib import Path
+import socket
 import tempfile
 import threading
 import time
@@ -140,10 +141,17 @@ class ProxyTests(unittest.TestCase):
         self.proxy.shutdown()
         self.proxy.server_close()
         self.thread.join(timeout=3)
-        self.proxy = create_server(Config(f"http://127.0.0.1:{self.upstream.server_port}", TOKEN, port=0, dist=self.dist, timeout=3))
-        self.thread = threading.Thread(target=self.proxy.serve_forever, daemon=True)
-        self.thread.start()
-        self.reason("/api/health", 502, "BROKER_UNAVAILABLE")
+        # Keep a non-listening socket bound while the proxy starts. Otherwise
+        # the OS can reuse the stopped upstream's port for the new proxy, which
+        # makes the proxy call itself and return 404 instead of a refusal.
+        with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as unavailable:
+            unavailable.bind(("127.0.0.1", 0))
+            unavailable_port = unavailable.getsockname()[1]
+            self.proxy = create_server(Config(f"http://127.0.0.1:{unavailable_port}", TOKEN, port=0, dist=self.dist, timeout=3))
+            self.assertNotEqual(self.proxy.server_port, unavailable_port)
+            self.thread = threading.Thread(target=self.proxy.serve_forever, daemon=True)
+            self.thread.start()
+            self.reason("/api/health", 502, "BROKER_UNAVAILABLE")
 
     def test_static_and_history_fallback(self):
         self.assertEqual(self.request("/")[2], b"<html>frontend</html>")

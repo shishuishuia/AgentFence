@@ -96,6 +96,26 @@ pub(super) async fn workspaces(
     .await
 }
 
+pub(super) async fn edit_copy(
+    State(broker): State<Broker>,
+    Extension(ctx): Extension<RequestContext>,
+    path: Result<Path<String>, PathRejection>,
+    body: Body,
+) -> Response {
+    let Ok(Path(id)) = path else {
+        return failure(broker, ctx, ReasonCode::InvalidRequest, false).await;
+    };
+    if !valid_id(&id) || !to_bytes(body, BODY_LIMIT).await.is_ok_and(|b| b.is_empty()) {
+        return failure(broker, ctx, ReasonCode::InvalidRequest, false).await;
+    }
+    let worker = broker.clone();
+    let request = ctx.clone();
+    run(broker, ctx, StatusCode::CREATED, move || {
+        worker.create_edit_copy(&request, &id)
+    })
+    .await
+}
+
 pub(super) async fn agent_status(
     State(broker): State<Broker>,
     Extension(ctx): Extension<RequestContext>,
@@ -150,6 +170,80 @@ pub(super) async fn agent_files(
             query.cursor.as_deref(),
             query.limit,
         )
+    })
+    .await
+}
+
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(super) struct EditPath {
+    path: String,
+}
+
+pub(super) async fn edit_changes(
+    State(broker): State<Broker>,
+    Extension(ctx): Extension<RequestContext>,
+    path: Result<Path<String>, PathRejection>,
+) -> Response {
+    let Ok(Path(id)) = path else {
+        return failure(broker, ctx, ReasonCode::InvalidRequest, false).await;
+    };
+    if !valid_id(&id) {
+        return failure(broker, ctx, ReasonCode::InvalidRequest, false).await;
+    }
+    let worker = broker.clone();
+    run(broker, ctx, StatusCode::OK, move || {
+        worker.edit_changes(&id)
+    })
+    .await
+}
+pub(super) async fn edit_change(
+    State(broker): State<Broker>,
+    Extension(ctx): Extension<RequestContext>,
+    path: Result<Path<String>, PathRejection>,
+    query: Result<Query<EditPath>, QueryRejection>,
+) -> Response {
+    let (Ok(Path(id)), Ok(Query(query))) = (path, query) else {
+        return failure(broker, ctx, ReasonCode::InvalidRequest, false).await;
+    };
+    if !valid_id(&id) || query.path.len() > 1024 {
+        return failure(broker, ctx, ReasonCode::InvalidRequest, false).await;
+    }
+    let worker = broker.clone();
+    run(broker, ctx, StatusCode::OK, move || {
+        worker.edit_change(&id, &query.path)
+    })
+    .await
+}
+#[derive(Deserialize)]
+#[serde(deny_unknown_fields)]
+pub(super) struct ApplyEdit {
+    path: String,
+    after_sha256: String,
+}
+pub(super) async fn apply_edit(
+    State(broker): State<Broker>,
+    Extension(ctx): Extension<RequestContext>,
+    path: Result<Path<String>, PathRejection>,
+    body: Result<Json<ApplyEdit>, JsonRejection>,
+) -> Response {
+    let (Ok(Path(id)), Ok(Json(body))) = (path, body) else {
+        return failure(broker, ctx, ReasonCode::InvalidRequest, false).await;
+    };
+    if !valid_id(&id)
+        || body.path.len() > 1024
+        || body.after_sha256.len() != 64
+        || !body
+            .after_sha256
+            .bytes()
+            .all(|b| b.is_ascii_hexdigit() && !b.is_ascii_uppercase())
+    {
+        return failure(broker, ctx, ReasonCode::InvalidRequest, false).await;
+    }
+    let worker = broker.clone();
+    let request = ctx.clone();
+    run(broker, ctx, StatusCode::OK, move || {
+        worker.apply_edit(&request, &id, &body.path, &body.after_sha256)
     })
     .await
 }

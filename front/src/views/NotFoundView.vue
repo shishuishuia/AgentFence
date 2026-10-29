@@ -6,7 +6,7 @@ import { RouterLink } from 'vue-router'
   <section class="panel empty-state">
     <p class="eyebrow">404 / PAGE NOT FOUND</p>
     <h1>页面不存在</h1>
-    <p>请检查地址，或返回项目总览继续。</p>
-    <RouterLink class="button primary" to="/dashboard">返回总览</RouterLink>
+    <p>请检查地址，或返回工作区管理继续。</p>
+    <RouterLink class="button primary" to="/workspaces">返回工作区</RouterLink>
   </section>
 </template>

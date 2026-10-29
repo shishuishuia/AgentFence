@@ -76,5 +76,43 @@ class RustMcpTests(unittest.TestCase):
                 self.assertIn("Controlled test report", result["report"])
 
 
+    def test_edit_model_writes_only_copy_until_admin_applies(self):
+        with tempfile.TemporaryDirectory(dir=REPO / "tmp" if (REPO / "tmp").exists() else None) as tmp:
+            root = Path(tmp)
+            prepare_fixture(root / "fixture")
+            project = root / "project"
+            project.mkdir()
+            for name in ("main.rs", "lib.rs", "README.md"):
+                (project / name).write_bytes(b"// before\n")
+            token = secrets.token_hex(32)
+            with ManagedBroker(BIN / ("agentfence-server" + SUFFIX), root / "fixture", token) as broker:
+                backend = WorkspaceBackend(Config(broker.base_url, token, dist=None))
+                preview = backend.preview(str(project.resolve()))
+                workspace = backend.confirm(preview["preview_id"], "test")
+                task = backend.create_edit_task(workspace["workspace_id"], "Edit main")
+                class Model:
+                    rounds = 0
+                    def complete(self, messages, tools):
+                        self.rounds += 1
+                        if token in json.dumps(messages) or task["agent_token"] in json.dumps(messages):
+                            raise AssertionError("credential entered model context")
+                        write = next(t for t in tools if t["function"]["name"] == "agentfence_write_file")
+                        if "grant_id" in write["function"]["parameters"]["properties"]:
+                            raise AssertionError("model received grant controls")
+                        if self.rounds == 1:
+                            return {"role":"assistant","content":None,"tool_calls":[{"id":"edit_test","type":"function","function":{"name":"agentfence_write_file","arguments":json.dumps({"path":"main.rs","content":"// after\n"})}}]}, {}
+                        return {"role":"assistant","content":"Updated main.rs in the isolated copy."}, {}
+                client = ReviewClient(BIN / ("agentfence-mcp-server" + SUFFIX), broker.base_url, task, task["agent_token"], token, model=Model())
+                result = asyncio.run(client.run())
+                self.assertEqual(result["mode"], "model_edit")
+                self.assertEqual((project / "main.rs").read_text(encoding="utf-8"), "// before\n")
+                changes = backend.edit_changes(task["task_id"])["changes"]
+                self.assertEqual(len(changes), 1)
+                change = backend.edit_change(task["task_id"], "main.rs")
+                self.assertEqual((change["before"], change["after"]), ("// before\n", "// after\n"))
+                backend.apply_edit(task["task_id"], "main.rs", change["after_sha256"])
+                self.assertEqual((project / "main.rs").read_text(encoding="utf-8"), "// after\n")
+
+
 if __name__ == "__main__":
     unittest.main()

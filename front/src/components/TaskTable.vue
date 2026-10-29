@@ -7,7 +7,7 @@ defineProps<{ tasks: TaskSummary[] }>()
 </script>
 <template>
   <p v-if="!tasks.length" class="empty-message">
-    当前实例暂无任务。可从项目总览启动演示任务，或通过终端展示入口创建任务。
+    当前实例暂无任务。可在工作区管理中创建任务。
   </p>
   <div v-else class="table-scroll">
     <table>

@@ -22,6 +22,7 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--bin-dir", type=Path, default=REPO / "target/v2/release")
     parser.add_argument("--port", type=int, default=4174)
+    parser.add_argument("--dist", type=Path, default=REPO / "front/dist", help="built frontend directory")
     parser.add_argument("--agent", choices=("offline", "deepseek"), default="offline")
     args = parser.parse_args()
     suffix = ".exe" if os.name == "nt" else ""
@@ -42,12 +43,12 @@ def main():
         signal.signal(signal.SIGTERM, lambda *_: stop.set())
     try:
         with ManagedBroker(args.bin_dir / ("agentfence-server" + suffix), root / "fixture", token) as broker:
-            config = Config(broker.base_url, token, port=args.port)
+            config = Config(broker.base_url, token, port=args.port, dist=args.dist)
             mcp = args.bin_dir / ("agentfence-mcp-server" + suffix)
             if not mcp.is_file():
                 raise ValueError("missing MCP binary")
             factory = lambda summary, task_token, progress: ReviewClient(mcp, broker.base_url, summary, task_token, token, model=model, progress=progress)
-            manager = WorkspaceManager(WorkspaceBackend(config), review_factory=factory)
+            manager = WorkspaceManager(WorkspaceBackend(config), review_factory=factory, builtin_mode=args.agent)
             with create_server(config, manager=manager) as server:
                 thread = threading.Thread(target=server.serve_forever, daemon=True)
                 thread.start()

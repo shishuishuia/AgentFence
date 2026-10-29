@@ -20,7 +20,7 @@ async fn main() {
 async fn run() -> Result<(), Box<dyn std::error::Error>> {
     let server = McpServer::from_env().await?;
     let (input, output) = stdio();
-    let transport = AsyncRwTransport::new(input, output).with_max_line_length(16 * 1024);
+    let transport = AsyncRwTransport::new(input, output).with_max_line_length(512 * 1024);
     let service = server.serve(transport).await?;
     service.waiting().await?;
     Ok(())

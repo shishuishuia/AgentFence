@@ -4,6 +4,8 @@ import { RouterLink } from 'vue-router'
 import { controlDemo, getDemoState } from '@/api/demo'
 import { usePolling } from '@/composables/usePolling'
 
+defineProps<{ hideWhenUnavailable?: boolean }>()
+
 const poll = usePolling((context) => getDemoState(context.signal))
 const state = poll.data
 const pending = ref(false)
@@ -102,7 +104,7 @@ onScopeDispose(() => {
 </script>
 
 <template>
-  <section class="panel live-demo section-gap" aria-labelledby="live-demo-title">
+  <section v-if="!hideWhenUnavailable || state?.enabled || poll.error.value" class="panel live-demo section-gap" aria-labelledby="live-demo-title">
     <div class="section-heading">
       <div>
         <p class="eyebrow">LIVE AGENT TASK</p>

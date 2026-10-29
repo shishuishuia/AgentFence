@@ -80,7 +80,7 @@ def run(server_bin, mcp_bin, output, *, model=None):
                 ("bad-csrf", "/picker/start", {}, {"X-AgentFence-CSRF": "wrong"}, 403),
                 ("arbitrary-root", "/picker/start", {"root": "/"}, {}, 400),
                 ("unbound-session", "/workspaces", None, {"Cookie": "agentfence_admin=unknown"}, 401),
-                ("editable-profile", "/tasks", {"workspace_id": "ws_test", "goal": "review", "permission_profile": "controlled_edit"}, {}, 400),
+                ("invalid-profile", "/tasks", {"workspace_id": "ws_test", "goal": "review", "permission_profile": "invalid"}, {}, 400),
                 ("browser-token-injection", "/tasks", {"workspace_id": "ws_test", "goal": "review", "permission_profile": "readonly", "agent_token": "test-only"}, {}, 400),
             ):
                 status, _, value = request(route, body, override)

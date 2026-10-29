@@ -10,7 +10,7 @@
 
 ## 当前进度
 
-v2 已集成动态只读快照、Rust MCP 与 B 的工作区导入/只读审查界面。
+v2 已集成工作区导入、只读审查与隔离副本上的受控修改；应用到原项目须由管理员逐文件确认。
 启动、逐步检查、双项目验收及当前设备限制见 [B v2 交付说明](docs/v2-b-delivery.md)。
 快速入口：构建 `target/v2` 与 `front/dist` 后，执行 `python -m demo.run_v2_dashboard`，
 访问 `http://127.0.0.1:4174/workspaces`；默认明确显示离线 MCP 模式。
@@ -18,6 +18,8 @@ v2 已集成动态只读快照、Rust MCP 与 B 的工作区导入/只读审查�
 成员 A 的后端已实现：管理员/任务 Token 隔离、四阶段状态机、工作区配置、精确路径限制、UTF-8 文件读写、单调时钟写租约、原子替换和消费、intent/result 审计，以及 v2.1 的任务列表/详情/事件查询。
 
 已合入成员 A 的 `crates/`、`config/`、Rust 测试及接口说明；`front/` 已接入真实任务与审计、轮询和实例恢复，`web_proxy/` 提供四条只读查询及 dist 托管，`integrations/` 和 `demo/` 提供 HTTP 客户端、独立最小演示和持续展示入口。B 的 34 场景独立 HTTP 黑盒和三轮配对 HTTP 性能实验已在 Ubuntu CI 完成；A 已在 WSL2 完成三轮权限窗口及完整黑盒负载下的 RSS 采样，观测峰值 5372 KiB。原始样本、版本和复核记录均已归档，最终统一版本、干净环境和录屏验收待完成。对接入口见 [成员 A 交接](docs/member-a-handoff.md)、[API 契约](docs/api-contract.md)、[独立黑盒报告](docs/member-b-blackbox-report.md)、[HTTP 性能报告](docs/member-b-http-bench-report.md) 和 [权限窗口/RSS 报告](docs/member-a-permission-rss-report.md)。
+
+受控修改任务的隔离副本、管理员逐文件确认和安全边界见 [隔离修改任务](docs/v2-controlled-edit.md)。
 
 ## 环境依赖
 
@@ -181,7 +183,7 @@ results/member-a/          脱敏验证日志与纯策略样本
 
 ## 运行前端
 
-验证环境为 Node.js 24.14.1、npm 11.11.0。已接入总览、任务列表、任务详情和审计查询；页面每轮请求完成后等待 1 秒更新，断线保留快照、实例变化清空旧数据。
+验证环境为 Node.js 24.14.1、npm 11.11.0。已接入工作区管理、任务列表、任务详情和审计查询；服务连接状态位于主菜单下方。页面每轮请求完成后等待 1 秒更新，断线保留快照、实例变化清空旧数据。
 
 ```bash
 cd front
@@ -201,7 +203,7 @@ npm run dev
 
 ### 启动真实看板
 
-**真实大模型模式**：已接入 DeepSeek / deepseek-flash。配置服务端 DEEPSEEK_API_KEY 后，在下面的启动命令加 `--agent deepseek --step-delay 0`，即可从总览输入任务，实时查看模型工具调用、执行结果和审计。密钥安全输入方式、固定演示工作区范围及真实实跑记录见 [DeepSeek Agent](docs/deepseek-agent.md)。不加参数时仍为可离线运行的确定性演示。
+**真实大模型模式**：已接入 DeepSeek / deepseek-flash。配置服务端 DEEPSEEK_API_KEY 后，在下面的启动命令加 `--agent deepseek --step-delay 0`，即可从任务列表输入演示任务，实时查看模型工具调用、执行结果和审计。密钥安全输入方式、固定演示工作区范围及真实实跑记录见 [DeepSeek Agent](docs/deepseek-agent.md)。不加参数时仍为可离线运行的确定性演示。
 
 先按上述命令构建 release Rust。在仓库根目录：
 
@@ -212,7 +214,7 @@ python -m demo.run_live_dashboard --mode dev
 npm --prefix front run dev
 ```
 
-访问 http://127.0.0.1:5173/dashboard，点击“开始执行任务”，页面实时显示固定 Agent 任务的 13 个步骤，可暂停/继续并查看租约、审计。演示 Agent 通过真实 Rust API 修改独立夹具并读回验证，包含 5 次预期拦截；无需在线模型或手动复制 Token。完成后可点击“再运行一次”。暂停不会延长租约有效期，Ctrl+C 关闭自有服务。原 `demo.run_dashboard` 仍提供终端播放、浏览器只读的展示方式。
+访问 http://127.0.0.1:5173/tasks，点击“开始执行任务”，页面实时显示固定 Agent 任务的 13 个步骤，可暂停/继续并查看租约、审计。演示 Agent 通过真实 Rust API 修改独立夹具并读回验证，包含 5 次预期拦截；无需在线模型或手动复制 Token。完成后可点击“再运行一次”。暂停不会延长租约有效期，Ctrl+C 关闭自有服务。原 `demo.run_dashboard` 仍提供终端播放、浏览器只读的展示方式。
 
 正式构建展示：停止上一套展示入口，执行：
 

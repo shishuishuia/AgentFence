@@ -17,9 +17,9 @@ python -m demo.run_live_dashboard --mode dev --agent deepseek --step-delay 0
 Remove-Item Env:DEEPSEEK_API_KEY
 ```
 
-另一个终端运行 `npm --prefix front run dev`，访问 http://127.0.0.1:5173/dashboard。输入任务，点击开始；模型轮次、实际 HTTP 记录、阶段、Token 用量、模型执行说明和任务/审计链接实时更新。完成后可以修改任务再次运行。
+另一个终端运行 `npm --prefix front run dev`，访问 http://127.0.0.1:5173/tasks。输入任务，点击开始；模型轮次、实际 HTTP 记录、阶段、Token 用量、模型执行说明和任务/审计链接实时更新。完成后可以修改任务再次运行。
 
-托管生产构建：`npm --prefix front run build` 后使用 `--mode dist`，访问 http://127.0.0.1:4173/dashboard。两种入口不能同时占用 4173。缺少密钥时页面禁用启动；认证失败、余额不足、限流、超时、响应截断均显示真实失败，不切换到固定脚本冒充成功。密钥只留在服务端进程环境和内存，本项目不会把它写入配置文件；服务重启后需重新提供环境变量。
+托管生产构建：`npm --prefix front run build` 后使用 `--mode dist`，访问 http://127.0.0.1:4173/tasks。两种入口不能同时占用 4173。缺少密钥时页面禁用启动；认证失败、余额不足、限流、超时、响应截断均显示真实失败，不切换到固定脚本冒充成功。密钥只留在服务端进程环境和内存，本项目不会把它写入配置文件；服务重启后需重新提供环境变量。
 
 不传 `--agent deepseek` 时保留原来的确定性演示，供离线展示和固定安全场景回归。
 

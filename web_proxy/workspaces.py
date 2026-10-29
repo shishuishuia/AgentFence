@@ -137,7 +137,7 @@ class WorkspaceBackend:
 
     def request(self, method, route, body=None):
         try:
-            limit = 2 * 1024 * 1024 if route in ("/v1/admin/workspace-previews", "/v1/admin/workspaces") and method == "POST" else 1024 * 1024
+            limit = 2 * 1024 * 1024 if (route in ("/v1/admin/workspace-previews", "/v1/admin/workspaces") and method == "POST") or (method == "GET" and route.endswith("/changes")) else 1024 * 1024
             response = BrokerHttp(self.config.upstream, timeout=max(self.config.timeout, 10), max_response_bytes=limit).request(
                 method, route, token=self.config.token, body=body)
         except ClientError:
@@ -149,7 +149,8 @@ class WorkspaceBackend:
             if reason not in {"SNAPSHOT_CHANGED", "PREVIEW_EXPIRED", "PAYLOAD_TOO_LARGE", "PATH_DENIED",
                               "READONLY_TASK", "INVALID_REQUEST", "AUDIT_UNAVAILABLE", "IMPORT_LIMIT_EXCEEDED"}:
                 reason = "BROKER_REJECTED"
-            raise ManagementError(response.status, reason, "Rust 拒绝了管理操作，请检查预览、限制或服务状态。")
+            message = "原文件或隔离副本已变化，未应用修改；请重新检查。" if reason == "SNAPSHOT_CHANGED" else "Rust 拒绝了管理操作，请检查预览、限制或服务状态。"
+            raise ManagementError(response.status, reason, message)
         return response.payload
 
     def preview(self, root):
@@ -170,7 +171,27 @@ class WorkspaceBackend:
         value = self.request("GET", "/v1/admin/workspaces")
         if not isinstance(value.get("items"), list) or len(value["items"]) > 32 or any(not isinstance(x, dict) for x in value["items"]):
             raise invalid_response()
-        return {"items": [workspace_shape(item) for item in value["items"] if item.get("import_mode") != "configured"]}
+        return {"items": [workspace_shape(item) for item in value["items"] if item.get("import_mode") == "readonly_snapshot"]}
+
+    def create_edit_task(self, workspace_id, goal):
+        copy = self.request("POST", f"/v1/admin/workspaces/{workspace_id}/edit-copy")
+        copy_id = copy.get("workspace_id")
+        if copy.get("import_mode") != "editable_copy" or not isinstance(copy_id, str) or copy_id == workspace_id or not re.fullmatch(r"ws_[a-f0-9]{32}", copy_id):
+            raise invalid_response()
+        value = self.request("POST", "/v1/admin/tasks", {"workspace_id": copy_id, "goal": goal, "permission_profile": "controlled_edit"})
+        if not all(isinstance(value.get(k), str) for k in ("task_id", "workspace_id", "snapshot_id", "goal", "agent_token", "created_at", "updated_at", "instance_id")) or value.get("permission_profile") != "controlled_edit" or value.get("workspace_id") != copy_id or value.get("phase") != "inspect" or value.get("goal") != goal or not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", value["task_id"]) or not 32 <= len(value["agent_token"]) <= 256 or any(not 33 <= ord(c) <= 126 for c in value["agent_token"]):
+            raise invalid_response()
+        return value
+
+    def edit_changes(self, task_id):
+        return self.request("GET", f"/v1/admin/tasks/{task_id}/changes")
+
+    def edit_change(self, task_id, path):
+        from urllib.parse import urlencode
+        return self.request("GET", f"/v1/admin/tasks/{task_id}/change?" + urlencode({"path": path}))
+
+    def apply_edit(self, task_id, path, after_sha256):
+        return self.request("POST", f"/v1/admin/tasks/{task_id}/apply", {"path": path, "after_sha256": after_sha256})
 
     def create_readonly_task(self, workspace_id, goal):
         value = self.request("POST", "/v1/admin/tasks", {
@@ -185,7 +206,9 @@ class WorkspaceBackend:
 
 class WorkspaceManager:
     """Bounded sessions and one-use dialog results; all shared state is locked."""
-    def __init__(self, backend, *, picker=None, clock=time.monotonic, review_factory=None):
+    def __init__(self, backend, *, picker=None, clock=time.monotonic, review_factory=None, external_review_factory=None, builtin_mode="unknown"):
+        if builtin_mode not in ("unknown", "offline", "deepseek"):
+            raise ValueError("invalid builtin agent mode")
         self.backend, self.picker, self.clock = backend, picker if picker is not None else NativePicker(), clock
         self.lock = threading.Lock()
         self.sessions = {}
@@ -193,6 +216,8 @@ class WorkspaceManager:
         self.tasks = {}  # Task credentials remain in this trusted process only.
         self.dialog_busy = False
         self.review_factory = review_factory
+        self.external_review_factory = external_review_factory
+        self.builtin_mode = builtin_mode
         self.review_thread = None
         self.review_loop = self.review_task = None
         self.closed = False
@@ -302,7 +327,7 @@ class WorkspaceManager:
         # Consume before I/O: an uncertain outcome must never be retried with this selection.
         return self.backend.confirm(preview_id, display_name)
 
-    def create_task(self, workspace_id, goal):
+    def create_task(self, workspace_id, goal, profile="readonly"):
         with self.lock:
             if len(self.tasks) >= 128:
                 raise ManagementError(429, "TASK_LIMIT", "本次服务的任务数量已达上限，请重启后再创建。")
@@ -310,7 +335,7 @@ class WorkspaceManager:
             reservation = "pending_" + secrets.token_hex(16)
             self.tasks[reservation] = None
         try:
-            value = self.backend.create_readonly_task(workspace_id, goal)
+            value = (self.backend.create_edit_task(workspace_id, goal) if profile == "controlled_edit" else self.backend.create_readonly_task(workspace_id, goal))
             clean = {k: value[k] for k in ("task_id", "workspace_id", "snapshot_id", "goal",
                     "permission_profile", "phase", "created_at", "updated_at", "instance_id")}
             with self.lock:
@@ -320,6 +345,25 @@ class WorkspaceManager:
             with self.lock:
                 self.tasks.pop(reservation, None)
 
+    def edit_task(self, task_id):
+        with self.lock:
+            task = self.tasks.get(task_id)
+            if task is None or task["summary"]["permission_profile"] != "controlled_edit" or task["review"]["state"] != "completed":
+                raise ManagementError(409, "EDIT_NOT_READY", "修改任务尚未完成或不可查看。")
+        return task
+
+    def changes(self, task_id):
+        self.edit_task(task_id)
+        return self.backend.edit_changes(task_id)
+
+    def change(self, task_id, path):
+        self.edit_task(task_id)
+        return self.backend.edit_change(task_id, path)
+
+    def apply(self, task_id, path, after_sha256):
+        self.edit_task(task_id)
+        return self.backend.apply_edit(task_id, path, after_sha256)
+
     def review_status(self, task_id):
         with self.lock:
             value = self.tasks.get(task_id)
@@ -327,33 +371,51 @@ class WorkspaceManager:
                 raise ManagementError(404, "TASK_NOT_MANAGED", "本机助手未持有该任务身份；重启后需要重新创建。")
             return dict(value["review"])
 
-    def start_review(self, task_id):
-        if self.review_factory is None:
-            raise ManagementError(503, "MCP_NOT_CONFIGURED", "启动助手时需配置 Rust MCP 可执行文件。")
+    def start_review(self, task_id, agent_type="builtin"):
+        if agent_type not in ("builtin", "deepseek_harness"):
+            raise ManagementError(400, "INVALID_REQUEST", "不支持的 Agent 类型。")
         with self.lock:
             if self.closed:
                 raise ManagementError(503, "MANAGER_CLOSED", "管理助手已经关闭。")
             task = self.tasks.get(task_id)
             if task is None:
-                raise ManagementError(404, "TASK_NOT_MANAGED", "请通过当前本机助手创建只读任务。")
+                raise ManagementError(404, "TASK_NOT_MANAGED", "请通过当前本机助手创建任务。")
             if task["review"]["state"] != "idle":
                 raise ManagementError(409, "REVIEW_CONSUMED", "该任务的运行已经启动或结束，请查看结果。")
             if any(t and t["review"]["state"] == "running" for t in self.tasks.values()):
                 raise ManagementError(409, "REVIEW_BUSY", "已有任务正在执行，请等待完成。")
-            task["review"]["state"] = "running"
-            self.review_thread = threading.Thread(target=self._review, args=(task_id,), daemon=True)
+            if agent_type == "deepseek_harness":
+                if task["summary"]["permission_profile"] != "readonly":
+                    raise ManagementError(403, "READONLY_TASK", "外部 Agent 暂仅支持只读任务。")
+                factory = self.external_review_factory
+                if factory is None:
+                    raise ManagementError(503, "HARNESS_NOT_CONFIGURED", "外部 Agent 未完成安全配置，无法启动。")
+            else:
+                factory = self.review_factory
+                if factory is None:
+                    raise ManagementError(503, "MCP_NOT_CONFIGURED", "启动助手时需配置 Rust MCP 可执行文件。")
+            task["review"].update({"state": "running", "agent_type": agent_type})
+            self.review_thread = threading.Thread(target=self._review, args=(task_id, factory), daemon=True)
             self.review_thread.start()
-        return {"state": "running"}
+        return {"state": "running", "agent_type": agent_type}
 
-    def _review(self, task_id):
+    def _review(self, task_id, factory):
         import asyncio
         from integrations.mcp_review import ReviewError
         from integrations.deepseek import ModelError
 
+        task = self.tasks[task_id]
+        external = task["review"].get("agent_type") == "deepseek_harness"
         def progress(value):
+            if external:
+                if not isinstance(value, dict):
+                    return
+                safe = {k: value[k] for k in ("call_count", "read_file_count") if type(value.get(k)) is int and 0 <= value[k] <= 10000}
+                if value.get("progress_text") in ("正在连接外部 Agent", "正在执行任务", "正在核对审计"):
+                    safe["progress_text"] = value["progress_text"]
+                value = safe
             with self.lock:
                 self.tasks[task_id]["review"].update(value)
-        task = self.tasks[task_id]
         async def run(client):
             with self.lock:
                 self.review_loop, self.review_task = asyncio.get_running_loop(), asyncio.current_task()
@@ -362,13 +424,34 @@ class WorkspaceManager:
                 raise ReviewError("管理助手已经关闭。")
             return await client.run()
         try:
-            client = self.review_factory(task["summary"], task["token"], progress)
+            client = factory(task["summary"], task["token"], progress)
             result = asyncio.run(run(client))
+            if external:
+                if not isinstance(result, dict) or result.get("mode") != "external_agent" or not isinstance(result.get("report"), str) or not 1 <= len(result["report"]) <= 20000 or not isinstance(result.get("calls"), list) or len(result["calls"]) > 100:
+                    raise ReviewError("外部 Agent 返回的任务结果无效。")
+                # Do not let untrusted process fields override lifecycle or expose credentials.
+                safe_calls = []
+                for call in result["calls"]:
+                    if not isinstance(call, dict) or not isinstance(call.get("tool"), str) or len(call["tool"]) > 128 or type(call.get("ok")) is not bool:
+                        raise ReviewError("外部 Agent 返回的调用记录无效。")
+                    safe = {k: call[k] for k in ("tool", "ok", "request_id", "path") if k in call}
+                    if any(not isinstance(v, str) or len(v) > 1024 for k, v in safe.items() if k != "ok"):
+                        raise ReviewError("外部 Agent 返回的调用记录无效。")
+                    safe_calls.append(safe)
+                result = {"mode": "external_agent", "report": result["report"], "calls": safe_calls}
+                secrets_to_hide = [task["token"], getattr(getattr(self.backend, "config", None), "token", ""), os.environ.get("DEEPSEEK_API_KEY", "")]
+                if any(secret and secret in json.dumps(result, ensure_ascii=False) for secret in secrets_to_hide):
+                    raise ReviewError("外部 Agent 返回了不安全的内容，任务已停止。")
             with self.lock:
                 task["review"].update({"state": "completed", **result})
         except (ReviewError, ModelError) as error:
+            message = str(error)
+            if external:
+                secrets_to_hide = [task["token"], getattr(getattr(self.backend, "config", None), "token", ""), os.environ.get("DEEPSEEK_API_KEY", "")]
+                if any(secret and secret in message for secret in secrets_to_hide):
+                    message = "外部 Agent 运行失败，请检查安全配置。"
             with self.lock:
-                task["review"].update({"state": "failed", "message": str(error)})
+                task["review"].update({"state": "failed", "message": message})
         except asyncio.CancelledError:
             with self.lock:
                 task["review"].update({"state": "failed", "message": "管理助手关闭，运行已停止。"})

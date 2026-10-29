@@ -16,6 +16,10 @@ fn v2_openapi_uses_the_correct_role_for_each_new_endpoint() {
         ("/v1/admin/workspace-previews/{id}/excluded", "get"),
         ("/v1/admin/workspaces", "post"),
         ("/v1/admin/workspaces", "get"),
+        ("/v1/admin/workspaces/{id}/edit-copy", "post"),
+        ("/v1/admin/tasks/{id}/changes", "get"),
+        ("/v1/admin/tasks/{id}/change", "get"),
+        ("/v1/admin/tasks/{id}/apply", "post"),
     ] {
         assert_eq!(
             spec["paths"][path][method]["security"],

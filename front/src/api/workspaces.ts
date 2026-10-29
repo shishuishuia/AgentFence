@@ -140,6 +140,21 @@ export async function getWorkspaces(signal?: AbortSignal) {
   return { items: value.items }
 }
 
+export type AgentType = 'builtin' | 'deepseek_harness'
+export async function getAgents(signal?: AbortSignal) {
+  const value = await management('/agents', undefined, signal)
+  if (!record(value) || typeof value.builtin !== 'boolean' || typeof value.deepseek_harness !== 'boolean' || !['unknown', 'offline', 'deepseek'].includes(String(value.builtin_mode)))
+    throw new ApiError(502, 'INVALID_RESPONSE', 'Agent 可用状态无效。')
+  return { builtin: value.builtin, deepseek_harness: value.deepseek_harness, builtin_mode: value.builtin_mode as 'unknown' | 'offline' | 'deepseek' }
+}
+
+export async function startTaskReview(taskId: string, agent: AgentType, signal?: AbortSignal) {
+  const body = agent === 'builtin' ? {} : { agent_type: agent }
+  const value = await management(`/tasks/${encodeURIComponent(taskId)}/review/start`, body, signal)
+  if (!record(value) || value.state !== 'running' || value.agent_type !== agent)
+    throw new ApiError(502, 'INVALID_RESPONSE', '服务端未确认所选 Agent，启动结果未知。')
+}
+
 export async function getExclusions(id: string, offset: number, signal?: AbortSignal) {
   const value = await management(
     `/picker/${encodeURIComponent(id)}/excluded?offset=${offset}`,
@@ -178,5 +193,12 @@ export async function createReadonlyTask(workspaceId: string, goal: string, sign
     typeof value.goal !== 'string'
   )
     throw new ApiError(502, 'INVALID_RESPONSE', '服务端未确认只读任务，已停止后续操作。')
+  return value as unknown as TaskSummary
+}
+
+export async function createEditTask(workspaceId: string, goal: string, signal?: AbortSignal) {
+  const value = await management('/tasks', { workspace_id: workspaceId, goal, permission_profile: 'controlled_edit' }, signal)
+  if (!record(value) || value.permission_profile !== 'controlled_edit' || value.phase !== 'inspect' || typeof value.workspace_id !== 'string' || value.workspace_id === workspaceId || typeof value.task_id !== 'string' || typeof value.snapshot_id !== 'string' || typeof value.goal !== 'string')
+    throw new ApiError(502, 'INVALID_RESPONSE', '服务端未确认独立修改副本，已停止后续操作。')
   return value as unknown as TaskSummary
 }

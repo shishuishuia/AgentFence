@@ -703,3 +703,191 @@ async fn failed_registration_audit_does_not_commit_a_workspace_and_closes_import
         "AUDIT_UNAVAILABLE"
     );
 }
+
+#[tokio::test]
+async fn editable_copy_is_isolated_and_keeps_readonly_invariants() {
+    let f = Fixture::new();
+    let source = f.project(
+        "editable-source",
+        &[("a.rs", "original\n"), ("b.md", "second\n")],
+    );
+    let original = f.import(&source).await;
+    let original_id = original["workspace_id"].as_str().unwrap();
+    let (s, copy) = f
+        .call(
+            "POST",
+            &format!("/v1/admin/workspaces/{original_id}/edit-copy"),
+            ADMIN,
+            Value::Null,
+        )
+        .await;
+    assert_eq!(s, 201, "{copy}");
+    assert_eq!(copy["import_mode"], "editable_copy");
+    let copy_id = copy["workspace_id"].as_str().unwrap();
+    assert_ne!(copy_id, original_id);
+    let (s, denied) = f
+        .call(
+            "POST",
+            "/v1/admin/tasks",
+            ADMIN,
+            json!({"workspace_id":original_id,"permission_profile":"controlled_edit"}),
+        )
+        .await;
+    assert_ne!(s, 201, "{denied}");
+    let (s, task) = f.call("POST", "/v1/admin/tasks", ADMIN, json!({"workspace_id":copy_id,"permission_profile":"controlled_edit","goal":"edit copy"})).await;
+    assert_eq!(s, 201, "{task}");
+    let tid = task["task_id"].as_str().unwrap();
+    let token = task["agent_token"].as_str().unwrap();
+    let (s, denied) = f
+        .call(
+            "POST",
+            "/v1/admin/tasks",
+            ADMIN,
+            json!({"workspace_id":copy_id,"permission_profile":"controlled_edit"}),
+        )
+        .await;
+    assert_ne!(s, 201, "{denied}");
+    let (s, denied) = f
+        .call(
+            "POST",
+            "/v1/tool/execute",
+            token,
+            json!({"task_id":tid,"tool":"write_file","path":"a.rs","content":"changed\n"}),
+        )
+        .await;
+    assert_ne!(s, 200, "{denied}");
+    assert_eq!(
+        f.call(
+            "POST",
+            &format!("/v1/admin/tasks/{tid}/phase"),
+            ADMIN,
+            json!({"phase":"edit"})
+        )
+        .await
+        .0,
+        200
+    );
+    let (s, grant) = f
+        .call(
+            "POST",
+            &format!("/v1/admin/tasks/{tid}/grants"),
+            ADMIN,
+            json!({"tool":"write_file","path":"a.rs","ttl_seconds":60,"max_uses":1}),
+        )
+        .await;
+    assert_eq!(s, 201, "{grant}");
+    let (s, written) = f.call("POST", "/v1/tool/execute", token, json!({"task_id":tid,"tool":"write_file","path":"a.rs","content":"changed\n","grant_id":grant["grant_id"]})).await;
+    assert_eq!(s, 200, "{written}");
+    assert_eq!(
+        fs::read_to_string(source.join("a.rs")).unwrap(),
+        "original\n"
+    );
+    let (s, read) = f.read(&task, "a.rs").await;
+    assert_eq!(s, 200, "{read}");
+    assert_eq!(read["data"]["content"], "changed\n");
+    let readonly = f.task(&original).await;
+    let (_, original_read) = f.read(&readonly, "a.rs").await;
+    assert_eq!(original_read["data"]["content"], "original\n");
+    let changes_url = format!("/v1/admin/tasks/{tid}/changes");
+    assert_ne!(f.call("GET", &changes_url, ADMIN, Value::Null).await.0, 200);
+    assert_eq!(
+        f.call(
+            "POST",
+            &format!("/v1/admin/tasks/{tid}/phase"),
+            ADMIN,
+            json!({"phase":"verify"})
+        )
+        .await
+        .0,
+        200
+    );
+    assert_eq!(
+        f.call(
+            "POST",
+            &format!("/v1/admin/tasks/{tid}/phase"),
+            ADMIN,
+            json!({"phase":"done"})
+        )
+        .await
+        .0,
+        200
+    );
+    let (s, changes) = f.call("GET", &changes_url, ADMIN, Value::Null).await;
+    assert_eq!(s, 200, "{changes}");
+    assert_eq!(changes["changes"].as_array().unwrap().len(), 1);
+    let sha = changes["changes"][0]["after_sha256"].as_str().unwrap();
+    let (s, preview) = f
+        .call(
+            "GET",
+            &format!("/v1/admin/tasks/{tid}/change?path=a.rs"),
+            ADMIN,
+            Value::Null,
+        )
+        .await;
+    assert_eq!(s, 200, "{preview}");
+    assert_eq!(preview["before"], "original\n");
+    assert_eq!(preview["after"], "changed\n");
+    let apply_url = format!("/v1/admin/tasks/{tid}/apply");
+    let body = json!({"path":"a.rs", "after_sha256":sha});
+    assert_ne!(f.call("POST", &apply_url, token, body.clone()).await.0, 200);
+    assert_eq!(
+        fs::read_to_string(source.join("a.rs")).unwrap(),
+        "original\n"
+    );
+    fs::write(source.join("a.rs"), "external change\n").unwrap();
+    let (s, conflict) = f.call("POST", &apply_url, ADMIN, body.clone()).await;
+    assert_ne!(s, 200, "{conflict}");
+    assert_eq!(
+        fs::read_to_string(source.join("a.rs")).unwrap(),
+        "external change\n"
+    );
+    fs::write(source.join("a.rs"), "original\n").unwrap();
+    let (s, applied) = f.call("POST", &apply_url, ADMIN, body.clone()).await;
+    assert_eq!(s, 200, "{applied}");
+    assert_eq!(
+        fs::read_to_string(source.join("a.rs")).unwrap(),
+        "changed\n"
+    );
+    assert_ne!(f.call("POST", &apply_url, ADMIN, body).await.0, 200);
+    let audit = fs::read_to_string(f.root.path().join("audit.jsonl")).unwrap();
+    let events: Vec<Value> = audit
+        .lines()
+        .map(|line| serde_json::from_str(line).unwrap())
+        .collect();
+    assert!(events.iter().any(|e| e["tool"] == "apply_edit"
+        && e["event_type"] == "result"
+        && e["reason_code"] == "SNAPSHOT_CHANGED"));
+    assert!(events.iter().any(|e| e["tool"] == "apply_edit"
+        && e["event_type"] == "result"
+        && e["executed"] == true));
+}
+
+#[tokio::test]
+async fn python_sources_are_imported_but_virtual_environment_is_excluded() {
+    let f = Fixture::new();
+    let source = f.project(
+        "python-project",
+        &[
+            ("src/main.py", "print('hello')\n"),
+            ("venv/lib/third_party.py", "ignored\n"),
+            (".venv/ignored.py", "ignored\n"),
+            ("README.md", "hello\n"),
+        ],
+    );
+    let preview = f.preview(&source).await;
+    let paths: Vec<_> = preview["files"]
+        .as_array()
+        .unwrap()
+        .iter()
+        .map(|f| f["path"].as_str().unwrap())
+        .collect();
+    assert!(paths.contains(&"src/main.py"));
+    assert!(!paths.iter().any(|path| path.contains("venv/")));
+    assert!(
+        preview["excluded"]
+            .as_array()
+            .unwrap()
+            .iter()
+            .any(|e| e["path"] == "venv")
+    );
+}
