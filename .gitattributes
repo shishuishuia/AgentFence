@@ -17,3 +17,6 @@
 # Preserve raw v2 evidence bytes and its fixed-length synthetic fixture.
 /results/member-a/v2-77d3c8e/** -text
 /results/member-a/v2-77d3c8e/benchmark/project/benchmark.rs -whitespace
+
+# Preserve B's native UI and offline MCP evidence hashes on Windows checkout.
+/results/member-b/v2-demo-20261029/** -text whitespace=cr-at-eol
