@@ -206,7 +206,7 @@ class WorkspaceBackend:
 
 class WorkspaceManager:
     """Bounded sessions and one-use dialog results; all shared state is locked."""
-    def __init__(self, backend, *, picker=None, clock=time.monotonic, review_factory=None):
+    def __init__(self, backend, *, picker=None, clock=time.monotonic, review_factory=None, external_review_factory=None):
         self.backend, self.picker, self.clock = backend, picker if picker is not None else NativePicker(), clock
         self.lock = threading.Lock()
         self.sessions = {}
@@ -214,6 +214,7 @@ class WorkspaceManager:
         self.tasks = {}  # Task credentials remain in this trusted process only.
         self.dialog_busy = False
         self.review_factory = review_factory
+        self.external_review_factory = external_review_factory
         self.review_thread = None
         self.review_loop = self.review_task = None
         self.closed = False
@@ -367,33 +368,51 @@ class WorkspaceManager:
                 raise ManagementError(404, "TASK_NOT_MANAGED", "本机助手未持有该任务身份；重启后需要重新创建。")
             return dict(value["review"])
 
-    def start_review(self, task_id):
-        if self.review_factory is None:
-            raise ManagementError(503, "MCP_NOT_CONFIGURED", "启动助手时需配置 Rust MCP 可执行文件。")
+    def start_review(self, task_id, agent_type="builtin"):
+        if agent_type not in ("builtin", "deepseek_harness"):
+            raise ManagementError(400, "INVALID_REQUEST", "不支持的 Agent 类型。")
         with self.lock:
             if self.closed:
                 raise ManagementError(503, "MANAGER_CLOSED", "管理助手已经关闭。")
             task = self.tasks.get(task_id)
             if task is None:
-                raise ManagementError(404, "TASK_NOT_MANAGED", "请通过当前本机助手创建只读任务。")
+                raise ManagementError(404, "TASK_NOT_MANAGED", "请通过当前本机助手创建任务。")
             if task["review"]["state"] != "idle":
                 raise ManagementError(409, "REVIEW_CONSUMED", "该任务的运行已经启动或结束，请查看结果。")
             if any(t and t["review"]["state"] == "running" for t in self.tasks.values()):
                 raise ManagementError(409, "REVIEW_BUSY", "已有任务正在执行，请等待完成。")
-            task["review"]["state"] = "running"
-            self.review_thread = threading.Thread(target=self._review, args=(task_id,), daemon=True)
+            if agent_type == "deepseek_harness":
+                if task["summary"]["permission_profile"] != "readonly":
+                    raise ManagementError(403, "READONLY_TASK", "外部 Agent 暂仅支持只读任务。")
+                factory = self.external_review_factory
+                if factory is None:
+                    raise ManagementError(503, "HARNESS_NOT_CONFIGURED", "外部 Agent 未完成安全配置，无法启动。")
+            else:
+                factory = self.review_factory
+                if factory is None:
+                    raise ManagementError(503, "MCP_NOT_CONFIGURED", "启动助手时需配置 Rust MCP 可执行文件。")
+            task["review"].update({"state": "running", "agent_type": agent_type})
+            self.review_thread = threading.Thread(target=self._review, args=(task_id, factory), daemon=True)
             self.review_thread.start()
-        return {"state": "running"}
+        return {"state": "running", "agent_type": agent_type}
 
-    def _review(self, task_id):
+    def _review(self, task_id, factory):
         import asyncio
         from integrations.mcp_review import ReviewError
         from integrations.deepseek import ModelError
 
+        task = self.tasks[task_id]
+        external = task["review"].get("agent_type") == "deepseek_harness"
         def progress(value):
+            if external:
+                if not isinstance(value, dict):
+                    return
+                safe = {k: value[k] for k in ("call_count", "read_file_count") if type(value.get(k)) is int and 0 <= value[k] <= 10000}
+                if value.get("progress_text") in ("正在连接外部 Agent", "正在执行任务", "正在核对审计"):
+                    safe["progress_text"] = value["progress_text"]
+                value = safe
             with self.lock:
                 self.tasks[task_id]["review"].update(value)
-        task = self.tasks[task_id]
         async def run(client):
             with self.lock:
                 self.review_loop, self.review_task = asyncio.get_running_loop(), asyncio.current_task()
@@ -402,13 +421,34 @@ class WorkspaceManager:
                 raise ReviewError("管理助手已经关闭。")
             return await client.run()
         try:
-            client = self.review_factory(task["summary"], task["token"], progress)
+            client = factory(task["summary"], task["token"], progress)
             result = asyncio.run(run(client))
+            if external:
+                if not isinstance(result, dict) or result.get("mode") != "external_agent" or not isinstance(result.get("report"), str) or not 1 <= len(result["report"]) <= 20000 or not isinstance(result.get("calls"), list) or len(result["calls"]) > 100:
+                    raise ReviewError("外部 Agent 返回的任务结果无效。")
+                # Do not let untrusted process fields override lifecycle or expose credentials.
+                safe_calls = []
+                for call in result["calls"]:
+                    if not isinstance(call, dict) or not isinstance(call.get("tool"), str) or len(call["tool"]) > 128 or type(call.get("ok")) is not bool:
+                        raise ReviewError("外部 Agent 返回的调用记录无效。")
+                    safe = {k: call[k] for k in ("tool", "ok", "request_id", "path") if k in call}
+                    if any(not isinstance(v, str) or len(v) > 1024 for k, v in safe.items() if k != "ok"):
+                        raise ReviewError("外部 Agent 返回的调用记录无效。")
+                    safe_calls.append(safe)
+                result = {"mode": "external_agent", "report": result["report"], "calls": safe_calls}
+                secrets_to_hide = [task["token"], getattr(getattr(self.backend, "config", None), "token", ""), os.environ.get("DEEPSEEK_API_KEY", "")]
+                if any(secret and secret in json.dumps(result, ensure_ascii=False) for secret in secrets_to_hide):
+                    raise ReviewError("外部 Agent 返回了不安全的内容，任务已停止。")
             with self.lock:
                 task["review"].update({"state": "completed", **result})
         except (ReviewError, ModelError) as error:
+            message = str(error)
+            if external:
+                secrets_to_hide = [task["token"], getattr(getattr(self.backend, "config", None), "token", ""), os.environ.get("DEEPSEEK_API_KEY", "")]
+                if any(secret and secret in message for secret in secrets_to_hide):
+                    message = "外部 Agent 运行失败，请检查安全配置。"
             with self.lock:
-                task["review"].update({"state": "failed", "message": str(error)})
+                task["review"].update({"state": "failed", "message": message})
         except asyncio.CancelledError:
             with self.lock:
                 task["review"].update({"state": "failed", "message": "管理助手关闭，运行已停止。"})

@@ -83,9 +83,11 @@ def handle_admin(handler, manager, path, query):
                 raise ManagementError(400, "INVALID_REQUEST", "应用修改参数无效。")
             return handler.reply(200, manager.apply(task_id, body["path"], body["after_sha256"]))
         if review:
-            if body:
-                raise ManagementError(400, "INVALID_REQUEST", "审查启动不接受额外参数。")
-            return handler.reply(202 if review.group(2) else 200, manager.start_review(review.group(1)) if review.group(2) else manager.review_status(review.group(1)))
+            if review.group(2):
+                if body and (set(body) != {"agent_type"} or body["agent_type"] != "deepseek_harness"):
+                    raise ManagementError(400, "INVALID_REQUEST", "审查启动参数无效。")
+                return handler.reply(202, manager.start_review(review.group(1), body.get("agent_type", "builtin")))
+            return handler.reply(200, manager.review_status(review.group(1)))
         if path == "/api/admin/picker/start":
             if body:
                 raise ManagementError(400, "INVALID_REQUEST", "目录仅由系统选择器提供。")

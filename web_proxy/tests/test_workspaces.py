@@ -204,6 +204,70 @@ class WorkspaceTests(unittest.TestCase):
         self.assertEqual(self.request("/api/admin/tasks/task_edit/changes")[0], 409)
         self.assertEqual(self.request("/api/admin/tasks/task_edit/apply", "POST", {"path":"a.rs","after_sha256":"a"*64}, {"X-AgentFence-CSRF":"bad"})[0], 403)
 
+    def test_external_harness_requires_safe_configuration_without_consuming_task(self):
+        self.request("/api/admin/tasks", "POST", {"workspace_id":"ws_test", "goal":"review", "permission_profile":"readonly"})
+        status, _, value = self.request("/api/admin/tasks/task_readonly/review/start", "POST", {"agent_type":"deepseek_harness"})
+        self.assertEqual(status, 503)
+        self.assertEqual(value["reason_code"], "HARNESS_NOT_CONFIGURED")
+        self.assertEqual(self.manager.review_status("task_readonly")["state"], "idle")
+
+    def test_external_harness_edit_task_denied_before_factory_is_called(self):
+        factory = Mock()
+        self.manager.external_review_factory = factory
+        self.request("/api/admin/tasks", "POST", {"workspace_id":"ws_test", "goal":"edit", "permission_profile":"controlled_edit"})
+        status, _, _ = self.request("/api/admin/tasks/task_edit/review/start", "POST", {"agent_type":"deepseek_harness"})
+        self.assertEqual(status, 403)
+        self.assertEqual(self.manager.review_status("task_edit")["state"], "idle")
+        factory.assert_not_called()
+
+    def test_external_harness_type_and_progress_are_visible_without_tokens(self):
+        class External:
+            async def run(self):
+                return {"mode":"external_agent", "report":"Fixture report", "calls":[]}
+        received = []
+        def make(summary, token, progress):
+            received.append((summary["task_id"], token))
+            progress({"call_count":1, "read_file_count":1, "progress_text":"正在处理"})
+            return External()
+        self.manager.external_review_factory = make
+        self.request("/api/admin/tasks", "POST", {"workspace_id":"ws_test", "goal":"review", "permission_profile":"readonly"})
+        status, _, value = self.request("/api/admin/tasks/task_readonly/review/start", "POST", {"agent_type":"deepseek_harness"})
+        self.assertEqual(status,202)
+        self.assertEqual(value["agent_type"], "deepseek_harness")
+        for _ in range(100):
+            _, _, state = self.request("/api/admin/tasks/task_readonly/review")
+            if state["state"] != "running": break
+            time.sleep(.01)
+        self.assertEqual(state["state"], "completed")
+        self.assertEqual(state["agent_type"], "deepseek_harness")
+        self.assertEqual(state["call_count"], 1)
+        self.assertNotIn(received[0][1], json.dumps(state))
+        self.assertEqual(self.request("/api/admin/tasks/task_readonly/review/start", "POST", {"agent_type":"deepseek_harness"})[0], 409)
+
+    def test_external_harness_output_cannot_leak_token_or_override_state(self):
+        class External:
+            def __init__(self, token, progress): self.token, self.progress = token, progress
+            async def run(self):
+                self.progress({"progress_text": self.token, "agent_type": "builtin", "state": "completed"})
+                return {"mode":"external_agent", "report":self.token, "calls":[], "agent_type":"builtin"}
+        self.manager.external_review_factory = lambda summary, token, progress: External(token, progress)
+        self.request("/api/admin/tasks", "POST", {"workspace_id":"ws_test", "goal":"review", "permission_profile":"readonly"})
+        self.assertEqual(self.request("/api/admin/tasks/task_readonly/review/start", "POST", {"agent_type":"deepseek_harness"})[0], 202)
+        for _ in range(100):
+            _, _, state = self.request("/api/admin/tasks/task_readonly/review")
+            if state["state"] != "running": break
+            time.sleep(.01)
+        self.assertEqual(state["state"], "failed")
+        self.assertEqual(state["agent_type"], "deepseek_harness")
+        self.assertNotIn(self.manager.tasks["task_readonly"]["token"], json.dumps(state))
+        self.assertNotIn("report", state)
+
+    def test_external_harness_request_rejects_extra_arguments(self):
+        self.request("/api/admin/tasks", "POST", {"workspace_id":"ws_test", "goal":"review", "permission_profile":"readonly"})
+        for body in ({"agent_type":"unknown"}, {"agent_type":"deepseek_harness", "command":"arbitrary"}, {"agent_type":"deepseek_harness", "env":{}}):
+            self.assertEqual(self.request("/api/admin/tasks/task_readonly/review/start", "POST", body)[0], 400)
+        self.assertEqual(self.manager.review_status("task_readonly")["state"], "idle")
+
     def test_workspace_name_enforces_rust_byte_bound(self):
         sid, _ = self.select()
         status, _, _ = self.request("/api/admin/workspaces/confirm", "POST", {
