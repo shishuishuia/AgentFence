@@ -183,12 +183,31 @@ impl BrokerClient {
         )
     }
 
-    pub async fn write(&self, path: &str, content: &str, grant_id: &str) -> Result<Value, Value> {
-        if !self.editable || path.len() > 1024 || content.len() > 65536 || grant_id.len() > 128 {
+    pub async fn write(
+        &self,
+        path: &str,
+        content: &str,
+        grant_id: Option<&str>,
+    ) -> Result<Value, Value> {
+        if !self.editable
+            || path.len() > 1024
+            || content.len() > 65536
+            || grant_id.is_some_and(|value| value.len() > 128)
+        {
             return Err(error("INVALID_ARGUMENTS"));
         }
-        let body = self.request(self.http.post(format!("{}/v1/tool/execute", self.base))
-            .json(&json!({"task_id":self.task,"tool":"write_file","path":path,"content":content,"grant_id":grant_id}))).await?;
+        let mut payload =
+            json!({"task_id":self.task,"tool":"write_file","path":path,"content":content});
+        if let Some(value) = grant_id {
+            payload["grant_id"] = json!(value);
+        }
+        let body = self
+            .request(
+                self.http
+                    .post(format!("{}/v1/tool/execute", self.base))
+                    .json(&payload),
+            )
+            .await?;
         if body["allowed"] != true
             || body["executed"] != true
             || body["data"]["bytes_written"] != content.len()

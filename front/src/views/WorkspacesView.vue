@@ -3,6 +3,7 @@ import { onMounted, onUnmounted, ref } from 'vue'
 import {
   openManagement,
   startPicker,
+  importWorkspacePath,
   getSelection,
   confirmWorkspace,
   getWorkspaces,
@@ -27,6 +28,10 @@ const showCredential = ref(false)
 const credential = ref<CredentialState | null>(null)
 const credentialKey = ref('')
 const credentialMessage = ref('')
+const serverPath = ref('')
+const serverName = ref('')
+const serverBusy = ref(false)
+const showServerImport = ref(false)
 const controller = new AbortController()
 let timer: ReturnType<typeof setTimeout> | undefined
 const message = (e: unknown) => (e instanceof Error ? e.message : '管理操作失败。')
@@ -91,6 +96,21 @@ async function confirm() {
     if (!controller.signal.aborted) error.value = message(e)
   } finally {
     busy.value = false
+  }
+}
+async function importFromPath() {
+  if (serverBusy.value || !serverPath.value.trim() || !serverName.value.trim()) return
+  serverBusy.value = true
+  error.value = ''
+  try {
+    await importWorkspacePath(serverPath.value.trim(), serverName.value.trim(), controller.signal)
+    serverPath.value = ''
+    serverName.value = ''
+    await refresh()
+  } catch (e) {
+    if (!controller.signal.aborted) error.value = message(e)
+  } finally {
+    serverBusy.value = false
   }
 }
 async function toggleCredential() {
@@ -218,6 +238,31 @@ async function loadExcluded() {
           确认导入项目快照
         </button>
       </template>
+      <button class="button" type="button" @click="showServerImport = !showServerImport">
+        {{ showServerImport ? '收起路径导入' : '无法使用目录选择器？改用服务器路径' }}
+      </button>
+      <template v-if="showServerImport">
+      <div class="server-import">
+        <p class="hint">
+          服务器部署时可直接填写服务器上的项目路径（需位于管理员配置的导入目录内）。
+        </p>
+        <label
+          >服务器路径
+          <input v-model="serverPath" placeholder="/opt/agentfence/projects/my-project" maxlength="1024"
+        /></label>
+        <label
+          >工作区名称
+          <input v-model="serverName" placeholder="例如：示例项目" maxlength="80"
+        /></label>
+        <button
+          class="button"
+          :disabled="serverBusy || !serverPath.trim() || !serverName.trim()"
+          @click="importFromPath"
+        >
+          {{ serverBusy ? '正在导入…' : '从服务器路径导入' }}
+        </button>
+      </div>
+      </template>
     </section>
     <section class="panel section-gap">
       <h2>已导入工作区</h2>
@@ -272,7 +317,7 @@ async function loadExcluded() {
             清除本机密钥
           </button>
           <p class="hint">
-            密钥只提交一次，保存在本机用户目录；页面不回显、不写入浏览器存储，也不会进入 MCP 子进程。
+            密钥只提交一次，保存在本机用户目录；页面不回显、不写入浏览器存储，也不会进入 MCP 子进程。保存后需重启服务才会切换执行器。
           </p>
         </template>
         <p v-if="credentialMessage" role="status">{{ credentialMessage }}</p>

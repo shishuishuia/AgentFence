@@ -211,7 +211,7 @@ def _utc_now():
 
 class WorkspaceManager:
     """Bounded sessions and one-use dialog results; all shared state is locked."""
-    def __init__(self, backend, *, picker=None, clock=time.monotonic, review_factory=None, external_review_factory=None, credential_store=None, builtin_mode="unknown"):
+    def __init__(self, backend, *, picker=None, clock=time.monotonic, review_factory=None, external_review_factory=None, credential_store=None, builtin_mode="unknown", import_root=None):
         if builtin_mode not in ("unknown", "offline", "deepseek"):
             raise ValueError("invalid builtin agent mode")
         self.backend, self.picker, self.clock = backend, picker if picker is not None else NativePicker(), clock
@@ -224,6 +224,8 @@ class WorkspaceManager:
         self.external_review_factory = external_review_factory
         self.credential_store = credential_store
         self.builtin_mode = builtin_mode
+        root = import_root or os.environ.get("AGENTFENCE_IMPORT_ROOT")
+        self.import_root = Path(root).resolve() if root else None
         self.review_thread = None
         self.review_loop = self.review_task = None
         self.closed = False
@@ -351,6 +353,27 @@ class WorkspaceManager:
             preview_id = job.pop("preview")["preview_id"]
         # Consume before I/O: an uncertain outcome must never be retried with this selection.
         return self.backend.confirm(preview_id, display_name)
+
+    def import_path(self, path, display_name):
+        """Import a directory below the configured server-side import root."""
+        if self.import_root is None:
+            raise ManagementError(503, "IMPORT_DISABLED", "服务器路径导入未启用。")
+        try:
+            root = self.import_root.resolve(strict=True)
+            target = Path(path).expanduser().resolve(strict=True)
+        except (OSError, RuntimeError):
+            raise ManagementError(400, "PATH_DENIED", "服务器路径不存在。") from None
+        if target != root and root not in target.parents:
+            raise ManagementError(403, "PATH_DENIED", "只允许导入配置的导入目录下的项目。")
+        if not target.is_dir():
+            raise ManagementError(400, "PATH_DENIED", "服务器路径不是目录。")
+        preview = self.backend.preview(str(target))
+        workspace = self.backend.confirm(preview["preview_id"], display_name)
+        return {"workspace": workspace, "preview": {
+            "allowed_file_count": preview["allowed_file_count"],
+            "excluded_file_count": preview["excluded_file_count"],
+            "total_bytes": preview["total_bytes"],
+        }}
 
     def create_task(self, workspace_id, goal, profile="readonly"):
         with self.lock:

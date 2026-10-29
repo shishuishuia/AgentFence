@@ -494,8 +494,11 @@ code {
   color: #4a6683;
 }
 .result-badge.denied {
-  background: #fff0d9;
-  color: #8b5e27;
+  background: #b42318;
+  color: #ffffff;
+  font-weight: 700;
+  border: 1px solid #8f1d14;
+  padding: 3px 8px;
 }
 .result-badge.failed {
   background: #f9e8e4;

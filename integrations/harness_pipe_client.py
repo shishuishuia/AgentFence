@@ -1,12 +1,60 @@
-"""Byte-only MCP stdio adapter for a user-restricted AgentFence pipe pair."""
+"""Byte-only MCP stdio adapter for an AgentFence relay endpoint."""
 import os
 import re
+import socket
 import sys
 import threading
 
-def main():
-    if os.name != 'nt' or len(sys.argv) != 2:
+
+def _unix_main(path):
+    """Bridge stdio to a Unix-domain relay socket (Linux/macOS)."""
+    if not re.fullmatch(r'/.*agentfence-[a-f0-9]{24}\.sock', path):
         return 2
+    try:
+        sock = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+        sock.connect(path)
+    except OSError:
+        return 1
+
+    def forward_input():
+        try:
+            while True:
+                data = os.read(sys.stdin.fileno(), 65536)
+                if not data:
+                    break
+                sock.sendall(data)
+        except OSError:
+            pass
+        finally:
+            try:
+                sock.shutdown(socket.SHUT_WR)
+            except OSError:
+                pass
+
+    thread = threading.Thread(target=forward_input, daemon=True)
+    thread.start()
+    try:
+        while True:
+            data = sock.recv(65536)
+            if not data:
+                break
+            sys.stdout.buffer.write(data)
+            sys.stdout.buffer.flush()
+    except OSError:
+        pass
+    finally:
+        try:
+            sock.close()
+        except OSError:
+            pass
+    return 0
+
+
+def main():
+    if len(sys.argv) != 2:
+        return 2
+    if os.name != 'nt':
+        return _unix_main(sys.argv[1])
     import win32con
     import win32event
     import win32file
@@ -17,7 +65,7 @@ def main():
     inbound = outbound = mutex = None
     acquired = False
     try:
-        mutex = win32event.OpenMutex(win32con.SYNCHRONIZE | 0x0001, False,  # MUTEX_MODIFY_STATE
+        mutex = win32event.OpenMutex(win32con.SYNCHRONIZE | 0x0001, False,
                                      'Local\\agentfence-' + name.rsplit('-', 1)[-1])
         wait = win32event.WaitForSingleObject(mutex, 30000)
         if wait not in (win32con.WAIT_OBJECT_0, win32con.WAIT_ABANDONED):
@@ -35,7 +83,8 @@ def main():
         if mutex is not None:
             mutex.Close()
         return 1
-    def forward_input():
+
+    def forward_input_windows():
         try:
             while True:
                 data = os.read(sys.stdin.fileno(), 65536)
@@ -49,7 +98,8 @@ def main():
                 inbound.Close()
             except Exception:
                 pass
-    thread = threading.Thread(target=forward_input, daemon=True)
+
+    thread = threading.Thread(target=forward_input_windows, daemon=True)
     thread.start()
     try:
         while True:
@@ -70,6 +120,7 @@ def main():
         if mutex is not None:
             mutex.Close()
     return 0
+
 
 if __name__ == '__main__':
     raise SystemExit(main())

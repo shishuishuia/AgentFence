@@ -133,6 +133,12 @@ export async function confirmWorkspace(id: string, name: string, signal?: AbortS
   if (!isWorkspace(value)) throw new ApiError(502, 'INVALID_RESPONSE', '工作区响应无效。')
   return value
 }
+export async function importWorkspacePath(path: string, displayName: string, signal?: AbortSignal) {
+  const value = await management('/workspaces/import', { path, display_name: displayName }, signal)
+  if (!record(value) || !isWorkspace(value.workspace))
+    throw new ApiError(502, 'INVALID_RESPONSE', '服务器路径导入响应无效。')
+  return value.workspace
+}
 export async function getWorkspaces(signal?: AbortSignal) {
   const value = await management('/workspaces', undefined, signal)
   if (!record(value) || !Array.isArray(value.items) || !value.items.every(isWorkspace))

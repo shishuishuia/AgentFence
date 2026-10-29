@@ -66,7 +66,7 @@ def main():
             return 0
     elif args.harness_check:
         parser.error("--harness-check requires --harness-entry or AGENTFENCE_DSH_ENTRY")
-    credentials = CredentialStore(args.credentials_file) if harness is not None or args.agent == "deepseek" else None
+    credentials = CredentialStore(args.credentials_file)
     root = REPO / "results" / ("local-v2-dashboard-" + datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + "-" + uuid.uuid4().hex[:8])
     root.mkdir()
     prepare_fixture(root / "fixture")

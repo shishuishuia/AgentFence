@@ -9,7 +9,9 @@ import json
 import os
 from pathlib import Path
 import secrets
+import socket
 import subprocess
+import tempfile
 import threading
 
 from integrations.mcp_review import child_environment
@@ -20,8 +22,6 @@ class PipeRelayError(RuntimeError):
 class TaskPipeRelay:
     """Own bounded, current-user-only pipe pairs and task-scoped MCP children."""
     def __init__(self, binary, broker_url, task_id, task_token, *, max_connections=12, grant_hook=None):
-        if os.name != 'nt':
-            raise PipeRelayError('当前任务中继仅支持原生 Windows。')
         if type(max_connections) is not int or not 1 <= max_connections <= 32:
             raise ValueError('invalid connection budget')
         binary = Path(binary).resolve(strict=True)
@@ -30,7 +30,13 @@ class TaskPipeRelay:
         self._binary = str(binary)
         self._env = child_environment(broker_url, task_id, task_token)
         self._grant_hook = grant_hook
-        self.name = r'\\.\pipe\agentfence-' + secrets.token_hex(24)
+        self._unix = os.name != 'nt'
+        if self._unix:
+            self.name = str(Path(tempfile.gettempdir()) / ('agentfence-' + secrets.token_hex(12) + '.sock'))
+            self._socket = None
+            self._connections = set()
+        else:
+            self.name = r'\\.\pipe\agentfence-' + secrets.token_hex(24)
         self._limit = max_connections
         self._closed = threading.Event()
         self._ready = threading.Event()
@@ -72,6 +78,8 @@ class TaskPipeRelay:
     def start(self):
         if self._thread is not None:
             raise PipeRelayError('任务中继已启动。')
+        if self._unix:
+            return self._start_unix()
         try:
             attrs = self._security()
             import win32event
@@ -88,6 +96,137 @@ class TaskPipeRelay:
             self.close()
             raise PipeRelayError('任务中继无法启动。')
         return self
+
+    def _start_unix(self):
+        try:
+            if os.path.exists(self.name):
+                os.unlink(self.name)
+            server = socket.socket(socket.AF_UNIX, socket.SOCK_STREAM)
+            server.bind(self.name)
+            os.chmod(self.name, 0o600)
+            server.listen(4)
+        except OSError:
+            raise PipeRelayError('任务中继无法启动。') from None
+        self._socket = server
+        self._ready.set()
+        self._thread = threading.Thread(target=self._accept_unix, daemon=True)
+        self._thread.start()
+        return self
+
+    def _accept_unix(self):
+        while not self._closed.is_set():
+            try:
+                conn, _ = self._socket.accept()
+            except OSError:
+                break
+            with self._lock:
+                self._connections.add(conn)
+            worker = threading.Thread(target=self._serve_unix, args=(conn,), daemon=True)
+            with self._lock:
+                self._workers.add(worker)
+            worker.start()
+
+    def _serve_unix(self, conn):
+        child = None
+        output = None
+        try:
+            child = subprocess.Popen([self._binary], env=self._env, stdin=subprocess.PIPE,
+                                     stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
+                                     creationflags=getattr(subprocess, 'CREATE_NO_WINDOW', 0), bufsize=0)
+            with self._lock:
+                self._children.add(child)
+
+            def copy_output():
+                try:
+                    while not self._closed.is_set():
+                        chunk = os.read(child.stdout.fileno(), 65536)
+                        if not chunk:
+                            break
+                        conn.sendall(chunk)
+                except OSError:
+                    pass
+
+            output = threading.Thread(target=copy_output, daemon=True)
+            output.start()
+            buffer = b''
+            while not self._closed.is_set():
+                data = conn.recv(65536)
+                if not data:
+                    break
+                if self._grant_hook is None:
+                    child.stdin.write(data)
+                    child.stdin.flush()
+                    continue
+                buffer += data
+                while b'\n' in buffer:
+                    line, buffer = buffer.split(b'\n', 1)
+                    child.stdin.write(self._inject(line) + b'\n')
+                    child.stdin.flush()
+                if len(buffer) > 1024 * 1024:
+                    child.stdin.write(buffer)
+                    child.stdin.flush()
+                    buffer = b''
+            if buffer and child.stdin:
+                child.stdin.write(buffer)
+                child.stdin.flush()
+        except (OSError, ValueError):
+            pass
+        finally:
+            try:
+                conn.close()
+            except OSError:
+                pass
+            with self._lock:
+                self._connections.discard(conn)
+            if child is not None:
+                if child.poll() is None:
+                    child.terminate()
+                try:
+                    child.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    child.kill()
+                    child.wait(timeout=5)
+                for stream in (child.stdin, child.stdout):
+                    try:
+                        if stream is not None:
+                            stream.close()
+                    except OSError:
+                        pass
+                with self._lock:
+                    self._children.discard(child)
+            if output is not None:
+                output.join(2)
+            with self._lock:
+                self._workers.discard(threading.current_thread())
+
+    def _close_unix(self):
+        try:
+            if self._socket is not None:
+                self._socket.close()
+        except OSError:
+            pass
+        try:
+            os.unlink(self.name)
+        except OSError:
+            pass
+        with self._lock:
+            connections = list(self._connections)
+            children = list(self._children)
+            workers = list(self._workers)
+        for conn in connections:
+            try:
+                conn.close()
+            except OSError:
+                pass
+        for child in children:
+            if child.poll() is None:
+                child.terminate()
+        for worker in workers:
+            worker.join(6)
+        if self._thread is not None:
+            self._thread.join(6)
+        if self._thread is not None and self._thread.is_alive():
+            raise PipeRelayError('任务中继未能停止。')
 
     def _accept(self, attrs):
         import pywintypes
@@ -237,6 +376,9 @@ class TaskPipeRelay:
         if self._closed.is_set():
             return
         self._closed.set()
+        if self._unix:
+            self._close_unix()
+            return
         if self._thread is not None:
             # Wake the pending accept by connecting both directions. These carry
             # no traffic and are discarded before a Rust child is created.

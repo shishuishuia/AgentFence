@@ -38,7 +38,8 @@ struct ReadArgs {
 struct WriteArgs {
     path: String,
     content: String,
-    grant_id: String,
+    #[serde(default)]
+    grant_id: Option<String>,
 }
 #[derive(Deserialize)]
 #[serde(deny_unknown_fields)]
@@ -87,7 +88,7 @@ impl McpServer {
             "agentfence_write_file" if self.client.editable => {
                 let args: WriteArgs = serde_json::from_value(arguments).map_err(|_| invalid())?;
                 self.client
-                    .write(&args.path, &args.content, &args.grant_id)
+                    .write(&args.path, &args.content, args.grant_id.as_deref())
                     .await
             }
             "agentfence_task_status" => {
