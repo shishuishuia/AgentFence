@@ -137,7 +137,7 @@ class WorkspaceBackend:
 
     def request(self, method, route, body=None):
         try:
-            limit = 2 * 1024 * 1024 if route in ("/v1/admin/workspace-previews", "/v1/admin/workspaces") and method == "POST" else 1024 * 1024
+            limit = 2 * 1024 * 1024 if (route in ("/v1/admin/workspace-previews", "/v1/admin/workspaces") and method == "POST") or (method == "GET" and route.endswith("/changes")) else 1024 * 1024
             response = BrokerHttp(self.config.upstream, timeout=max(self.config.timeout, 10), max_response_bytes=limit).request(
                 method, route, token=self.config.token, body=body)
         except ClientError:
@@ -149,7 +149,8 @@ class WorkspaceBackend:
             if reason not in {"SNAPSHOT_CHANGED", "PREVIEW_EXPIRED", "PAYLOAD_TOO_LARGE", "PATH_DENIED",
                               "READONLY_TASK", "INVALID_REQUEST", "AUDIT_UNAVAILABLE", "IMPORT_LIMIT_EXCEEDED"}:
                 reason = "BROKER_REJECTED"
-            raise ManagementError(response.status, reason, "Rust 拒绝了管理操作，请检查预览、限制或服务状态。")
+            message = "原文件或隔离副本已变化，未应用修改；请重新检查。" if reason == "SNAPSHOT_CHANGED" else "Rust 拒绝了管理操作，请检查预览、限制或服务状态。"
+            raise ManagementError(response.status, reason, message)
         return response.payload
 
     def preview(self, root):
@@ -170,7 +171,27 @@ class WorkspaceBackend:
         value = self.request("GET", "/v1/admin/workspaces")
         if not isinstance(value.get("items"), list) or len(value["items"]) > 32 or any(not isinstance(x, dict) for x in value["items"]):
             raise invalid_response()
-        return {"items": [workspace_shape(item) for item in value["items"] if item.get("import_mode") != "configured"]}
+        return {"items": [workspace_shape(item) for item in value["items"] if item.get("import_mode") == "readonly_snapshot"]}
+
+    def create_edit_task(self, workspace_id, goal):
+        copy = self.request("POST", f"/v1/admin/workspaces/{workspace_id}/edit-copy")
+        copy_id = copy.get("workspace_id")
+        if copy.get("import_mode") != "editable_copy" or not isinstance(copy_id, str) or copy_id == workspace_id or not re.fullmatch(r"ws_[a-f0-9]{32}", copy_id):
+            raise invalid_response()
+        value = self.request("POST", "/v1/admin/tasks", {"workspace_id": copy_id, "goal": goal, "permission_profile": "controlled_edit"})
+        if not all(isinstance(value.get(k), str) for k in ("task_id", "workspace_id", "snapshot_id", "goal", "agent_token", "created_at", "updated_at", "instance_id")) or value.get("permission_profile") != "controlled_edit" or value.get("workspace_id") != copy_id or value.get("phase") != "inspect" or value.get("goal") != goal or not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", value["task_id"]) or not 32 <= len(value["agent_token"]) <= 256 or any(not 33 <= ord(c) <= 126 for c in value["agent_token"]):
+            raise invalid_response()
+        return value
+
+    def edit_changes(self, task_id):
+        return self.request("GET", f"/v1/admin/tasks/{task_id}/changes")
+
+    def edit_change(self, task_id, path):
+        from urllib.parse import urlencode
+        return self.request("GET", f"/v1/admin/tasks/{task_id}/change?" + urlencode({"path": path}))
+
+    def apply_edit(self, task_id, path, after_sha256):
+        return self.request("POST", f"/v1/admin/tasks/{task_id}/apply", {"path": path, "after_sha256": after_sha256})
 
     def create_readonly_task(self, workspace_id, goal):
         value = self.request("POST", "/v1/admin/tasks", {
@@ -302,7 +323,7 @@ class WorkspaceManager:
         # Consume before I/O: an uncertain outcome must never be retried with this selection.
         return self.backend.confirm(preview_id, display_name)
 
-    def create_task(self, workspace_id, goal):
+    def create_task(self, workspace_id, goal, profile="readonly"):
         with self.lock:
             if len(self.tasks) >= 128:
                 raise ManagementError(429, "TASK_LIMIT", "本次服务的任务数量已达上限，请重启后再创建。")
@@ -310,7 +331,7 @@ class WorkspaceManager:
             reservation = "pending_" + secrets.token_hex(16)
             self.tasks[reservation] = None
         try:
-            value = self.backend.create_readonly_task(workspace_id, goal)
+            value = (self.backend.create_edit_task(workspace_id, goal) if profile == "controlled_edit" else self.backend.create_readonly_task(workspace_id, goal))
             clean = {k: value[k] for k in ("task_id", "workspace_id", "snapshot_id", "goal",
                     "permission_profile", "phase", "created_at", "updated_at", "instance_id")}
             with self.lock:
@@ -319,6 +340,25 @@ class WorkspaceManager:
         finally:
             with self.lock:
                 self.tasks.pop(reservation, None)
+
+    def edit_task(self, task_id):
+        with self.lock:
+            task = self.tasks.get(task_id)
+            if task is None or task["summary"]["permission_profile"] != "controlled_edit" or task["review"]["state"] != "completed":
+                raise ManagementError(409, "EDIT_NOT_READY", "修改任务尚未完成或不可查看。")
+        return task
+
+    def changes(self, task_id):
+        self.edit_task(task_id)
+        return self.backend.edit_changes(task_id)
+
+    def change(self, task_id, path):
+        self.edit_task(task_id)
+        return self.backend.edit_change(task_id, path)
+
+    def apply(self, task_id, path, after_sha256):
+        self.edit_task(task_id)
+        return self.backend.apply_edit(task_id, path, after_sha256)
 
     def review_status(self, task_id):
         with self.lock:

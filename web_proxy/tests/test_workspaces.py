@@ -40,6 +40,12 @@ class Backend:
     def workspaces(self):
         return {"items": []}
 
+    def create_edit_task(self, workspace_id, goal):
+        self.calls.append(("create_edit", workspace_id, goal))
+        return {"task_id": "task_edit", "workspace_id": "ws_isolated", "snapshot_id": "snap_test",
+                "goal": goal, "permission_profile": "controlled_edit", "phase": "inspect", "agent_token": "private-" + "z" * 40,
+                "created_at": "2026-10-28T00:00:00Z", "updated_at": "2026-10-28T00:00:00Z", "instance_id": "inst_test"}
+
     def create_readonly_task(self, workspace_id, goal):
         self.calls.append(("create", workspace_id, goal))
         return {"task_id": "task_readonly", "workspace_id": workspace_id, "snapshot_id": "snap_test",
@@ -181,11 +187,22 @@ class WorkspaceTests(unittest.TestCase):
         self.assertNotIn("agent_token", value)
         self.assertIn("task_readonly", self.manager.tasks)
 
-    def test_task_rejects_edit_and_extra_credentials(self):
-        for extra in ({"permission_profile": "controlled_edit"}, {"agent_token": "bad"}, {"goal": ""}, {"workspace_id": "../root"}):
+    def test_task_rejects_invalid_profile_and_extra_credentials(self):
+        for extra in ({"permission_profile": "invalid"}, {"agent_token": "bad"}, {"goal": ""}, {"workspace_id": "../root"}):
             body = {"workspace_id": "ws_test", "goal": "review", "permission_profile": "readonly", **extra}
             self.assertEqual(self.request("/api/admin/tasks", "POST", body)[0], 400)
         self.assertEqual(self.backend.calls, [])
+
+    def test_edit_task_keeps_credentials_server_side_and_uses_copy(self):
+        status, _, value = self.request("/api/admin/tasks", "POST", {
+            "workspace_id": "ws_test", "goal": "edit", "permission_profile": "controlled_edit"})
+        self.assertEqual(status, 201)
+        self.assertEqual(value["permission_profile"], "controlled_edit")
+        self.assertEqual(value["workspace_id"], "ws_isolated")
+        self.assertNotIn("agent_token", value)
+        self.assertEqual(self.backend.calls, [("create_edit", "ws_test", "edit")])
+        self.assertEqual(self.request("/api/admin/tasks/task_edit/changes")[0], 409)
+        self.assertEqual(self.request("/api/admin/tasks/task_edit/apply", "POST", {"path":"a.rs","after_sha256":"a"*64}, {"X-AgentFence-CSRF":"bad"})[0], 403)
 
     def test_workspace_name_enforces_rust_byte_bound(self):
         sid, _ = self.select()

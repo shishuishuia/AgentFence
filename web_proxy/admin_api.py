@@ -38,8 +38,9 @@ def handle_admin(handler, manager, path, query):
         selection = re.fullmatch(r"/api/admin/picker/(sel_[a-f0-9]{32})", path)
         exclusions = re.fullmatch(r"/api/admin/picker/(sel_[a-f0-9]{32})/excluded", path)
         review = re.fullmatch(r"/api/admin/tasks/([A-Za-z0-9_-]{1,128})/review(/start)?", path)
-        expected = "GET" if selection or exclusions or path == "/api/admin/workspaces" or (review and not review.group(2)) else "POST"
-        if path not in {"/api/admin/session", "/api/admin/picker/start", "/api/admin/workspaces/confirm", "/api/admin/workspaces", "/api/admin/tasks"} and selection is None and exclusions is None and review is None:
+        editing = re.fullmatch(r"/api/admin/tasks/([A-Za-z0-9_-]{1,128})/(changes|change|apply)", path)
+        expected = "GET" if selection or exclusions or path == "/api/admin/workspaces" or (review and not review.group(2)) or (editing and editing.group(2) != "apply") else "POST"
+        if path not in {"/api/admin/session", "/api/admin/picker/start", "/api/admin/workspaces/confirm", "/api/admin/workspaces", "/api/admin/tasks"} and selection is None and exclusions is None and review is None and editing is None:
             raise ManagementError(404, "ROUTE_NOT_FOUND", "未知管理接口。")
         offset = None
         if exclusions:
@@ -47,7 +48,13 @@ def handle_admin(handler, manager, path, query):
             if len(pairs) != 1 or pairs[0][0] != "offset" or not re.fullmatch(r"[0-9]{1,5}", pairs[0][1]):
                 raise ManagementError(400, "INVALID_REQUEST", "排除项分页参数无效。")
             offset = int(pairs[0][1])
-        if (query and not exclusions) or handler.command != expected:
+        change_path = None
+        if editing and editing.group(2) == "change":
+            pairs = parse_qsl(query, strict_parsing=True, max_num_fields=1)
+            if len(pairs) != 1 or pairs[0][0] != "path" or not 1 <= len(pairs[0][1]) <= 1024:
+                raise ManagementError(400, "INVALID_REQUEST", "文件路径无效。")
+            change_path = pairs[0][1]
+        if (query and not exclusions and change_path is None) or handler.command != expected:
             raise ManagementError(400 if query else 405, "INVALID_REQUEST", "请求方法或查询参数无效。")
         if expected == "POST":
             origins = handler.headers.get_all("Origin", [])
@@ -66,6 +73,15 @@ def handle_admin(handler, manager, path, query):
         if len(cookies) != 1 or (expected == "POST" and len(csrf) != 1):
             raise ManagementError(403, "CSRF_DENIED", "管理请求缺少会话或校验信息。")
         sid = manager.authenticate(cookies[0], csrf[0] if expected == "POST" else None)
+        if editing:
+            task_id, action = editing.groups()
+            if action == "changes":
+                return handler.reply(200, manager.changes(task_id))
+            if action == "change":
+                return handler.reply(200, manager.change(task_id, change_path))
+            if set(body) != {"path", "after_sha256"} or not isinstance(body["path"], str) or not 1 <= len(body["path"]) <= 1024 or not isinstance(body["after_sha256"], str) or not re.fullmatch(r"[a-f0-9]{64}", body["after_sha256"]):
+                raise ManagementError(400, "INVALID_REQUEST", "应用修改参数无效。")
+            return handler.reply(200, manager.apply(task_id, body["path"], body["after_sha256"]))
         if review:
             if body:
                 raise ManagementError(400, "INVALID_REQUEST", "审查启动不接受额外参数。")
@@ -81,9 +97,9 @@ def handle_admin(handler, manager, path, query):
         if path == "/api/admin/workspaces":
             return handler.reply(200, manager.backend.workspaces())
         if path == "/api/admin/tasks":
-            if set(body) != {"workspace_id", "goal", "permission_profile"} or body["permission_profile"] != "readonly" or not isinstance(body["workspace_id"], str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", body["workspace_id"]) or not isinstance(body["goal"], str) or not 1 <= len(body["goal"].strip()) <= 1000 or len(body["goal"].encode("utf-8")) > 4000 or any(ord(x) < 32 and x not in "\n\t" for x in body["goal"]):
+            if set(body) != {"workspace_id", "goal", "permission_profile"} or body["permission_profile"] not in ("readonly", "controlled_edit") or not isinstance(body["workspace_id"], str) or not re.fullmatch(r"[A-Za-z0-9_-]{1,128}", body["workspace_id"]) or not isinstance(body["goal"], str) or not 1 <= len(body["goal"].strip()) <= 1000 or len(body["goal"].encode("utf-8")) > 4000 or any(ord(x) < 32 and x not in "\n\t" for x in body["goal"]):
                 raise ManagementError(400, "INVALID_REQUEST", "只读任务参数无效。")
-            return handler.reply(201, manager.create_task(body["workspace_id"], body["goal"].strip()))
+            return handler.reply(201, manager.create_task(body["workspace_id"], body["goal"].strip(), body["permission_profile"]))
         if set(body) != {"selection_id", "display_name", "profile"} or body["profile"] != "readonly_snapshot" or not isinstance(body["selection_id"], str) or not re.fullmatch(r"sel_[a-f0-9]{32}", body["selection_id"]) or not isinstance(body["display_name"], str) or not 1 <= len(body["display_name"].strip()) <= 80 or len(body["display_name"].encode("utf-8")) > 256 or any(ord(x) < 32 for x in body["display_name"]):
             raise ManagementError(400, "INVALID_REQUEST", "工作区确认参数无效。")
         return handler.reply(201, manager.confirm(sid, body["selection_id"], body["display_name"].strip()))
