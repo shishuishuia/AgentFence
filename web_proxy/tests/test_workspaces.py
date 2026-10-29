@@ -88,6 +88,15 @@ class WorkspaceTests(unittest.TestCase):
         self.cookie = headers["Set-Cookie"].split(";")[0]
         self.csrf = body["csrf_token"]
 
+    def test_agent_availability_tracks_configured_factories_and_requires_session(self):
+        status, _, result = self.request('/api/admin/agents')
+        self.assertEqual(status, 200)
+        self.assertEqual(result, {'builtin': False, 'deepseek_harness': False, 'builtin_mode': 'unknown'})
+        self.manager.review_factory = lambda *_: None
+        self.manager.external_review_factory = lambda *_: None
+        self.assertEqual(self.request('/api/admin/agents')[2], {'builtin': True, 'deepseek_harness': True, 'builtin_mode': 'unknown'})
+        self.assertEqual(self.request('/api/admin/agents', headers={'Cookie': ''})[0], 401)
+
     def select(self):
         status, _, body = self.request("/api/admin/picker/start", "POST", {})
         self.assertEqual(status, 202)

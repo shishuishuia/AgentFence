@@ -206,7 +206,9 @@ class WorkspaceBackend:
 
 class WorkspaceManager:
     """Bounded sessions and one-use dialog results; all shared state is locked."""
-    def __init__(self, backend, *, picker=None, clock=time.monotonic, review_factory=None, external_review_factory=None):
+    def __init__(self, backend, *, picker=None, clock=time.monotonic, review_factory=None, external_review_factory=None, builtin_mode="unknown"):
+        if builtin_mode not in ("unknown", "offline", "deepseek"):
+            raise ValueError("invalid builtin agent mode")
         self.backend, self.picker, self.clock = backend, picker if picker is not None else NativePicker(), clock
         self.lock = threading.Lock()
         self.sessions = {}
@@ -215,6 +217,7 @@ class WorkspaceManager:
         self.dialog_busy = False
         self.review_factory = review_factory
         self.external_review_factory = external_review_factory
+        self.builtin_mode = builtin_mode
         self.review_thread = None
         self.review_loop = self.review_task = None
         self.closed = False

@@ -39,8 +39,8 @@ def handle_admin(handler, manager, path, query):
         exclusions = re.fullmatch(r"/api/admin/picker/(sel_[a-f0-9]{32})/excluded", path)
         review = re.fullmatch(r"/api/admin/tasks/([A-Za-z0-9_-]{1,128})/review(/start)?", path)
         editing = re.fullmatch(r"/api/admin/tasks/([A-Za-z0-9_-]{1,128})/(changes|change|apply)", path)
-        expected = "GET" if selection or exclusions or path == "/api/admin/workspaces" or (review and not review.group(2)) or (editing and editing.group(2) != "apply") else "POST"
-        if path not in {"/api/admin/session", "/api/admin/picker/start", "/api/admin/workspaces/confirm", "/api/admin/workspaces", "/api/admin/tasks"} and selection is None and exclusions is None and review is None and editing is None:
+        expected = "GET" if selection or exclusions or path in ("/api/admin/workspaces", "/api/admin/agents") or (review and not review.group(2)) or (editing and editing.group(2) != "apply") else "POST"
+        if path not in {"/api/admin/session", "/api/admin/picker/start", "/api/admin/workspaces/confirm", "/api/admin/workspaces", "/api/admin/tasks", "/api/admin/agents"} and selection is None and exclusions is None and review is None and editing is None:
             raise ManagementError(404, "ROUTE_NOT_FOUND", "未知管理接口。")
         offset = None
         if exclusions:
@@ -73,6 +73,10 @@ def handle_admin(handler, manager, path, query):
         if len(cookies) != 1 or (expected == "POST" and len(csrf) != 1):
             raise ManagementError(403, "CSRF_DENIED", "管理请求缺少会话或校验信息。")
         sid = manager.authenticate(cookies[0], csrf[0] if expected == "POST" else None)
+        if path == "/api/admin/agents":
+            return handler.reply(200, {"builtin": manager.review_factory is not None,
+                                       "deepseek_harness": manager.external_review_factory is not None,
+                                       "builtin_mode": manager.builtin_mode})
         if editing:
             task_id, action = editing.groups()
             if action == "changes":
