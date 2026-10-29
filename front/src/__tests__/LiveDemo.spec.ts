@@ -19,6 +19,23 @@ const idle: DemoState = {
 afterEach(() => vi.unstubAllGlobals())
 
 describe('交互演示控制', () => {
+  it('任务列表仅在演示服务启用时展示演示入口', async () => {
+    const request = vi.fn<typeof fetch>()
+      .mockResolvedValueOnce(new Response('{}', { status: 404 }))
+      .mockResolvedValueOnce(new Response(JSON.stringify(idle)))
+    vi.stubGlobal('fetch', request)
+    const disabled = mount(LiveDemoPanel, { props: { hideWhenUnavailable: true }, global: { stubs: { RouterLink: RouterLinkStub } } })
+    await flushPromises()
+    expect(disabled.find('section').exists()).toBe(false)
+    disabled.unmount()
+    const enabled = mount(LiveDemoPanel, { props: { hideWhenUnavailable: true }, global: { stubs: { RouterLink: RouterLinkStub } } })
+    try {
+      await flushPromises()
+      expect(enabled.text()).toContain('现场执行一个 Agent 任务')
+    } finally {
+      enabled.unmount()
+    }
+  })
   it('真实模型模式提交用户任务，不显示写死的 13 步进度', async () => {
     const modelState: DemoState = {
       ...idle,

@@ -3,6 +3,7 @@ import { getTasks } from '@/api'
 import { usePolling } from '@/composables/usePolling'
 import RequestState from '@/components/RequestState.vue'
 import TaskTable from '@/components/TaskTable.vue'
+import LiveDemoPanel from '@/components/LiveDemoPanel.vue'
 const list = usePolling((context) => getTasks(50, context.signal))
 </script>
 <template>
@@ -29,5 +30,6 @@ const list = usePolling((context) => getTasks(50, context.signal))
       <TaskTable v-if="list.data.value" :tasks="list.data.value.items" />
       <p v-else class="empty-message">等待任务数据。</p>
     </section>
+    <LiveDemoPanel hide-when-unavailable />
   </section>
 </template>

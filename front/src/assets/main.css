@@ -91,26 +91,6 @@ nav a.router-link-active {
   width: 20px;
   text-align: center;
 }
-.sidebar-note {
-  margin-top: auto;
-  padding: 22px 12px 0;
-  font-size: 12px;
-  color: #537464;
-}
-.sidebar-note p {
-  color: #8c9991;
-  line-height: 1.8;
-  margin-top: 10px;
-  font-size: 11px;
-}
-.status-dot {
-  width: 6px;
-  height: 6px;
-  background: #6c9a78;
-  border-radius: 50%;
-  display: inline-block;
-  margin-right: 7px;
-}
 .workspace {
   flex: 1;
   min-width: 0;
@@ -291,10 +271,6 @@ h1 {
   color: #8a5a3b;
   background: #faf0e5;
 }
-.connection-panel p {
-  min-height: 50px;
-  margin: 17px 0;
-}
 .setup-list {
   padding: 0;
   list-style: none;
@@ -379,8 +355,7 @@ footer {
     gap: 7px;
     font-size: 12px;
   }
-  .nav-label,
-  .sidebar-note {
+  .nav-label {
     display: none;
   }
   .topbar {
