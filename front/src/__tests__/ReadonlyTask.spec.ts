@@ -2,9 +2,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 import { flushPromises, mount } from '@vue/test-utils'
 import { createMemoryHistory, createRouter } from 'vue-router'
 import ReadonlyTaskForm from '@/components/ReadonlyTaskForm.vue'
-import { createReadonlyTask } from '@/api/workspaces'
+import { createReadonlyTask, createEditTask } from '@/api/workspaces'
 import type { TaskSummary } from '@/types/api'
-vi.mock('@/api/workspaces', () => ({ createReadonlyTask: vi.fn<typeof createReadonlyTask>() }))
+vi.mock('@/api/workspaces', () => ({ createReadonlyTask: vi.fn<typeof createReadonlyTask>(), createEditTask: vi.fn<typeof createEditTask>() }))
 beforeEach(() => vi.resetAllMocks())
 async function setup() {
   const router = createRouter({
@@ -33,6 +33,17 @@ describe('只读任务创建', () => {
       expect.any(AbortSignal),
     )
     expect(router.currentRoute.value.path).toBe('/tasks/task_readonly')
+    wrapper.unmount()
+  })
+  it('选择读写任务后使用隔离副本接口', async () => {
+    vi.mocked(createEditTask).mockResolvedValue({ task_id: 'task_edit' } as TaskSummary)
+    const { wrapper, router } = await setup()
+    await wrapper.get('input[value="controlled_edit"]').setValue()
+    await wrapper.get('form').trigger('submit')
+    await flushPromises()
+    expect(createEditTask).toHaveBeenCalledWith('ws_test', expect.any(String), expect.any(AbortSignal))
+    expect(createReadonlyTask).not.toHaveBeenCalled()
+    expect(router.currentRoute.value.path).toBe('/tasks/task_edit')
     wrapper.unmount()
   })
   it('超时或重复提交只发送一次创建请求', async () => {

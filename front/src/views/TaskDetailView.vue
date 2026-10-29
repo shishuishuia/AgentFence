@@ -50,9 +50,10 @@ const statuses: Record<GrantStatus, string> = {
     </p>
     <template v-if="detail.data.value">
       <McpReviewPanel
-        v-if="detail.data.value.permission_profile === 'readonly'"
+        v-if="detail.data.value.permission_profile === 'readonly' || detail.data.value.permission_profile === 'controlled_edit'"
         :key="taskId"
         :task-id="taskId"
+        :editable="detail.data.value.permission_profile === 'controlled_edit'"
       />
       <div class="detail-grid">
         <section class="panel">

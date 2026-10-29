@@ -2,7 +2,8 @@
 import { onMounted, onUnmounted, ref } from 'vue'
 import { openManagement, management } from '@/api/workspaces'
 import { ApiError } from '@/api/client'
-const props = defineProps<{ taskId: string }>()
+import EditChangesPanel from '@/components/EditChangesPanel.vue'
+const props = defineProps<{ taskId: string; editable?: boolean }>()
 interface Review {
   state: 'idle' | 'running' | 'completed' | 'failed'
   call_count?: number
@@ -121,7 +122,7 @@ async function start() {
 </script>
 <template>
   <section class="panel section-gap">
-    <h2>MCP 只读审查</h2>
+    <h2>{{ editable ? 'MCP 隔离修改' : 'MCP 只读审查' }}</h2>
     <p v-if="startError" class="notice" role="alert">{{ startError }}</p>
     <p v-if="error" class="notice" role="alert">{{ error }}</p>
     <p v-if="retryHint" class="notice">{{ retryHint }}</p>
@@ -132,7 +133,7 @@ async function start() {
         :disabled="busy || querying"
         @click="start"
       >
-        开始 MCP 审查
+        {{ editable ? '开始 MCP 修改' : '开始 MCP 审查' }}
       </button>
       <p role="status">
         状态：{{ value.state }} · 工具调用 {{ value.call_count || 0 }} 次 · 已读
@@ -142,6 +143,7 @@ async function start() {
         离线 MCP 调用重放：已核验文件与审计，未调用模型生成审查建议。
       </p>
       <p v-if="value.mode === 'model_review'">真实模型审查；建议需人工复核。</p>
+      <p v-if="value.mode === 'model_edit'">模型已完成隔离副本修改；确认前不会修改原项目。</p>
       <p v-if="value.message" role="alert">{{ value.message }}</p>
       <pre v-if="value.report" class="review-report">{{ value.report }}</pre>
       <ul v-if="value.calls">
@@ -152,6 +154,7 @@ async function start() {
         </li>
       </ul>
     </template>
+    <EditChangesPanel v-if="editable && value?.state === 'completed'" :task-id="taskId" />
     <button class="button" :disabled="busy || querying" @click="refresh">
       {{ querying ? '查询中…' : '重新查询' }}
     </button>

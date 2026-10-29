@@ -1,3 +1,5 @@
+> 说明：本文描述 v2 初版只读契约；隔离读写任务的新流程见 [隔离修改任务](v2-controlled-edit.md)。
+
 # v2：B 本机管理接口与 A 对接约定
 
 本文件描述 B 的适配约定；现已集成 A 的 `fd4e086`，实际 Rust 接口以
@@ -52,7 +54,7 @@ excluded_file_count、total_bytes。源绝对路径仅出现在管理员的选�
 Agent/MCP 返回。
 
 Rust 限额：最多 1000 个 UTF-8 普通文本文件，单文件 64 KiB、合计 20 MiB。
-扩展名 .rs/.toml/.md/.txt/.json/.yaml/.yml；排除 .git、target、node_modules、
+扩展名 .rs/.py/.toml/.md/.txt/.json/.yaml/.yml；排除 .git、target、node_modules、venv、
 .env*、凭证/密钥、符号链接和 Windows 重解析点。限额失败必须显式报错。
 
 ## 分步检查记录

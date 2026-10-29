@@ -1,3 +1,5 @@
+> 说明：本文描述 v2 初版只读契约；隔离读写任务的新流程见 [隔离修改任务](v2-controlled-edit.md)。
+
 # v2 Rust 工作区与 MCP 接入
 
 A 实现目录扫描/快照、不可升级的只读任务、任务身份查询和 MCP stdio 服务。主验收环境是原生 Windows。目录选择器、浏览器会话、Vue 管理页面、真实模型审查和录屏由 B 对接；离线协议重放不等于真实模型审查。
@@ -49,11 +51,11 @@ Linux 去掉 `.exe`。第二条命令创建两个不同的三文件项目、自�
 
 列表/状态走 `/v1/agent/tasks/{id}` 和 `/files`，读取走 `/v1/tool/execute`，均使用任务身份。MCP 不直接打开文件，不提供 Shell、注册工作区或授权管理功能。未知工具和额外参数拒绝。stdout 只写协议，诊断仅写 stderr。
 
-HTTP 禁用代理/重定向，连接超时 2 秒、请求超时 10 秒、响应上限 1 MiB；MCP 输入行上限 16 KiB。Broker/快照身份变化后不自动切换任务。Broker 拒绝返回 MCP `isError:true`，保留安全 reason_code 和 request_id；未进入 Broker 的协议参数错误不伪造 request_id。底层网络错误不转发原始错误体或请求头。
+HTTP 禁用代理/重定向，连接超时 2 秒、请求超时 10 秒、响应上限 1 MiB；MCP 输入行上限 512 KiB。Broker/快照身份变化后不自动切换任务。Broker 拒绝返回 MCP `isError:true`，保留安全 reason_code 和 request_id；未进入 Broker 的协议参数错误不伪造 request_id。底层网络错误不转发原始错误体或请求头。
 
 ## 导入及安全规则
 
-默认允许 rs/toml/md/txt/json/yaml/yml 普通 UTF-8 文件；排除隐藏项、构建/依赖目录、常见凭证名、链接、Windows reparse point 和特殊文件。名称规则不能保证识别内容里的所有敏感数据，管理端仍须展示并确认实际清单。
+默认允许 rs/py/toml/md/txt/json/yaml/yml 普通 UTF-8 文件；排除隐藏项、venv、构建/依赖目录、常见凭证名、链接、Windows reparse point 和特殊文件。名称规则不能保证识别内容里的所有敏感数据，管理端仍须展示并确认实际清单。
 
 最多 1000 文件、每文件 65536 字节、总计 20 MiB、20000 遍历项和 64 层目录，超限明确失败。预览有效 300 秒，在确认入口检查；最多保留 16 个。确认单次消费，清单/内容变化返回 SNAPSHOT_CHANGED，必须重新预览。总工作区上限 32（含旧配置）。排除目录按一个目录项计，不递归计数；预览首包最多显示 200 项，并给出完整 excluded_entry_count 和 excluded_truncated。管理员可以分页取全；预览过期或确认消费后分页失效。
 

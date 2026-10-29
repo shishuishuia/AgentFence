@@ -180,3 +180,10 @@ export async function createReadonlyTask(workspaceId: string, goal: string, sign
     throw new ApiError(502, 'INVALID_RESPONSE', '服务端未确认只读任务，已停止后续操作。')
   return value as unknown as TaskSummary
 }
+
+export async function createEditTask(workspaceId: string, goal: string, signal?: AbortSignal) {
+  const value = await management('/tasks', { workspace_id: workspaceId, goal, permission_profile: 'controlled_edit' }, signal)
+  if (!record(value) || value.permission_profile !== 'controlled_edit' || value.phase !== 'inspect' || typeof value.workspace_id !== 'string' || value.workspace_id === workspaceId || typeof value.task_id !== 'string' || typeof value.snapshot_id !== 'string' || typeof value.goal !== 'string')
+    throw new ApiError(502, 'INVALID_RESPONSE', '服务端未确认独立修改副本，已停止后续操作。')
+  return value as unknown as TaskSummary
+}
