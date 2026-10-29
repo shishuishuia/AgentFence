@@ -5,6 +5,7 @@ connection owns a fresh Rust child to support client probing and reconnects.
 The authenticated OS user is the trust boundary; this is not a same-user sandbox.
 """
 from __future__ import annotations
+import json
 import os
 from pathlib import Path
 import secrets
@@ -18,7 +19,7 @@ class PipeRelayError(RuntimeError):
 
 class TaskPipeRelay:
     """Own bounded, current-user-only pipe pairs and task-scoped MCP children."""
-    def __init__(self, binary, broker_url, task_id, task_token, *, max_connections=12):
+    def __init__(self, binary, broker_url, task_id, task_token, *, max_connections=12, grant_hook=None):
         if os.name != 'nt':
             raise PipeRelayError('当前任务中继仅支持原生 Windows。')
         if type(max_connections) is not int or not 1 <= max_connections <= 32:
@@ -28,6 +29,7 @@ class TaskPipeRelay:
             raise PipeRelayError('MCP 程序不可用。')
         self._binary = str(binary)
         self._env = child_environment(broker_url, task_id, task_token)
+        self._grant_hook = grant_hook
         self.name = r'\\.\pipe\agentfence-' + secrets.token_hex(24)
         self._limit = max_connections
         self._closed = threading.Event()
@@ -139,6 +141,30 @@ class TaskPipeRelay:
             for pipe in pipes:
                 self._pipes.discard(pipe)
 
+    def _inject(self, line):
+        """Add a launcher-issued grant to a write tool call; never log content."""
+        try:
+            message = json.loads(line)
+            if not isinstance(message, dict) or message.get("method") != "tools/call":
+                return line
+            params = message.get("params")
+            if not isinstance(params, dict) or params.get("name") != "agentfence_write_file":
+                return line
+            arguments = params.get("arguments")
+            if not isinstance(arguments, dict):
+                return line
+            path = arguments.get("path")
+            if not isinstance(path, str) or not path:
+                return line
+            # The trusted launcher always replaces any model-supplied value.
+            grant_id = self._grant_hook(path)
+            if not isinstance(grant_id, str) or not grant_id:
+                return line
+            arguments["grant_id"] = grant_id
+            return json.dumps(message, ensure_ascii=False, separators=(",", ":")).encode("utf-8")
+        except Exception:
+            return line
+
     def _serve(self, inbound, outbound):
         import win32file
         child = None
@@ -164,11 +190,26 @@ class TaskPipeRelay:
                     self._release(outbound)
             output = threading.Thread(target=copy_output, daemon=True)
             output.start()
+            buffer = b""
             while not self._closed.is_set():
                 _, data = win32file.ReadFile(inbound, 65536)
                 if not data:
                     break
-                child.stdin.write(data)
+                if self._grant_hook is None:
+                    child.stdin.write(data)
+                    child.stdin.flush()
+                    continue
+                buffer += data
+                while b"\n" in buffer:
+                    line, buffer = buffer.split(b"\n", 1)
+                    child.stdin.write(self._inject(line) + b"\n")
+                    child.stdin.flush()
+                if len(buffer) > 1024 * 1024:
+                    child.stdin.write(buffer)
+                    child.stdin.flush()
+                    buffer = b""
+            if buffer:
+                child.stdin.write(buffer)
                 child.stdin.flush()
         except Exception:
             pass

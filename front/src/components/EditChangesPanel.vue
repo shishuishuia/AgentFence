@@ -1,7 +1,9 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { management, openManagement } from '@/api/workspaces'
-const props = defineProps<{ taskId: string }>()
+const props = withDefaults(defineProps<{ taskId: string; canApply?: boolean }>(), {
+  canApply: true,
+})
 type Entry = { path: string; before_sha256: string; after_sha256: string }
 type Detail = Entry & { before: string; after: string }
 const entries = ref<Entry[]>([])
@@ -32,7 +34,7 @@ async function preview(entry: Entry) {
 }
 async function apply() {
   const current = selected.value
-  if (!current || !accepted.value || busy.value) return
+  if (!current || !accepted.value || busy.value || props.canApply === false) return
   accepted.value = false; busy.value = true; message.value = ''
   try {
     await management(`${prefix}/apply`, {path: current.path, after_sha256: current.after_sha256})
@@ -47,6 +49,9 @@ onMounted(() => void refresh())
   <section class="panel section-gap">
     <h2>修改预览与应用</h2>
     <p>以下修改位于隔离副本。逐个查看原内容和修改后内容，再决定是否应用到原项目。</p>
+    <p v-if="canApply === false" class="notice" role="status">
+      本次运行未正常结束：只能查看差异，不能应用。请重新创建任务后再确认。
+    </p>
     <p v-if="message" role="status">{{ message }}</p>
     <p v-if="!entries.length && !busy">没有检测到文件内容变化。</p>
     <ul>
@@ -61,7 +66,9 @@ onMounted(() => void refresh())
       <p>原始内容</p><pre>{{ selected.before }}</pre>
       <p>修改后内容</p><pre>{{ selected.after }}</pre>
       <label><input v-model="accepted" type="checkbox" /> 我已检查此文件内容，同意将本次修改应用到原项目。</label>
-      <button class="button primary" :disabled="!accepted || busy" @click="apply">确认应用到原项目</button>
+      <button class="button primary" :disabled="!accepted || busy || canApply === false" @click="apply">
+        确认应用到原项目
+      </button>
       <p>如果原文件在导入后已变化，系统会拒绝覆盖；发生错误或超时后请先检查原文件。</p>
     </template>
     <button class="button" :disabled="busy" @click="refresh">刷新修改清单</button>

@@ -4,7 +4,7 @@ import { usePolling } from '@/composables/usePolling'
 import RequestState from '@/components/RequestState.vue'
 import TaskTable from '@/components/TaskTable.vue'
 import LiveDemoPanel from '@/components/LiveDemoPanel.vue'
-const list = usePolling((context) => getTasks(50, context.signal))
+const list = usePolling((context) => getTasks(50, context.signal), { interval: 60000 })
 </script>
 <template>
   <section>

@@ -10,6 +10,8 @@
 
 ## 当前进度
 
+首次使用可参考 [项目功能与使用说明](docs/项目功能与使用说明.md)。
+
 v2 已集成工作区导入、只读审查与隔离副本上的受控修改；应用到原项目须由管理员逐文件确认。
 启动、逐步检查、双项目验收及当前设备限制见 [B v2 交付说明](docs/v2-b-delivery.md)。
 快速入口：构建 `target/v2` 与 `front/dist` 后，执行 `python -m demo.run_v2_dashboard`，
@@ -199,6 +201,7 @@ npm run dev
 - [HTTP 接口文档](docs/api-contract.md)：业务接口、字段、鉴权、错误码、事件分页和联调示例。
 - [接口设计说明](docs/api-design.md)：已随本批联调同步 Rust/代理查询与边界；发生差异以 HTTP 接口文档及实际响应为准。
 - [OpenAPI 文档](docs/openapi.json)：已按当前接口同步，本地引用和代表性响应检查通过；尚未声称完成全量 JSON Schema 标准验证。
+- [外部 Agent 接入](docs/external-harness-integration.md)：固定版本 Harness、准备脚本、ACP/管道中继、写租约注入与安全边界。
 
 
 ### 启动真实看板

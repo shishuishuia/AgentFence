@@ -1,7 +1,12 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router'
 
 export const routes: RouteRecordRaw[] = [
-  { path: '/', redirect: '/workspaces' },
+  {
+    path: '/',
+    name: 'welcome',
+    component: () => import('@/views/WelcomeView.vue'),
+    meta: { title: '欢迎', layout: 'landing' },
+  },
   {
     path: '/workspaces',
     name: 'workspaces',
@@ -22,12 +27,8 @@ export const routes: RouteRecordRaw[] = [
     props: true,
     meta: { title: '任务详情' },
   },
-  {
-    path: '/audit',
-    name: 'audit',
-    component: () => import('@/views/AuditView.vue'),
-    meta: { title: '审计事件' },
-  },
+  // Audit events now live inside the task detail page; keep old links working.
+  { path: '/audit', redirect: '/tasks' },
   {
     path: '/:pathMatch(.*)*',
     name: 'not-found',

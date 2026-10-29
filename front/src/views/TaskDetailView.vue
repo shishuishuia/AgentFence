@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import { ref } from 'vue'
 import { RouterLink } from 'vue-router'
 import { getTask } from '@/api'
 import { ApiError } from '@/api/client'
@@ -7,20 +8,25 @@ import { useAuditEvents } from '@/composables/useAuditEvents'
 import RequestState from '@/components/RequestState.vue'
 import PhaseBadge from '@/components/PhaseBadge.vue'
 import AuditEventTable from '@/components/AuditEventTable.vue'
+import EditChangesPanel from '@/components/EditChangesPanel.vue'
 import McpReviewPanel from '@/components/McpReviewPanel.vue'
-import { formatTime } from '@/utils/audit'
+import { formatTime, type ResultFilter } from '@/utils/audit'
 import type { GrantStatus } from '@/types/api'
 const props = defineProps<{ taskId: string }>()
 const detail = usePolling((context) => getTask(props.taskId, context.signal), {
   key: () => props.taskId,
   fatal: (error) => error instanceof ApiError && error.status === 404,
+  interval: 60000,
 })
 const feed = useAuditEvents()
 const audit = usePolling((context) => feed.load(context, props.taskId), {
   key: () => props.taskId,
   reset: feed.reset,
   fatal: feed.fatal,
+  interval: 60000,
 })
+const auditFilter = ref<ResultFilter>('all')
+const reviewState = ref<string | null>(null)
 const statuses: Record<GrantStatus, string> = {
   active: '有效',
   used_up: '次数耗尽',
@@ -54,8 +60,18 @@ const statuses: Record<GrantStatus, string> = {
         :key="taskId"
         :task-id="taskId"
         :editable="detail.data.value.permission_profile === 'controlled_edit'"
+        @state="reviewState = $event"
       />
-      <div class="detail-grid">
+      <EditChangesPanel
+        v-if="
+          detail.data.value.permission_profile === 'controlled_edit' &&
+          (reviewState === 'completed' || reviewState === 'failed')
+        "
+        :key="`changes-${taskId}`"
+        :task-id="taskId"
+        :can-apply="reviewState === 'completed'"
+      />
+      <div class="detail-grid section-gap">
         <section class="panel">
           <div class="section-heading">
             <h2>任务状态</h2>
@@ -137,9 +153,15 @@ const statuses: Record<GrantStatus, string> = {
     <section class="panel section-gap">
       <div class="section-heading">
         <h2>关联审计</h2>
-        <RouterLink class="text-link" :to="{ path: '/audit', query: { taskId } }"
-          >前往审计页面 →</RouterLink
-        >
+        <label class="audit-filter"
+          >结果
+          <select v-model="auditFilter">
+            <option value="all">全部事件</option>
+            <option value="allowed">执行成功</option>
+            <option value="denied">策略拒绝</option>
+            <option value="failed">执行失败</option>
+          </select>
+        </label>
       </div>
       <RequestState
         :loading="audit.loading.value"
@@ -153,7 +175,20 @@ const statuses: Record<GrantStatus, string> = {
           · 仅保留最近 2000 条</template
         ><template v-if="feed.hasMore.value"> · 正在继续加载</template>
       </p>
-      <AuditEventTable :events="feed.events.value" />
+      <AuditEventTable :events="feed.events.value" :filter="auditFilter" />
     </section>
   </section>
 </template>
+<style scoped>
+.audit-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  color: #51675a;
+}
+.audit-filter select {
+  padding: 7px 10px;
+  font-size: 12px;
+}
+</style>

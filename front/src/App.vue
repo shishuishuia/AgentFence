@@ -1,18 +1,21 @@
 <script setup lang="ts">
+import { computed } from 'vue'
 import { RouterLink, RouterView, useRoute } from 'vue-router'
 import './assets/main.css'
 import { useBrokerSession } from '@/composables/useBrokerSession'
 import ServiceConnection from '@/components/ServiceConnection.vue'
 
 const route = useRoute()
+const isLanding = computed(() => route.meta.layout === 'landing')
 const session = useBrokerSession()
 const logoUrl = `${import.meta.env.BASE_URL}favicon.svg`
 </script>
 
 <template>
-  <div class="app-shell">
+  <RouterView v-if="isLanding" />
+  <div v-else class="app-shell">
     <aside class="sidebar">
-      <RouterLink class="brand" to="/workspaces" aria-label="AgentFence 首页">
+      <RouterLink class="brand" to="/" aria-label="AgentFence 首页">
         <img :src="logoUrl" alt="" width="36" height="36" />
         <span>AgentFence<small>LITE CONSOLE</small></span>
       </RouterLink>
@@ -20,8 +23,8 @@ const logoUrl = `${import.meta.env.BASE_URL}favicon.svg`
       <nav aria-label="主导航">
         <RouterLink to="/workspaces"><span class="nav-icon">▧</span>工作区管理</RouterLink>
         <RouterLink to="/tasks"><span class="nav-icon">▤</span>任务列表</RouterLink>
-        <RouterLink to="/audit"><span class="nav-icon">◎</span>审计事件</RouterLink>
       </nav>
+      <RouterLink class="nav-back" to="/">← 返回欢迎页</RouterLink>
       <ServiceConnection />
     </aside>
     <div class="workspace">

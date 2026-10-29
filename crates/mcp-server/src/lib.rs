@@ -155,8 +155,8 @@ impl ServerHandler for McpServer {
             })
             .collect();
         if self.client.editable {
-            let schema = json!({"type":"object","properties":{"path":{"type":"string","minLength":1,"maxLength":1024},"content":{"type":"string","maxLength":65536},"grant_id":{"type":"string","minLength":1,"maxLength":128}},"required":["path","content","grant_id"],"additionalProperties":false});
-            tools.push(Tool::new("agentfence_write_file", "Replace an allowlisted file in this task's isolated copy using a valid write lease", schema.as_object().expect("static schema").clone()).with_annotations(ToolAnnotations::new().read_only(false).destructive(true).open_world(false)));
+            let schema = json!({"type":"object","properties":{"path":{"type":"string","minLength":1,"maxLength":1024},"content":{"type":"string","maxLength":65536},"grant_id":{"type":"string","minLength":1,"maxLength":128,"description":"Omitted by the model: the trusted launcher injects a task-bound lease for this path."}},"required":["path","content"],"additionalProperties":false});
+            tools.push(Tool::new("agentfence_write_file", "Replace an allowlisted file in this task's isolated copy; the trusted launcher supplies the write lease", schema.as_object().expect("static schema").clone()).with_annotations(ToolAnnotations::new().read_only(false).destructive(true).open_world(false)));
         }
         Ok(ListToolsResult::with_all_items(tools))
     }

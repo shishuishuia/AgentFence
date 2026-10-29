@@ -202,3 +202,52 @@ export async function createEditTask(workspaceId: string, goal: string, signal?:
     throw new ApiError(502, 'INVALID_RESPONSE', '服务端未确认独立修改副本，已停止后续操作。')
   return value as unknown as TaskSummary
 }
+
+export interface CredentialState {
+  configured: boolean
+  source: 'environment' | 'file' | null
+  editable: boolean
+}
+function checkedCredential(v: unknown): CredentialState {
+  if (
+    record(v) &&
+    typeof v.configured === 'boolean' &&
+    typeof v.editable === 'boolean' &&
+    (v.source === null || v.source === 'environment' || v.source === 'file')
+  )
+    return { configured: v.configured, source: v.source as CredentialState['source'], editable: v.editable }
+  throw new ApiError(502, 'INVALID_RESPONSE', '凭证状态响应无效。')
+}
+export async function getCredential(signal?: AbortSignal) {
+  return checkedCredential(await management('/credentials', undefined, signal))
+}
+export async function saveCredential(apiKey: string) {
+  return checkedCredential(await management('/credentials', { api_key: apiKey }))
+}
+export async function clearCredential() {
+  let response: Response
+  try {
+    response = await fetch(`${base}/admin/credentials`, {
+      method: 'DELETE',
+      credentials: 'same-origin',
+      headers: { Accept: 'application/json', 'X-AgentFence-CSRF': csrf },
+    })
+  } catch {
+    throw new ApiError(0, 'NETWORK_ERROR', '本机管理服务连接失败；操作未自动重试。')
+  }
+  let value: unknown
+  try {
+    value = await response.json()
+  } catch {
+    throw new ApiError(502, 'INVALID_RESPONSE', '管理服务未返回 JSON。')
+  }
+  if (!response.ok) {
+    const v = value as Record<string, unknown> | null
+    throw new ApiError(
+      response.status,
+      typeof v?.reason_code === 'string' ? v.reason_code : 'HTTP_ERROR',
+      typeof v?.message === 'string' ? v.message : '清除凭证失败。',
+    )
+  }
+  return checkedCredential(value)
+}
