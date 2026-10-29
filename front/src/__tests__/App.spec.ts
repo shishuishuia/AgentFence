@@ -5,17 +5,20 @@ import App from '../App.vue'
 import { routes } from '../router'
 
 describe('页面路由', () => {
-  it('访问根目录和旧总览地址都进入工作区，连接状态在主导航下方', async () => {
+  it('根路径是欢迎页，旧总览地址进入工作区', async () => {
     const router = createRouter({ history: createMemoryHistory(), routes })
     await router.push('/')
     await router.isReady()
     const wrapper = mount(App, { global: { plugins: [router] } })
+    expect(router.currentRoute.value.path).toBe('/')
+    expect(wrapper.text()).toContain('落在围栏之内')
+    expect(wrapper.find('.sidebar').exists()).toBe(false)
+    await router.push('/dashboard')
+    await router.isReady()
     expect(router.currentRoute.value.path).toBe('/workspaces')
     expect(wrapper.get('h1').text()).toBe('工作区管理')
     expect(wrapper.find('nav').text()).not.toContain('项目总览')
     expect(wrapper.get('.sidebar .service-connection').text()).toContain('服务连接')
-    await router.push('/dashboard')
-    expect(router.currentRoute.value.path).toBe('/workspaces')
     wrapper.unmount()
   })
 

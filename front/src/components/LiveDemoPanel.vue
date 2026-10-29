@@ -177,9 +177,7 @@ onScopeDispose(() => {
       <RouterLink v-if="state?.task_id" class="text-link" :to="`/tasks/${state.task_id}`"
         >查看任务与租约 →</RouterLink
       >
-      <RouterLink v-if="state?.task_id" class="text-link" :to="`/audit?taskId=${state.task_id}`"
-        >查看本次审计 →</RouterLink
-      >
+
     </div>
     <p v-if="state && !state.enabled" class="notice">
       当前服务为只读展示。交互演示需使用终端入口

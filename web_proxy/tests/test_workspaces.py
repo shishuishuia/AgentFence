@@ -220,14 +220,24 @@ class WorkspaceTests(unittest.TestCase):
         self.assertEqual(value["reason_code"], "HARNESS_NOT_CONFIGURED")
         self.assertEqual(self.manager.review_status("task_readonly")["state"], "idle")
 
-    def test_external_harness_edit_task_denied_before_factory_is_called(self):
-        factory = Mock()
-        self.manager.external_review_factory = factory
+    def test_external_harness_can_start_an_isolated_edit_task(self):
+        class External:
+            async def run(self):
+                return {"mode":"external_agent", "report":"Edit report", "calls":[]}
+        called = []
+        def make(summary, token, progress):
+            called.append(summary["permission_profile"])
+            return External()
+        self.manager.external_review_factory = make
         self.request("/api/admin/tasks", "POST", {"workspace_id":"ws_test", "goal":"edit", "permission_profile":"controlled_edit"})
         status, _, _ = self.request("/api/admin/tasks/task_edit/review/start", "POST", {"agent_type":"deepseek_harness"})
-        self.assertEqual(status, 403)
-        self.assertEqual(self.manager.review_status("task_edit")["state"], "idle")
-        factory.assert_not_called()
+        self.assertEqual(status, 202)
+        for _ in range(100):
+            if self.manager.review_status("task_edit")["state"] != "running":
+                break
+            time.sleep(.01)
+        self.assertEqual(called, ["controlled_edit"])
+        self.assertEqual(self.manager.review_status("task_edit")["state"], "completed")
 
     def test_external_harness_type_and_progress_are_visible_without_tokens(self):
         class External:

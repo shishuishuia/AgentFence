@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { RouterLink } from 'vue-router'
 import type { TaskSummary } from '@/types/api'
-import { formatTime } from '@/utils/audit'
+import { formatTime, shortId } from '@/utils/audit'
 import PhaseBadge from './PhaseBadge.vue'
 defineProps<{ tasks: TaskSummary[] }>()
 </script>
@@ -23,16 +23,27 @@ defineProps<{ tasks: TaskSummary[] }>()
       <tbody>
         <tr v-for="task in tasks" :key="task.task_id">
           <td>
-            <RouterLink class="text-link mono" :to="`/tasks/${encodeURIComponent(task.task_id)}`">{{
-              task.task_id
-            }}</RouterLink>
+            <RouterLink
+              class="text-link mono"
+              :to="`/tasks/${encodeURIComponent(task.task_id)}`"
+              :title="task.task_id"
+              >{{ shortId(task.task_id) }}</RouterLink
+            >
           </td>
-          <td>{{ task.workspace_id }}</td>
+          <td class="mono" :title="task.workspace_id">{{ shortId(task.workspace_id) }}</td>
           <td><PhaseBadge :phase="task.phase" /></td>
           <td>{{ formatTime(task.created_at) }}</td>
           <td>{{ formatTime(task.updated_at) }}</td>
         </tr>
       </tbody>
     </table>
+    <p class="table-hint">任务与工作区显示短标识，悬停可查看完整 ID。</p>
   </div>
 </template>
+<style scoped>
+.table-hint {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #84938c;
+}
+</style>

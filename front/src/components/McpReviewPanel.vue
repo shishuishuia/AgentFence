@@ -1,9 +1,10 @@
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue'
+import { shortRequest } from '@/utils/audit'
 import { openManagement, management } from '@/api/workspaces'
 import { ApiError } from '@/api/client'
-import EditChangesPanel from '@/components/EditChangesPanel.vue'
 const props = defineProps<{ taskId: string; editable?: boolean }>()
+const emit = defineEmits<{ state: [string] }>()
 interface Review {
   state: 'idle' | 'running' | 'completed' | 'failed'
   call_count?: number
@@ -13,6 +14,8 @@ interface Review {
   progress_text?: string
   report?: string
   message?: string
+  started_at?: string | null
+  finished_at?: string | null
   calls?: { tool: string; request_id?: string; ok: boolean; path?: string }[]
 }
 const value = ref<Review | null>(null)
@@ -30,6 +33,71 @@ let disposed = false
 let activeRequest: AbortController | undefined
 let timer: ReturnType<typeof setTimeout> | undefined
 const endpoint = () => `/tasks/${encodeURIComponent(props.taskId)}/review`
+const tick = ref(0)
+let clock: ReturnType<typeof setInterval> | undefined
+function startClock() {
+  if (!clock) clock = setInterval(() => (tick.value += 1), 1000)
+}
+function stopClock() {
+  if (clock) clearInterval(clock)
+  clock = undefined
+}
+watch(
+  () => value.value?.state,
+  (state) => (state === 'running' ? startClock() : stopClock()),
+)
+watch(
+  () => value.value?.state,
+  (state) => {
+    if (state) emit('state', state)
+  },
+)
+const elapsed = computed(() => {
+  void tick.value
+  const start = value.value?.started_at ? Date.parse(value.value.started_at) : NaN
+  if (!Number.isFinite(start)) return null
+  const end = value.value?.finished_at ? Date.parse(value.value.finished_at) : Date.now()
+  if (!Number.isFinite(end) || end < start) return null
+  return Math.round((end - start) / 1000)
+})
+function durationText(seconds: number | null) {
+  if (seconds === null) return ''
+  if (seconds < 60) return `${seconds} 秒`
+  return `${Math.floor(seconds / 60)} 分 ${String(seconds % 60).padStart(2, '0')} 秒`
+}
+const statusLabel = computed(
+  () => ({ idle: '未开始', running: '运行中', completed: '已完成', failed: '失败' })[
+    value.value?.state ?? 'idle'
+  ],
+)
+const statusSummary = computed(() => {
+  const v = value.value
+  if (!v) return ''
+  const counts = `读取 ${v.read_file_count || 0} 个文件 · 记录 ${v.call_count || 0} 次调用`
+  const time = durationText(elapsed.value)
+  if (v.state === 'running')
+    return [time ? `已运行 ${time}` : '', counts, v.progress_text].filter(Boolean).join(' · ')
+  if (v.state === 'completed') return [time ? `用时 ${time}` : '', counts].filter(Boolean).join(' · ')
+  if (v.state === 'failed')
+    return [time ? `运行 ${time}` : '', v.message || '原因未知'].filter(Boolean).join(' · ')
+  return '尚未开始'
+})
+const statusNote = computed(() => {
+  const state = value.value?.state
+  if (state === 'running')
+    return props.editable
+      ? '外部 Agent 正在读取文件并生成修改；页面每秒刷新，关闭页面不会中断服务端任务。'
+      : '外部 Agent 正在读取文件并生成审查建议；页面每秒刷新，关闭页面不会中断服务端任务。'
+  if (state === 'completed')
+    return props.editable
+      ? '运行已结束，副本改动可在下方逐项核对并确认应用。'
+      : '运行已结束，报告可人工复核。'
+  if (state === 'failed')
+    return props.editable
+      ? '运行未正常结束；隔离副本可能已被修改，下方差异仍可查看。'
+      : '运行未正常结束，请核对原因后重新创建任务。'
+  return ''
+})
 
 // Bound both the connection and response body, without retrying a mutation.
 async function request<T>(operation: (signal: AbortSignal) => Promise<T>): Promise<T> {
@@ -130,16 +198,21 @@ async function start() {
 </script>
 <template>
   <section class="panel section-gap">
-    <h2>{{ editable ? 'MCP 隔离修改' : 'MCP 只读审查' }}</h2>
+    <div class="panel-head">
+      <h2>{{ editable ? 'MCP 隔离修改' : 'MCP 只读审查' }}</h2>
+      <button class="button compact" :disabled="busy || querying" @click="refresh">
+        {{ querying ? '查询中…' : '重新查询' }}
+      </button>
+    </div>
     <p v-if="startError" class="notice" role="alert">{{ startError }}</p>
     <p v-if="error" class="notice" role="alert">{{ error }}</p>
     <p v-if="retryHint" class="notice">{{ retryHint }}</p>
     <template v-if="value">
       <fieldset v-if="value.state === 'idle'" :disabled="busy || querying">
         <legend>执行方式</legend>
-        <label><input v-model="selectedAgent" type="radio" value="builtin" /> 当前服务运行器</label>
-        <label><input v-model="selectedAgent" type="radio" value="deepseek_harness" :disabled="editable" /> 外部 DeepSeek Harness</label>
-        <p v-if="editable">外部 Harness 当前仅开放只读任务；隔离修改仍使用当前服务运行器。</p>
+        <label><input v-model="selectedAgent" type="radio" value="builtin" /> 内置执行器（DeepSeek）</label>
+        <label><input v-model="selectedAgent" type="radio" value="deepseek_harness" /> 外部 DeepSeek Harness</label>
+        <p v-if="editable">外部 Harness 只修改隔离副本；确认前不会改动原项目。</p>
         <p v-else-if="selectedAgent === 'deepseek_harness'">使用外部 Agent 需要服务端配置对应运行环境；不可用时会显示错误，不会自动切换执行方式。</p>
       </fieldset>
       <button
@@ -150,44 +223,135 @@ async function start() {
       >
         {{ editable ? '开始 MCP 修改' : '开始 MCP 审查' }}
       </button>
-      <p role="status">
-        状态：{{ value.state }} · 工具调用 {{ value.call_count || 0 }} 次 · 已读
-        {{ value.read_file_count || 0 }} 个文件
+      <div class="review-status" :class="value.state">
+        <span class="state-dot" aria-hidden="true"></span>
+        <strong>{{ statusLabel }}</strong>
+        <span class="state-summary">{{ statusSummary }}</span>
+      </div>
+      <p v-if="statusNote" class="state-note" role="status">{{ statusNote }}</p>
+      <p v-if="value.agent_type === 'deepseek_harness'" class="review-meta">
+        执行方式：外部 DeepSeek Harness
       </p>
-      <p v-if="value.agent_type === 'deepseek_harness'">执行方式：外部 DeepSeek Harness</p>
-      <p v-if="value.progress_text" role="status">{{ value.progress_text }}</p>
       <p v-if="value.mode === 'offline_mcp_replay'" class="notice">
         离线 MCP 调用重放：已核验文件与审计，未调用模型生成审查建议。
       </p>
-      <p v-if="value.mode === 'model_review'">真实模型审查；建议需人工复核。</p>
-      <p v-if="value.mode === 'external_agent' && value.agent_type === 'deepseek_harness'">外部 Agent 的建议需人工复核。</p>
-      <p v-if="value.mode === 'model_edit'">模型已完成隔离副本修改；确认前不会修改原项目。</p>
-      <p v-if="value.message" role="alert">{{ value.message }}</p>
-      <pre v-if="value.report" class="review-report">{{ value.report }}</pre>
-      <ul v-if="value.calls">
-        <li v-for="(call, index) in value.calls" :key="index">
-          <code>{{ call.tool }} {{ call.path || '' }}</code> ·
-          {{ call.ok ? '成功' : '拒绝/失败' }} ·
-          <code>{{ call.request_id || '未进入 Broker' }}</code>
-        </li>
-      </ul>
+      <details v-if="value.report" class="report-block" open>
+        <summary>审查报告</summary>
+        <pre class="review-report">{{ value.report }}</pre>
+      </details>
+      <details v-if="value.calls?.length" class="calls-block">
+        <summary>调用记录（{{ value.calls.length }} 条）</summary>
+        <ul>
+          <li v-for="(call, index) in value.calls" :key="index">
+            <code>{{ call.tool }} {{ call.path || '' }}</code>
+            <span>{{ call.ok ? '成功' : '拒绝/失败' }}</span>
+            <code :title="call.request_id || ''">{{
+              call.request_id ? shortRequest(call.request_id) : '未进入 Broker'
+            }}</code>
+          </li>
+        </ul>
+      </details>
     </template>
-    <EditChangesPanel v-if="editable && value?.state === 'completed'" :task-id="taskId" />
-    <button class="button" :disabled="busy || querying" @click="refresh">
-      {{ querying ? '查询中…' : '重新查询' }}
-    </button>
   </section>
 </template>
 <style scoped>
-.review-report {
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-  font: inherit;
+.panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid #e1e8da;
+}
+.panel-head .button {
+  margin-top: 0;
 }
 button {
   margin-top: 16px;
 }
-fieldset { margin-top: 16px; border: 1px solid #c9d8c3; border-radius: 8px; }
+fieldset {
+  margin-top: 16px;
+  padding: 12px 16px 16px;
+  border: 1px solid #d7e0d1;
+  border-radius: 10px;
+  background: #fff;
+}
+fieldset legend {
+  padding: 0 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2f5d44;
+}
+.review-meta {
+  margin-top: 10px;
+  font-size: 12px;
+  color: #5f7266;
+}
+.report-block,
+.calls-block {
+  margin-top: 16px;
+  border: 1px solid #e1e8da;
+  border-radius: 10px;
+  background: #fff;
+}
+.report-block summary,
+.calls-block summary {
+  padding: 10px 14px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #2f5d44;
+  cursor: pointer;
+}
+.review-report {
+  margin: 0;
+  padding: 0 14px 14px;
+  max-height: 520px;
+  overflow: auto;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.8;
+  color: #3f5447;
+}
+.calls-block ul {
+  margin: 0;
+  padding: 0 14px 14px 32px;
+  max-height: 320px;
+  overflow: auto;
+  font-size: 12px;
+  line-height: 1.9;
+}
+.review-status {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 10px 14px;
+  border: 1px solid #c9d8c3;
+  border-radius: 8px;
+  background: #f6f9f4;
+  flex-wrap: wrap;
+}
+.review-status.running { border-color: #d9b45a; background: #fdf7e6; }
+.review-status.completed { border-color: #7fb98a; background: #eef7ef; }
+.review-status.failed { border-color: #d08a86; background: #fdf0ef; }
+.state-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #8a9a8f;
+  flex: none;
+}
+.running .state-dot { background: #c98a12; animation: state-pulse 1.2s ease-in-out infinite; }
+.completed .state-dot { background: #3f8f4f; }
+.failed .state-dot { background: #b3413a; }
+.state-summary { font-size: 13px; opacity: 0.85; }
+.state-note { margin-top: 8px; font-size: 13px; }
+@keyframes state-pulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.35; transform: scale(0.75); }
+}
 fieldset label { display: block; margin: 8px 0; }
 ul {
   max-height: 360px;

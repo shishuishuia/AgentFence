@@ -204,9 +204,14 @@ class WorkspaceBackend:
         return value
 
 
+def _utc_now():
+    from datetime import datetime, timezone
+    return datetime.now(timezone.utc).isoformat()
+
+
 class WorkspaceManager:
     """Bounded sessions and one-use dialog results; all shared state is locked."""
-    def __init__(self, backend, *, picker=None, clock=time.monotonic, review_factory=None, external_review_factory=None, builtin_mode="unknown"):
+    def __init__(self, backend, *, picker=None, clock=time.monotonic, review_factory=None, external_review_factory=None, credential_store=None, builtin_mode="unknown"):
         if builtin_mode not in ("unknown", "offline", "deepseek"):
             raise ValueError("invalid builtin agent mode")
         self.backend, self.picker, self.clock = backend, picker if picker is not None else NativePicker(), clock
@@ -217,10 +222,30 @@ class WorkspaceManager:
         self.dialog_busy = False
         self.review_factory = review_factory
         self.external_review_factory = external_review_factory
+        self.credential_store = credential_store
         self.builtin_mode = builtin_mode
         self.review_thread = None
         self.review_loop = self.review_task = None
         self.closed = False
+
+    def credentials(self):
+        """Write-only credential state; the key itself never leaves this process."""
+        if self.credential_store is None:
+            return {"configured": False, "source": None, "editable": False}
+        return self.credential_store.status()
+
+    def save_credential(self, api_key):
+        if self.credential_store is None:
+            raise ManagementError(503, "HARNESS_NOT_CONFIGURED", "本机没有配置外部 Agent 凭证存储。")
+        try:
+            return self.credential_store.save(api_key)
+        except ValueError:
+            raise ManagementError(400, "INVALID_REQUEST", "凭证格式无效。") from None
+
+    def clear_credential(self):
+        if self.credential_store is None:
+            raise ManagementError(503, "HARNESS_NOT_CONFIGURED", "本机没有配置外部 Agent 凭证存储。")
+        return self.credential_store.clear()
 
     def _prune(self):
         now = self.clock()
@@ -339,16 +364,17 @@ class WorkspaceManager:
             clean = {k: value[k] for k in ("task_id", "workspace_id", "snapshot_id", "goal",
                     "permission_profile", "phase", "created_at", "updated_at", "instance_id")}
             with self.lock:
-                self.tasks[value["task_id"]] = {"token": value["agent_token"], "summary": clean, "review": {"state": "idle", "call_count": 0, "read_file_count": 0}}
+                self.tasks[value["task_id"]] = {"token": value["agent_token"], "summary": clean, "review": {"state": "idle", "call_count": 0, "read_file_count": 0, "started_at": None, "finished_at": None}}
             return clean
         finally:
             with self.lock:
                 self.tasks.pop(reservation, None)
 
-    def edit_task(self, task_id):
+    def edit_task(self, task_id, *, completed_only=False):
         with self.lock:
             task = self.tasks.get(task_id)
-            if task is None or task["summary"]["permission_profile"] != "controlled_edit" or task["review"]["state"] != "completed":
+            allowed = ("completed",) if completed_only else ("completed", "failed")
+            if task is None or task["summary"]["permission_profile"] != "controlled_edit" or task["review"]["state"] not in allowed:
                 raise ManagementError(409, "EDIT_NOT_READY", "修改任务尚未完成或不可查看。")
         return task
 
@@ -361,7 +387,7 @@ class WorkspaceManager:
         return self.backend.edit_change(task_id, path)
 
     def apply(self, task_id, path, after_sha256):
-        self.edit_task(task_id)
+        self.edit_task(task_id, completed_only=True)
         return self.backend.apply_edit(task_id, path, after_sha256)
 
     def review_status(self, task_id):
@@ -385,8 +411,6 @@ class WorkspaceManager:
             if any(t and t["review"]["state"] == "running" for t in self.tasks.values()):
                 raise ManagementError(409, "REVIEW_BUSY", "已有任务正在执行，请等待完成。")
             if agent_type == "deepseek_harness":
-                if task["summary"]["permission_profile"] != "readonly":
-                    raise ManagementError(403, "READONLY_TASK", "外部 Agent 暂仅支持只读任务。")
                 factory = self.external_review_factory
                 if factory is None:
                     raise ManagementError(503, "HARNESS_NOT_CONFIGURED", "外部 Agent 未完成安全配置，无法启动。")
@@ -394,7 +418,7 @@ class WorkspaceManager:
                 factory = self.review_factory
                 if factory is None:
                     raise ManagementError(503, "MCP_NOT_CONFIGURED", "启动助手时需配置 Rust MCP 可执行文件。")
-            task["review"].update({"state": "running", "agent_type": agent_type})
+            task["review"].update({"state": "running", "agent_type": agent_type, "started_at": _utc_now(), "finished_at": None})
             self.review_thread = threading.Thread(target=self._review, args=(task_id, factory), daemon=True)
             self.review_thread.start()
         return {"state": "running", "agent_type": agent_type}
@@ -443,7 +467,7 @@ class WorkspaceManager:
                 if any(secret and secret in json.dumps(result, ensure_ascii=False) for secret in secrets_to_hide):
                     raise ReviewError("外部 Agent 返回了不安全的内容，任务已停止。")
             with self.lock:
-                task["review"].update({"state": "completed", **result})
+                task["review"].update({"state": "completed", "progress_text": "", "finished_at": _utc_now(), **result})
         except (ReviewError, ModelError) as error:
             message = str(error)
             if external:
@@ -451,13 +475,13 @@ class WorkspaceManager:
                 if any(secret and secret in message for secret in secrets_to_hide):
                     message = "外部 Agent 运行失败，请检查安全配置。"
             with self.lock:
-                task["review"].update({"state": "failed", "message": message})
+                task["review"].update({"state": "failed", "message": message, "finished_at": _utc_now()})
         except asyncio.CancelledError:
             with self.lock:
-                task["review"].update({"state": "failed", "message": "管理助手关闭，运行已停止。"})
+                task["review"].update({"state": "failed", "message": "管理助手关闭，运行已停止。", "finished_at": _utc_now()})
         except Exception:
             with self.lock:
-                task["review"].update({"state": "failed", "message": "MCP 审查失败，请检查依赖、后端和启动配置。"})
+                task["review"].update({"state": "failed", "message": "MCP 审查失败，请检查依赖、后端和启动配置。", "finished_at": _utc_now()})
         finally:
             with self.lock:
                 self.review_loop = self.review_task = None

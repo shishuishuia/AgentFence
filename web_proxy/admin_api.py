@@ -32,6 +32,24 @@ def _body(handler):
         raise ManagementError(400, "INVALID_REQUEST", "管理请求 JSON 无效。") from None
 
 
+def _drain(handler):
+    """Discard a bounded request body so a rejected request still gets a clean response."""
+    lengths = handler.headers.get_all("Content-Length", [])
+    if handler.headers.get("Transfer-Encoding") or len(lengths) != 1 or not re.fullmatch(r"[0-9]{1,6}", lengths[0]):
+        return
+    remaining = int(lengths[0])
+    if remaining <= 0 or remaining > 65536:
+        return
+    try:
+        while remaining > 0:
+            chunk = handler.rfile.read(min(remaining, 8192))
+            if not chunk:
+                break
+            remaining -= len(chunk)
+    except OSError:
+        pass
+
+
 def handle_admin(handler, manager, path, query):
     """Dispatch only explicitly listed routes, never a generic Admin proxy."""
     try:
@@ -39,8 +57,14 @@ def handle_admin(handler, manager, path, query):
         exclusions = re.fullmatch(r"/api/admin/picker/(sel_[a-f0-9]{32})/excluded", path)
         review = re.fullmatch(r"/api/admin/tasks/([A-Za-z0-9_-]{1,128})/review(/start)?", path)
         editing = re.fullmatch(r"/api/admin/tasks/([A-Za-z0-9_-]{1,128})/(changes|change|apply)", path)
-        expected = "GET" if selection or exclusions or path in ("/api/admin/workspaces", "/api/admin/agents") or (review and not review.group(2)) or (editing and editing.group(2) != "apply") else "POST"
-        if path not in {"/api/admin/session", "/api/admin/picker/start", "/api/admin/workspaces/confirm", "/api/admin/workspaces", "/api/admin/tasks", "/api/admin/agents"} and selection is None and exclusions is None and review is None and editing is None:
+        credentials = path == "/api/admin/credentials"
+        if credentials:
+            expected = handler.command
+            if expected not in ("GET", "POST", "DELETE"):
+                raise ManagementError(405, "METHOD_NOT_ALLOWED", "请求方法不受支持。")
+        else:
+            expected = "GET" if selection or exclusions or path in ("/api/admin/workspaces", "/api/admin/agents") or (review and not review.group(2)) or (editing and editing.group(2) != "apply") else "POST"
+        if path not in {"/api/admin/session", "/api/admin/picker/start", "/api/admin/workspaces/confirm", "/api/admin/workspaces", "/api/admin/tasks", "/api/admin/agents", "/api/admin/credentials"} and selection is None and exclusions is None and review is None and editing is None:
             raise ManagementError(404, "ROUTE_NOT_FOUND", "未知管理接口。")
         offset = None
         if exclusions:
@@ -56,11 +80,13 @@ def handle_admin(handler, manager, path, query):
             change_path = pairs[0][1]
         if (query and not exclusions and change_path is None) or handler.command != expected:
             raise ManagementError(400 if query else 405, "INVALID_REQUEST", "请求方法或查询参数无效。")
-        if expected == "POST":
+        mutating = expected in ("POST", "DELETE")
+        if mutating:
             origins = handler.headers.get_all("Origin", [])
             if len(origins) != 1 or origins[0] not in {f"http://127.0.0.1:{handler.server.server_port}", "http://127.0.0.1:5173"}:
+                _drain(handler)
                 raise ManagementError(403, "ORIGIN_REQUIRED", "请通过本机管理页面操作。")
-            body = _body(handler)
+            body = _body(handler) if expected == "POST" else {}
         else:
             body = {}
         if path == "/api/admin/session":
@@ -70,13 +96,21 @@ def handle_admin(handler, manager, path, query):
             return handler.reply(200, {"csrf_token": csrf}, cookie=f"{COOKIE}={sid}; HttpOnly; SameSite=Strict; Path=/api/admin; Max-Age=1800")
         cookies = handler.headers.get_all("Cookie", [])
         csrf = handler.headers.get_all("X-AgentFence-CSRF", [])
-        if len(cookies) != 1 or (expected == "POST" and len(csrf) != 1):
+        if len(cookies) != 1 or (mutating and len(csrf) != 1):
             raise ManagementError(403, "CSRF_DENIED", "管理请求缺少会话或校验信息。")
-        sid = manager.authenticate(cookies[0], csrf[0] if expected == "POST" else None)
+        sid = manager.authenticate(cookies[0], csrf[0] if mutating else None)
         if path == "/api/admin/agents":
             return handler.reply(200, {"builtin": manager.review_factory is not None,
                                        "deepseek_harness": manager.external_review_factory is not None,
                                        "builtin_mode": manager.builtin_mode})
+        if credentials:
+            if expected == "GET":
+                return handler.reply(200, manager.credentials())
+            if expected == "POST":
+                if set(body) != {"api_key"} or not isinstance(body["api_key"], str) or not 1 <= len(body["api_key"]) <= 256:
+                    raise ManagementError(400, "INVALID_REQUEST", "凭证参数无效。")
+                return handler.reply(200, manager.save_credential(body["api_key"]))
+            return handler.reply(200, manager.clear_credential())
         if editing:
             task_id, action = editing.groups()
             if action == "changes":

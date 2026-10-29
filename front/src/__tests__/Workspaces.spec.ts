@@ -10,6 +10,9 @@ vi.mock('@/api/workspaces', () => ({
   confirmWorkspace: vi.fn<typeof api.confirmWorkspace>(),
   getWorkspaces: vi.fn<typeof api.getWorkspaces>(),
   getExclusions: vi.fn<typeof api.getExclusions>(),
+  getCredential: vi.fn<typeof api.getCredential>(),
+  saveCredential: vi.fn<typeof api.saveCredential>(),
+  clearCredential: vi.fn<typeof api.clearCredential>(),
 }))
 const id = `sel_${'a'.repeat(32)}`
 const ready: api.Selection = {
@@ -34,6 +37,39 @@ beforeEach(() => {
   vi.mocked(api.getSelection).mockResolvedValue(ready)
 })
 afterEach(() => vi.useRealTimers())
+
+describe('外部 Agent 凭证', () => {
+  it('只写提交：保存后清空输入且不回显密钥', async () => {
+    vi.mocked(api.getCredential).mockResolvedValue({
+      configured: false,
+      source: null,
+      editable: true,
+    })
+    vi.mocked(api.saveCredential).mockResolvedValue({
+      configured: true,
+      source: 'file',
+      editable: true,
+    })
+    const wrapper = mount(WorkspacesView)
+    await flushPromises()
+    await wrapper
+      .findAll('button')
+      .find((b) => b.text().includes('模型凭证设置'))!
+      .trigger('click')
+    await flushPromises()
+    const key = 'sk-' + 'a'.repeat(32)
+    await wrapper.get('input[type="password"]').setValue(key)
+    await wrapper
+      .findAll('button')
+      .find((b) => b.text().includes('保存密钥'))!
+      .trigger('click')
+    await flushPromises()
+    expect(api.saveCredential).toHaveBeenCalledWith(key)
+    expect((wrapper.get('input[type="password"]').element as HTMLInputElement).value).toBe('')
+    expect(wrapper.text()).toContain('本机已保存凭证')
+    wrapper.unmount()
+  })
+})
 
 describe('工作区导入', () => {
   it('预览后显式确认，并阻止重复确认', async () => {

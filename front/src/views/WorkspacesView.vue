@@ -7,6 +7,10 @@ import {
   confirmWorkspace,
   getWorkspaces,
   getExclusions,
+  getCredential,
+  saveCredential,
+  clearCredential,
+  type CredentialState,
   type Selection,
   type Workspace,
 } from '@/api/workspaces'
@@ -19,6 +23,10 @@ const name = ref('')
 const busy = ref(false)
 const connected = ref(false)
 const error = ref('')
+const showCredential = ref(false)
+const credential = ref<CredentialState | null>(null)
+const credentialKey = ref('')
+const credentialMessage = ref('')
 const controller = new AbortController()
 let timer: ReturnType<typeof setTimeout> | undefined
 const message = (e: unknown) => (e instanceof Error ? e.message : '管理操作失败。')
@@ -83,6 +91,38 @@ async function confirm() {
     if (!controller.signal.aborted) error.value = message(e)
   } finally {
     busy.value = false
+  }
+}
+async function toggleCredential() {
+  showCredential.value = !showCredential.value
+  if (!showCredential.value) return
+  credentialMessage.value = ''
+  try {
+    credential.value = await getCredential(controller.signal)
+  } catch (e) {
+    if (!controller.signal.aborted) credentialMessage.value = message(e)
+  }
+}
+async function submitCredential() {
+  const key = credentialKey.value.trim()
+  if (!key) return
+  credentialMessage.value = ''
+  try {
+    credential.value = await saveCredential(key)
+    credentialKey.value = ''
+    credentialMessage.value = '已保存到本机文件；页面不会再次显示该密钥。'
+  } catch (e) {
+    credentialMessage.value = message(e)
+  }
+}
+async function removeCredential() {
+  credentialMessage.value = ''
+  try {
+    credential.value = await clearCredential()
+    credentialKey.value = ''
+    credentialMessage.value = '已清除本机保存的密钥。'
+  } catch (e) {
+    credentialMessage.value = message(e)
   }
 }
 async function loadExcluded() {
@@ -197,6 +237,47 @@ async function loadExcluded() {
         <ReadonlyTaskForm :workspace-id="workspace.workspace_id" />
       </article>
     </section>
+    <section class="panel section-gap">
+      <h2>外部 Agent 凭证</h2>
+      <p>内置 DeepSeek 与外部 Harness 共用这一份模型凭证；MCP 读取与审计不依赖它。</p>
+      <button class="button" @click="toggleCredential">
+        {{ showCredential ? '收起凭证设置' : '模型凭证设置' }}
+      </button>
+      <template v-if="showCredential">
+        <p v-if="credential" role="status">
+          <template v-if="credential.source === 'environment'"
+            >已由服务端环境变量配置，页面不可修改。</template
+          >
+          <template v-else-if="credential.configured"
+            >本机已保存凭证；如需更换请重新填写。</template
+          >
+          <template v-else>尚未配置模型凭证。</template>
+        </p>
+        <template v-if="credential?.editable">
+          <label>
+            DeepSeek API Key
+            <input
+              v-model="credentialKey"
+              type="password"
+              autocomplete="off"
+              spellcheck="false"
+              maxlength="256"
+              placeholder="sk-..."
+            />
+          </label>
+          <button class="button primary" :disabled="!credentialKey.trim()" @click="submitCredential">
+            保存密钥
+          </button>
+          <button class="button" :disabled="!credential.configured" @click="removeCredential">
+            清除本机密钥
+          </button>
+          <p class="hint">
+            密钥只提交一次，保存在本机用户目录；页面不回显、不写入浏览器存储，也不会进入 MCP 子进程。
+          </p>
+        </template>
+        <p v-if="credentialMessage" role="status">{{ credentialMessage }}</p>
+      </template>
+    </section>
   </section>
 </template>
 <style scoped>
@@ -205,6 +286,11 @@ async function loadExcluded() {
 }
 .mono {
   overflow-wrap: anywhere;
+}
+.hint {
+  margin-top: 12px;
+  font-size: 12px;
+  opacity: 0.75;
 }
 details {
   margin: 16px 0;

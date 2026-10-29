@@ -34,6 +34,7 @@ class AcpOutcome:
     """
     text: str
     stop_reason: str
+    final_text: str = ""
 
 
 class AcpProcess:
@@ -90,6 +91,7 @@ class AcpProcess:
         self.next_id = 0
         self.session_id: str | None = None
         self.chunks: list[str] = []
+        self.final_from = 0
         self.length = 0
         self.events = 0
         self.creating = False
@@ -143,6 +145,9 @@ class AcpProcess:
             self._reject_secret("".join(self.chunks))
         elif kind in ("tool_call", "tool_call_update"):
             # This is display progress only. Rust's audit is authoritative.
+            # Assistant text before the last tool call is narration, not report.
+            if kind == "tool_call":
+                self.final_from = len(self.chunks)
             self.progress({"progress_text": "正在执行任务"})
         # Ignore thoughts and other untrusted, nonessential update payloads.
 
@@ -227,9 +232,11 @@ class AcpProcess:
                 self.progress({"progress_text": "正在执行任务"})
                 result = await self._request("session/prompt", {"sessionId":session,"prompt":[{"type":"text","text":goal}]})
                 reason = result.get("stopReason")
-                if reason != "end_turn" or not "".join(self.chunks).strip():
+                full = "".join(self.chunks)
+                final = "".join(self.chunks[self.final_from:]).strip() or full
+                if reason != "end_turn" or not full.strip():
                     raise AcpError("外部 Agent 没有完成有效报告。")
-                return AcpOutcome("".join(self.chunks), reason)
+                return AcpOutcome(full, reason, final)
         except TimeoutError:
             raise AcpError("外部 Agent 运行超时。") from None
         except (OSError, BrokenPipeError, ConnectionError):
