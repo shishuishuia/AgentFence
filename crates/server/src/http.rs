@@ -33,6 +33,9 @@ pub fn app(broker: Broker) -> Router {
         .route("/healthz", get(health))
         .route("/v1/admin/tasks", get(list_tasks).post(create_task))
         .route("/v1/admin/tasks/{id}", get(task_detail))
+        .route("/v1/admin/tasks/{id}/changes", get(v2::edit_changes))
+        .route("/v1/admin/tasks/{id}/change", get(v2::edit_change))
+        .route("/v1/admin/tasks/{id}/apply", post(v2::apply_edit))
         .route("/v1/admin/tasks/{id}/phase", post(advance))
         .route("/v1/admin/tasks/{id}/grants", post(issue_grant))
         .route("/v1/admin/tasks/{id}/grants/{gid}", delete(revoke))
@@ -46,6 +49,7 @@ pub fn app(broker: Broker) -> Router {
             "/v1/admin/workspaces",
             get(v2::workspaces).post(v2::register_workspace),
         )
+        .route("/v1/admin/workspaces/{id}/edit-copy", post(v2::edit_copy))
         .route("/v1/agent/tasks/{id}", get(v2::agent_status))
         .route("/v1/agent/tasks/{id}/files", get(v2::agent_files))
         .route("/v1/tool/execute", post(execute))

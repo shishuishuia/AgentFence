@@ -132,6 +132,44 @@ impl Broker {
         Ok(result)
     }
 
+    pub(crate) fn create_edit_copy(
+        &self,
+        ctx: &RequestContext,
+        id: &str,
+    ) -> Result<Value, ReasonCode> {
+        if !self.healthy() {
+            return Err(ReasonCode::AuditUnavailable);
+        }
+        let base = self.workspace(id)?;
+        let workspace_id = format!(
+            "ws_{}",
+            random_hex::<16>().map_err(|_| ReasonCode::IoError)?
+        );
+        let snapshot_id = format!(
+            "snap_{}",
+            random_hex::<16>().map_err(|_| ReasonCode::IoError)?
+        );
+        let copy = Arc::new(workspace::edit_copy(&base, snapshot_id.clone())?);
+        let mut registry = lock(&self.shared.workspaces)?;
+        if registry.len() >= 32 {
+            return Err(ReasonCode::ImportLimitExceeded);
+        }
+        let now = self.shared.clock.sample();
+        let mut event = Event::new("edit_copy_created", &ctx.request_id, now);
+        event.workspace_id = Some(workspace_id.clone());
+        event.snapshot_id = Some(snapshot_id);
+        event.allowed = true;
+        event.executed = true;
+        event.reason_code = ReasonCode::Ok;
+        event.duration_us = micros(ctx.started);
+        self.append(event)?;
+        let mut result = workspace_value(&workspace_id, &copy);
+        result["request_id"] = json!(ctx.request_id);
+        result["instance_id"] = json!(self.instance_id());
+        registry.insert(workspace_id, copy);
+        Ok(result)
+    }
+
     pub(crate) fn list_workspaces(&self) -> Result<Value, ReasonCode> {
         let registry = lock(&self.shared.workspaces)?;
         let mut ids: Vec<_> = registry.keys().collect();
@@ -191,7 +229,7 @@ impl Broker {
             } else if task.profile == PermissionProfile::Readonly {
                 json!(["list_files", "read_file", "task_status"])
             } else {
-                json!(["read_file", "write_file", "task_status"])
+                json!(["list_files", "read_file", "write_file", "task_status"])
             };
             Ok(value)
         })
@@ -223,7 +261,14 @@ impl Broker {
                 }
             };
             if offset > files.len() { return Err(ReasonCode::InvalidRequest); }
-            let items: Vec<_> = files.iter().skip(offset).take(limit).collect();
+            let _gate = lock(&workspace.gate)?;
+            let items: Result<Vec<_>, ReasonCode> = files.iter().skip(offset).take(limit).map(|entry| {
+                if !snapshot.editable { return Ok(json!(entry)); }
+                let path = resolve_existing(&workspace.root, &entry.path).map_err(|error| error.reason())?;
+                let content = self.shared.files.read(&path, workspace.policy.max_content_bytes())?;
+                Ok(json!({"path":entry.path,"bytes":content.len(),"sha256":format!("{:x}", Sha256::digest(content.as_bytes()))}))
+            }).collect();
+            let items = items?;
             let end = offset + items.len();
             let next = if end < files.len() {
                 let signature = self.cursor_mac(task, prefix, end)?.finalize().into_bytes();
@@ -266,7 +311,11 @@ fn workspace_value(id: &str, workspace: &Workspace) -> Value {
         value["display_name"] = json!(snapshot.display_name);
         value["source_path"] = json!(snapshot.source);
         value["imported_at"] = json!(snapshot.imported_at);
-        value["import_mode"] = json!("readonly_snapshot");
+        value["import_mode"] = json!(if snapshot.editable {
+            "editable_copy"
+        } else {
+            "readonly_snapshot"
+        });
         value
     } else {
         json!({"workspace_id":id, "snapshot_id":null, "display_name":id, "import_mode":"configured", "allowed_file_count":workspace.policy.allowed_paths().len()})
@@ -281,7 +330,7 @@ fn workspace_summary_value(id: &str, workspace: &Workspace) -> Value {
             "display_name": snapshot.display_name,
             "source_path": snapshot.source,
             "imported_at": snapshot.imported_at,
-            "import_mode": "readonly_snapshot",
+            "import_mode": if snapshot.editable { "editable_copy" } else { "readonly_snapshot" },
             "allowed_file_count": snapshot.manifest.files.len(),
             "excluded_entry_count": snapshot.manifest.excluded.len(),
             "total_bytes": snapshot.manifest.total_bytes,

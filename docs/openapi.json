@@ -4,7 +4,7 @@
   "info": {
     "title": "AgentFence Lite HTTP API",
     "version": "2.2.0",
-    "description": "v2 readonly snapshot and task-bound MCP additions. Existing controlled_edit requests remain compatible. Local helper UI endpoints are owned by B and are not Broker routes."
+    "description": "Readonly snapshots and isolated controlled-edit copies; administrator approval is required to apply each changed file."
   },
   "servers": [
     {
@@ -2181,6 +2181,208 @@
           }
         }
       }
+    },
+    "/v1/admin/workspaces/{id}/edit-copy": {
+      "post": {
+        "operationId": "createEditCopy",
+        "summary": "Create an isolated editable copy of an approved snapshot",
+        "tags": [
+          "管理员"
+        ],
+        "security": [
+          {
+            "AdminBearer": []
+          }
+        ],
+        "x-required-role": "admin",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "409": {
+            "description": "State or source conflict"
+          },
+          "503": {
+            "description": "Audit unavailable"
+          },
+          "201": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/v1/admin/tasks/{id}/changes": {
+      "get": {
+        "operationId": "listEditChanges",
+        "summary": "List changed files in a completed editable task",
+        "tags": [
+          "管理员"
+        ],
+        "security": [
+          {
+            "AdminBearer": []
+          }
+        ],
+        "x-required-role": "admin",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "409": {
+            "description": "State or source conflict"
+          },
+          "503": {
+            "description": "Audit unavailable"
+          }
+        }
+      }
+    },
+    "/v1/admin/tasks/{id}/change": {
+      "get": {
+        "operationId": "getEditChange",
+        "summary": "Inspect original and edited file contents",
+        "tags": [
+          "管理员"
+        ],
+        "security": [
+          {
+            "AdminBearer": []
+          }
+        ],
+        "x-required-role": "admin",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "path",
+            "in": "query",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "maxLength": 1024
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "409": {
+            "description": "State or source conflict"
+          },
+          "503": {
+            "description": "Audit unavailable"
+          }
+        }
+      }
+    },
+    "/v1/admin/tasks/{id}/apply": {
+      "post": {
+        "operationId": "applyEdit",
+        "summary": "Apply one explicitly approved file after hash and source checks",
+        "tags": [
+          "管理员"
+        ],
+        "security": [
+          {
+            "AdminBearer": []
+          }
+        ],
+        "x-required-role": "admin",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          },
+          "400": {
+            "description": "Invalid request"
+          },
+          "403": {
+            "description": "Access denied"
+          },
+          "409": {
+            "description": "State or source conflict"
+          },
+          "503": {
+            "description": "Audit unavailable"
+          }
+        },
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "additionalProperties": false,
+                "required": [
+                  "path",
+                  "after_sha256"
+                ],
+                "properties": {
+                  "path": {
+                    "type": "string",
+                    "maxLength": 1024
+                  },
+                  "after_sha256": {
+                    "type": "string",
+                    "pattern": "^[a-f0-9]{64}$"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -3339,7 +3541,10 @@
           },
           "import_mode": {
             "type": "string",
-            "const": "readonly_snapshot"
+            "enum": [
+              "readonly_snapshot",
+              "editable_copy"
+            ]
           }
         },
         "required": [
@@ -3692,7 +3897,10 @@
           },
           "import_mode": {
             "type": "string",
-            "const": "readonly_snapshot"
+            "enum": [
+              "readonly_snapshot",
+              "editable_copy"
+            ]
           },
           "allowed_file_count": {
             "type": "integer",

@@ -13,6 +13,7 @@ pub(super) struct BrokerClient {
     token: String,
     instance: String,
     snapshot: String,
+    pub(super) editable: bool,
 }
 
 fn error(code: &str) -> Value {
@@ -57,19 +58,24 @@ impl BrokerClient {
             token,
             instance: String::new(),
             snapshot: String::new(),
+            editable: false,
         };
         let state = client
             .request(client.http.get(client.task_url()))
             .await
             .map_err(|_| AdapterError("TASK_AUTHENTICATION_FAILED"))?;
         if state["task_id"] != task
-            || state["permission_profile"] != "readonly"
+            || !matches!(
+                state["permission_profile"].as_str(),
+                Some("readonly" | "controlled_edit")
+            )
             || !state["snapshot_id"]
                 .as_str()
                 .is_some_and(|s| s.starts_with("snap_"))
         {
-            return Err(AdapterError("READONLY_SNAPSHOT_REQUIRED"));
+            return Err(AdapterError("TASK_SNAPSHOT_REQUIRED"));
         }
+        client.editable = state["permission_profile"] == "controlled_edit";
         client.instance = state["instance_id"]
             .as_str()
             .ok_or(AdapterError("INVALID_BROKER_RESPONSE"))?
@@ -174,6 +180,23 @@ impl BrokerClient {
             .await?;
         Ok(
             json!({"task_id":body["task_id"],"snapshot_id":body["snapshot_id"],"files":body["files"],"total":body["total"],"next_cursor":body["next_cursor"],"request_id":body["request_id"],"instance_id":body["instance_id"]}),
+        )
+    }
+
+    pub async fn write(&self, path: &str, content: &str, grant_id: &str) -> Result<Value, Value> {
+        if !self.editable || path.len() > 1024 || content.len() > 65536 || grant_id.len() > 128 {
+            return Err(error("INVALID_ARGUMENTS"));
+        }
+        let body = self.request(self.http.post(format!("{}/v1/tool/execute", self.base))
+            .json(&json!({"task_id":self.task,"tool":"write_file","path":path,"content":content,"grant_id":grant_id}))).await?;
+        if body["allowed"] != true
+            || body["executed"] != true
+            || body["data"]["bytes_written"] != content.len()
+        {
+            return Err(error("INVALID_BROKER_RESPONSE"));
+        }
+        Ok(
+            json!({"task_id":self.task,"path":path,"bytes_written":body["data"]["bytes_written"],"snapshot_id":self.snapshot,"request_id":body["request_id"],"instance_id":body["instance_id"]}),
         )
     }
 

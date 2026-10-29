@@ -27,6 +27,7 @@ use std::{
     time::Instant,
 };
 use subtle::ConstantTimeEq;
+mod edit;
 mod registry;
 
 /// Per-request context created before body validation and authentication.
@@ -95,6 +96,7 @@ pub(crate) enum Identity {
 struct Shared {
     workspaces: Mutex<HashMap<String, Arc<Workspace>>>,
     previews: Mutex<HashMap<String, Preview>>,
+    apply_gate: Mutex<()>,
     admin_hash: [u8; 32],
     tasks: Mutex<HashMap<String, Arc<Mutex<Task>>>>,
     agent_hashes: Mutex<HashMap<[u8; 32], String>>,
@@ -208,6 +210,7 @@ impl Broker {
             shared: Arc::new(Shared {
                 workspaces: Mutex::new(workspaces),
                 previews: Mutex::new(HashMap::new()),
+                apply_gate: Mutex::new(()),
                 admin_hash: hash(admin_token),
                 tasks: Mutex::new(HashMap::new()),
                 agent_hashes: Mutex::new(HashMap::new()),
@@ -319,10 +322,11 @@ impl Broker {
         goal: String,
     ) -> Result<Value, ReasonCode> {
         let workspace = self.workspace(workspace_id)?;
-        if workspace.snapshot.is_some() && profile != PermissionProfile::Readonly {
-            return Err(ReasonCode::ReadonlyTask);
-        }
-        if profile == PermissionProfile::Readonly && workspace.snapshot.is_none() {
+        if let Some(snapshot) = &workspace.snapshot {
+            if snapshot.editable != (profile == PermissionProfile::ControlledEdit) {
+                return Err(ReasonCode::ReadonlyTask);
+            }
+        } else if profile == PermissionProfile::Readonly {
             return Err(ReasonCode::InvalidRequest);
         }
         let task_id = format!(
@@ -333,6 +337,17 @@ impl Broker {
         let token = random_hex::<32>().map_err(|_| ReasonCode::IoError)?;
         let now = self.shared.clock.sample();
         let mut tasks = lock(&self.shared.tasks)?;
+        if workspace
+            .snapshot
+            .as_ref()
+            .is_some_and(|snapshot| snapshot.editable)
+        {
+            for existing in tasks.values() {
+                if lock(existing)?.workspace_id == workspace_id {
+                    return Err(ReasonCode::InvalidRequest);
+                }
+            }
+        }
         let task = Task {
             task_id: task_id.clone(),
             workspace_id: workspace_id.into(),
@@ -682,7 +697,9 @@ impl Broker {
                         .files
                         .read(&path, workspace.policy.max_content_bytes())?;
                     event.executed = true;
-                    if let Some(snapshot) = &workspace.snapshot {
+                    if let Some(snapshot) = &workspace.snapshot
+                        && !snapshot.editable
+                    {
                         let actual = format!("{:x}", Sha256::digest(content.as_bytes()));
                         if !snapshot
                             .manifest

@@ -65,6 +65,8 @@ pub(crate) struct Snapshot {
     pub source: PathBuf,
     pub imported_at: DateTime<Utc>,
     pub manifest: Manifest,
+    pub editable: bool,
+    pub base: Option<Arc<Workspace>>,
     pub _storage: tempfile::TempDir,
 }
 
@@ -118,6 +120,7 @@ fn excluded_name(name: &str) -> bool {
             "dist",
             "build",
             "__pycache__",
+            "venv",
         ]
         .contains(&name.as_str())
         || [
@@ -145,7 +148,7 @@ fn excluded_name(name: &str) -> bool {
 
 fn supported(path: &Path) -> bool {
     path.extension().and_then(|s| s.to_str()).is_some_and(|e| {
-        ["rs", "toml", "md", "txt", "json", "yaml", "yml"]
+        ["rs", "py", "toml", "md", "txt", "json", "yaml", "yml"]
             .contains(&e.to_ascii_lowercase().as_str())
     })
 }
@@ -314,6 +317,57 @@ pub(crate) fn import(
             source: scanned.source,
             imported_at: now,
             manifest: scanned.manifest,
+            editable: false,
+            base: None,
+            _storage: storage,
+        })),
+    })
+}
+
+/// Create an isolated editing workspace from the immutable approved snapshot.
+pub(crate) fn edit_copy(base: &Workspace, snapshot_id: String) -> Result<Workspace, ReasonCode> {
+    let original = base.snapshot.as_ref().ok_or(ReasonCode::InvalidRequest)?;
+    if original.editable {
+        return Err(ReasonCode::InvalidRequest);
+    }
+    let _guard = base.gate.lock().map_err(|_| ReasonCode::AuditUnavailable)?;
+    let storage = tempfile::Builder::new()
+        .prefix("agentfence-edit-")
+        .tempdir()
+        .map_err(|_| ReasonCode::IoError)?;
+    if storage
+        .path()
+        .canonicalize()
+        .map_err(|_| ReasonCode::IoError)?
+        .starts_with(&original.source)
+    {
+        return Err(ReasonCode::InvalidRequest);
+    }
+    let root = storage.path().join("workspace");
+    fs::create_dir(&root).map_err(|_| ReasonCode::IoError)?;
+    for entry in &original.manifest.files {
+        let source = resolve_existing(&base.root, &entry.path).map_err(|e| e.reason())?;
+        let bytes = fs::read(source).map_err(|_| ReasonCode::IoError)?;
+        if bytes.len() != entry.bytes || format!("{:x}", Sha256::digest(&bytes)) != entry.sha256 {
+            return Err(ReasonCode::SnapshotChanged);
+        }
+        let target = root.join(&entry.path);
+        fs::create_dir_all(target.parent().ok_or(ReasonCode::IoError)?)
+            .map_err(|_| ReasonCode::IoError)?;
+        fs::write(target, bytes).map_err(|_| ReasonCode::IoError)?;
+    }
+    Ok(Workspace {
+        root: root.canonicalize().map_err(|_| ReasonCode::IoError)?,
+        policy: base.policy.clone(),
+        gate: Arc::new(Mutex::new(())),
+        snapshot: Some(Arc::new(Snapshot {
+            id: snapshot_id,
+            display_name: original.display_name.clone(),
+            source: original.source.clone(),
+            imported_at: original.imported_at,
+            manifest: original.manifest.clone(),
+            editable: true,
+            base: Some(Arc::new(base.clone())),
             _storage: storage,
         })),
     })
