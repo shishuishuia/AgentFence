@@ -1,0 +1,30 @@
+{
+  "kind": "real_external_harness_review",
+  "harness": "@deepseek-ai/dsh@0.2.1-rc.2",
+  "model": "deepseek-flash",
+  "date": "2026-10-29",
+  "task_id": "task_079014faf73e1efba45b9e9d58c57088",
+  "instance_id": "inst_dbc39128c275211c56fe5da8d2c6d907",
+  "started_at": "2026-10-29T13:03:36.972526900+00:00",
+  "finished_at": "2026-10-29T13:06:36.349675200+00:00",
+  "read_file_results": 13,
+  "unique_paths": [
+    "day1/contact_manager.py",
+    "day1/day1.md",
+    "day1/dict.py",
+    "day1/list.py",
+    "day1/test.py",
+    "day2/contact_manager_v2.py",
+    "day3/dedup_sort.py",
+    "day4/student.py",
+    "day4/student_1.py",
+    "day5/main.py",
+    "day5/models.py",
+    "day6/app.py",
+    "day6/config.json"
+  ],
+  "report_chars": 9426,
+  "report_sha256": "57ee9f8535220d937263fafa52c3c1cb5b8156a8ce393370d6b31cbc049b6cec",
+  "source_run": "results/local-v2-dashboard-20261029T130215Z-6f9478c9",
+  "note": "Built-in executor was offline; the review itself ran through the external Harness. Audit was filtered to this task; file contents and credentials are not present."
+}
