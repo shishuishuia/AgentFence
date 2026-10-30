@@ -38,7 +38,7 @@ const logoUrl = `${import.meta.env.BASE_URL}favicon.svg`
         </p>
         <RouterView />
       </main>
-      <footer>AgentFence Lite <span>任务感知的工具权限控制</span></footer>
+      <footer>AgentFence Lite <span>基于 Rust 的 AI Agent 文件操作权限网关</span></footer>
     </div>
   </div>
 </template>

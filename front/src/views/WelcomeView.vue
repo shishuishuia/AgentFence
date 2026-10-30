@@ -84,7 +84,7 @@ const boundaries = [
         <span class="badge">Rust · MCP stdio · 本地回环</span>
         <h1>让 Agent 的文件操作，<br /><em>落在围栏之内。</em></h1>
         <p class="lede">
-          AgentFence Lite 是一个用 Rust 实现的任务感知工具权限网关：阶段、路径、租约与审计四道约束，
+          AgentFence Lite 是一个基于 Rust 的 AI Agent 文件操作权限网关：阶段、路径、租约与审计四道约束，
           把 AI Agent 的文件读写关进可核验的边界。
         </p>
         <div class="intro-actions">

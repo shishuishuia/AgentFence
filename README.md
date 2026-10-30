@@ -1,6 +1,6 @@
 # AgentFence Lite
 
-基于 Rust 的任务感知型 AI Agent 工具调用权限控制与审计原型。
+**AgentFence Lite：基于 Rust 的 AI Agent 文件操作权限网关。**
 
 **v2 已完成**：工作区快照、不可升级的 readonly 任务、隔离副本受控修改、Rust MCP stdio 三工具、Vue 控制台和外部 DeepSeek Harness 均已接入；Linux 与 Windows 两条路径都做过实测。构建与协议细节见 [v2 Rust MCP](docs/v2-rust-mcp.md) 与 [接口约定](docs/v2-a-contract.md)；v1 看板保留为固定脚本演示。
 
