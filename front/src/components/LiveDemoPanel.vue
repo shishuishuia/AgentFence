@@ -104,7 +104,7 @@ onScopeDispose(() => {
 </script>
 
 <template>
-  <section v-if="!hideWhenUnavailable || state?.enabled || poll.error.value" class="panel live-demo section-gap" aria-labelledby="live-demo-title">
+  <section v-if="!hideWhenUnavailable || state?.enabled" class="panel live-demo section-gap" aria-labelledby="live-demo-title">
     <div class="section-heading">
       <div>
         <p class="eyebrow">LIVE AGENT TASK</p>

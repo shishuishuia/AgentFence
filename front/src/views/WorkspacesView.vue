@@ -284,7 +284,10 @@ async function loadExcluded() {
     </section>
     <section class="panel section-gap">
       <h2>外部 Agent 凭证</h2>
-      <p>内置 DeepSeek 与外部 Harness 共用这一份模型凭证；MCP 读取与审计不依赖它。</p>
+      <p>
+        内置 DeepSeek 与外部 Harness 共用这一份模型凭证；MCP 读取与审计不依赖它。
+        在线演示请自备 DeepSeek API Key。
+      </p>
       <button class="button" @click="toggleCredential">
         {{ showCredential ? '收起凭证设置' : '模型凭证设置' }}
       </button>

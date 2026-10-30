@@ -25,7 +25,7 @@ defineProps<{ tasks: TaskSummary[] }>()
           <td>
             <RouterLink
               class="text-link mono"
-              :to="`/tasks/${encodeURIComponent(task.task_id)}`"
+              :to="{ name: 'task-detail', params: { taskId: task.task_id } }"
               :title="task.task_id"
               >{{ shortId(task.task_id) }}</RouterLink
             >

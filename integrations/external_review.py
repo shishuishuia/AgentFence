@@ -216,12 +216,29 @@ class ExternalReview:
         self._token, self._admin_token = token, admin_token
         self.progress = progress or (lambda _: None)
         self._api_key = api_key if api_key is not None else os.environ.get("DEEPSEEK_API_KEY", "")
+        self._last_counts = 0.0
 
     def has_credentials(self) -> bool:
         """An inherited key or a managed Harness credential store is enough."""
         if self._api_key:
             return True
         return self.config.home is not None and (self.config.home / ".credentials.yaml").is_file()
+
+    def _report_progress(self, update: dict) -> None:
+        """Include live audit counts so the console does not stay at zero."""
+        now = time.monotonic()
+        if now - self._last_counts >= 3:
+            try:
+                admin = AdminClient(BrokerHttp(self.url), self._admin_token)
+                page = admin.events(task_id=self.summary["task_id"], limit=500).require(200)
+                calls, reads = summarize_events(
+                    page.get("events") or [], self.summary["snapshot_id"], editable=self.editable
+                )
+                update = {**update, "call_count": len(calls), "read_file_count": len(reads)}
+                self._last_counts = now
+            except Exception:
+                pass
+        self.progress(update)
 
     async def run(self) -> dict:
         if not self.has_credentials():
@@ -236,7 +253,7 @@ class ExternalReview:
         root = None
         result = None
         try:
-            self.progress({"progress_text": "正在连接外部 Agent"})
+            self._report_progress({"progress_text": "正在连接外部 Agent"})
             try:
                 relay = TaskPipeRelay(
                     self.config.mcp_binary, self.url, self.summary["task_id"], self._token,
@@ -261,8 +278,24 @@ class ExternalReview:
                 servers,
                 secrets=(self._token, self._admin_token, self._api_key),
                 timeout=self.config.timeout,
-                progress=self.progress,
+                progress=self._report_progress,
             )
+            stop_counts = threading.Event()
+
+            def poll_counts() -> None:
+                while not stop_counts.wait(2):
+                    try:
+                        admin = AdminClient(BrokerHttp(self.url), self._admin_token)
+                        page = admin.events(task_id=self.summary["task_id"], limit=500).require(200)
+                        calls, reads = summarize_events(
+                            page.get("events") or [], self.summary["snapshot_id"], editable=self.editable
+                        )
+                        self.progress({"call_count": len(calls), "read_file_count": len(reads)})
+                    except Exception:
+                        pass
+
+            counts_thread = threading.Thread(target=poll_counts, daemon=True)
+            counts_thread.start()
             if self.editable:
                 await asyncio.to_thread(self._advance_to_edit)
             try:
@@ -278,13 +311,17 @@ class ExternalReview:
                 raise ReviewError("外部 Agent 未返回审查报告。")
             if len(report) > MAX_REPORT:
                 raise ReviewError("外部 Agent 报告超出长度上限。")
-            self.progress({"progress_text": "正在核对审计"})
+            self._report_progress({"progress_text": "正在核对审计"})
             calls, reads = await asyncio.to_thread(self._verify_and_finish)
             self.progress({"call_count": len(calls), "read_file_count": len(reads)})
             result = {"mode": "external_agent", "report": report, "calls": calls}
         except ClientError:
             raise ReviewError("审计查询失败，无法确认外部 Agent 的读取。") from None
         finally:
+            if 'stop_counts' in locals():
+                stop_counts.set()
+            if 'counts_thread' in locals():
+                counts_thread.join(2)
             if acp is not None:
                 try:
                     await acp.close()
