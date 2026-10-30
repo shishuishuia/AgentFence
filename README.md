@@ -229,7 +229,6 @@ npm run dev
 - [OpenAPI 文档](docs/openapi.json)：已按当前接口同步，本地引用和代表性响应检查通过；尚未声称完成全量 JSON Schema 标准验证。
 - [外部 Agent 接入](docs/external-harness-integration.md)：固定版本 Harness、准备脚本、ACP/管道中继、写租约注入与安全边界。
 - [演示用例](docs/demo-cases.md)：只读审查、越权读取拒绝、越权写入拒绝三条现场脚本。
-- [参赛技术文档](docs/reports/AgentFence_Lite_参赛技术文档_ccf2026.pdf)：10 页项目说明，覆盖背景、功能、实现、Rust 作用与评估。
 
 
 ### 启动真实看板

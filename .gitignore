@@ -16,3 +16,4 @@ node_modules/
 front/dist/
 *.token
 **/__pycache__/
+docs/reports/AgentFence_Lite_参赛技术文档_*
