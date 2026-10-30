@@ -2,11 +2,37 @@
 
 基于 Rust 的任务感知型 AI Agent 工具调用权限控制与审计原型。
 
-**v2 成员 A 升级**：已增加管理员确认的工作区快照、不可升级的 readonly 任务和 Rust MCP stdio 三工具。构建、离线协议重放及 B 的选择器/UI 对接见 [v2 Rust MCP](docs/v2-rust-mcp.md) 与 [接口约定](docs/v2-a-contract.md)。下面保留的 DeepSeek 看板是 v1 演示；v2 管理界面及真实模型审查由 B 对接。
+**v2 已完成**：工作区快照、不可升级的 readonly 任务、隔离副本受控修改、Rust MCP stdio 三工具、Vue 控制台和外部 DeepSeek Harness 均已接入；Linux 与 Windows 两条路径都做过实测。构建与协议细节见 [v2 Rust MCP](docs/v2-rust-mcp.md) 与 [接口约定](docs/v2-a-contract.md)；v1 看板保留为固定脚本演示。
 
 目标是在 `inspect → edit → verify → done` 的任务流程中，通过阶段权限、明确的文件白名单、限时限次写入租约和审计日志，控制经过网关的文件工具操作。
 
 本项目是 **Tool Broker（工具调用网关）**，安全边界只覆盖经过网关的操作。它不能阻止 Agent 绕过网关直接访问宿主机，也不提供操作系统级沙箱隔离。
+
+## 5 分钟快速验证
+
+- 仓库：<https://github.com/shishuishuia/AgentFence>
+- 评审版本：tag `ccf2026-final`
+- 在线演示：<http://101.33.228.6:9090/agentfence/>（访问凭据随投稿材料提供）
+- 演示脚本与预期审计：[演示用例](docs/demo-cases.md)
+
+只验证后端最小用例（约 1 分钟）：
+
+```bash
+git clone https://github.com/shishuishuia/AgentFence.git
+cd AgentFence
+cargo test -p agentfence-server --test tcp --locked -- --nocapture
+```
+
+看到 `BACKEND_TCP_MINIMAL_PASS` 即通过。测试启动真实 Rust 子进程，覆盖读取、阶段外拒写、一次性租约写入、再次拒写、区外路径拒绝、verify 读回和 done 拒读。
+
+完整看板：
+
+```bash
+cargo build --workspace --release --locked --target-dir target/v2
+npm --prefix front ci && npm --prefix front run build
+python -m demo.run_v2_dashboard
+# http://127.0.0.1:4174/workspaces
+```
 
 ## 当前进度
 
@@ -19,7 +45,7 @@ v2 已集成工作区导入、只读审查与隔离副本上的受控修改；�
 
 成员 A 的后端已实现：管理员/任务 Token 隔离、四阶段状态机、工作区配置、精确路径限制、UTF-8 文件读写、单调时钟写租约、原子替换和消费、intent/result 审计，以及 v2.1 的任务列表/详情/事件查询。
 
-已合入成员 A 的 `crates/`、`config/`、Rust 测试及接口说明；`front/` 已接入真实任务与审计、轮询和实例恢复，`web_proxy/` 提供四条只读查询及 dist 托管，`integrations/` 和 `demo/` 提供 HTTP 客户端、独立最小演示和持续展示入口。B 的 34 场景独立 HTTP 黑盒和三轮配对 HTTP 性能实验已在 Ubuntu CI 完成；A 已在 WSL2 完成三轮权限窗口及完整黑盒负载下的 RSS 采样，观测峰值 5372 KiB。原始样本、版本和复核记录均已归档，最终统一版本、干净环境和录屏验收待完成。对接入口见 [成员 A 交接](docs/member-a-handoff.md)、[API 契约](docs/api-contract.md)、[独立黑盒报告](docs/member-b-blackbox-report.md)、[HTTP 性能报告](docs/member-b-http-bench-report.md) 和 [权限窗口/RSS 报告](docs/member-a-permission-rss-report.md)。
+已合入成员 A 的 `crates/`、`config/`、Rust 测试及接口说明；`front/` 已接入真实任务与审计、轮询和实例恢复，`web_proxy/` 提供四条只读查询及 dist 托管，`integrations/` 和 `demo/` 提供 HTTP 客户端、独立最小演示和持续展示入口。B 的 34 场景独立 HTTP 黑盒和三轮配对 HTTP 性能实验已在 Ubuntu CI 完成；A 已在 WSL2 完成三轮权限窗口及完整黑盒负载下的 RSS 采样，观测峰值 5372 KiB。原始样本、版本和复核记录均已归档；评审版本为 tag `ccf2026-final`，主分支 CI 全绿。对接入口见 [成员 A 交接](docs/member-a-handoff.md)、[API 契约](docs/api-contract.md)、[独立黑盒报告](docs/member-b-blackbox-report.md)、[HTTP 性能报告](docs/member-b-http-bench-report.md) 和 [权限窗口/RSS 报告](docs/member-a-permission-rss-report.md)。
 
 受控修改任务的隔离副本、管理员逐文件确认和安全边界见 [隔离修改任务](docs/v2-controlled-edit.md)。
 
@@ -177,7 +203,7 @@ results/member-a/          脱敏验证日志与纯策略样本
 - AUDIT_UNAVAILABLE 会关闭后续工具执行。若响应 executed=true，文件已经变化且次数已扣减；管理员检查文件和 intent/result，修复日志后重启。写入超时或断连不能推断“未写入”，不要自动重试。
 - 缺少 Admin Token、错误配置或工作区不存在会阻止启动；先运行 prepare_fixture 并检查环境变量。审计文件尾行不完整时启动失败，保留故障文件供检查并指定新的专用日志路径。
 - Windows 报 link.exe 缺失时使用已配好的 GNU 工具链/MinGW，或改在 WSL2 中开发。端口占用时设置其他回环端口；服务不接受非回环 IP。
-- [测试报告](docs/test-report.md) 区分历史后端验证、当前前端/代理/演示集成复核，以及仍待完成的完整黑盒和实验验收。远程 GitHub CI 须查看实际运行结果，本地通过不等于远程已通过。
+- [测试报告](docs/test-report.md) 汇总后端、前端、代理与演示验证；完整黑盒、基准与权限窗口实验已在 Ubuntu CI 运行，复现命令见 [bench/README.md](bench/README.md) 与 [demo/README.md](demo/README.md)。
 
 ## 第三方依赖
 
@@ -202,6 +228,8 @@ npm run dev
 - [接口设计说明](docs/api-design.md)：已随本批联调同步 Rust/代理查询与边界；发生差异以 HTTP 接口文档及实际响应为准。
 - [OpenAPI 文档](docs/openapi.json)：已按当前接口同步，本地引用和代表性响应检查通过；尚未声称完成全量 JSON Schema 标准验证。
 - [外部 Agent 接入](docs/external-harness-integration.md)：固定版本 Harness、准备脚本、ACP/管道中继、写租约注入与安全边界。
+- [演示用例](docs/demo-cases.md)：只读审查、越权读取拒绝、越权写入拒绝三条现场脚本。
+- [参赛技术文档](docs/reports/AgentFence_Lite_参赛技术文档_ccf2026.pdf)：10 页项目说明，覆盖背景、功能、实现、Rust 作用与评估。
 
 
 ### 启动真实看板
@@ -239,4 +267,4 @@ npm --prefix front run test:unit
 npm --prefix front run build
 ```
 
-新增 Dashboard CI 执行相同检查及真实 dist 演示；是否远程通过须以推送后的实际运行结果为准。本机 Windows 无创建符号链接权限，相关代理测试明确跳过，Linux CI 补充覆盖。
+每次 push 或 PR 都会运行 Dashboard、Rust 与 V2 B 三条流水线，当前 `main` 上均为 success。本机 Windows 无创建符号链接权限，相关代理测试在 Linux CI 补充覆盖。
