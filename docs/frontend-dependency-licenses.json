@@ -1,0 +1,2834 @@
+[
+  {
+    "name": "@asamuzakjp/css-color",
+    "version": "3.2.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@babel/helper-string-parser",
+    "version": "7.29.11",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@babel/helper-string-parser",
+    "version": "8.0.8",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@babel/helper-validator-identifier",
+    "version": "7.29.7",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@babel/helper-validator-identifier",
+    "version": "8.0.6",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@babel/parser",
+    "version": "7.29.11",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@babel/parser",
+    "version": "8.0.8",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@babel/types",
+    "version": "7.29.11",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@babel/types",
+    "version": "8.0.8",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@cacheable/memory",
+    "version": "2.2.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@cacheable/utils",
+    "version": "2.5.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@csstools/color-helpers",
+    "version": "5.1.0",
+    "license": "MIT-0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@csstools/css-calc",
+    "version": "2.1.4",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@csstools/css-color-parser",
+    "version": "3.1.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@csstools/css-parser-algorithms",
+    "version": "3.0.5",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@csstools/css-tokenizer",
+    "version": "3.0.4",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@eslint-community/eslint-utils",
+    "version": "4.10.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@eslint-community/regexpp",
+    "version": "4.12.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@eslint/config-array",
+    "version": "0.23.5",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@eslint/config-helpers",
+    "version": "0.7.0",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@eslint/core",
+    "version": "1.2.1",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@eslint/object-schema",
+    "version": "3.0.5",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@eslint/plugin-kit",
+    "version": "0.7.3",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@humanfs/core",
+    "version": "0.19.2",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@humanfs/node",
+    "version": "0.16.8",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@humanfs/types",
+    "version": "0.15.0",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@humanwhocodes/module-importer",
+    "version": "1.0.1",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@humanwhocodes/retry",
+    "version": "0.4.3",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@isaacs/cliui",
+    "version": "8.0.2",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@jridgewell/gen-mapping",
+    "version": "0.3.13",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@jridgewell/remapping",
+    "version": "2.3.5",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@jridgewell/resolve-uri",
+    "version": "3.1.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@jridgewell/sourcemap-codec",
+    "version": "1.6.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@jridgewell/trace-mapping",
+    "version": "0.3.31",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@keyv/bigmap",
+    "version": "1.3.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@keyv/serialize",
+    "version": "1.1.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@nodelib/fs.scandir",
+    "version": "2.1.5",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@nodelib/fs.stat",
+    "version": "2.0.5",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@nodelib/fs.walk",
+    "version": "1.2.8",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@one-ini/wasm",
+    "version": "0.1.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxc-project/types",
+    "version": "0.155.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-android-arm-eabi",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-android-arm64",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-darwin-arm64",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-darwin-x64",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-freebsd-x64",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-linux-arm-gnueabihf",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-linux-arm-musleabihf",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-linux-arm64-gnu",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-linux-arm64-musl",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-linux-ppc64-gnu",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-linux-riscv64-gnu",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-linux-riscv64-musl",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-linux-s390x-gnu",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-linux-x64-gnu",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-linux-x64-musl",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-openharmony-arm64",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-win32-arm64-msvc",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-win32-ia32-msvc",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@oxlint/binding-win32-x64-msvc",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@pkgjs/parseargs",
+    "version": "0.11.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/binding-android-arm-eabi",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/binding-android-arm64",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/binding-darwin-arm64",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/binding-darwin-x64",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/binding-freebsd-x64",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/binding-linux-arm-gnueabihf",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/binding-linux-arm64-gnu",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/binding-linux-arm64-musl",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/binding-linux-ppc64-gnu",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/binding-linux-s390x-gnu",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/binding-linux-x64-gnu",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/binding-linux-x64-musl",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/binding-openharmony-arm64",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/binding-win32-arm64-msvc",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/binding-win32-x64-msvc",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@rolldown/pluginutils",
+    "version": "1.0.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@standard-schema/spec",
+    "version": "1.1.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@tsconfig/node24",
+    "version": "24.0.5",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "@types/chai",
+    "version": "5.2.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@types/deep-eql",
+    "version": "4.0.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@types/esrecurse",
+    "version": "4.3.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@types/estree",
+    "version": "1.0.9",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@types/json-schema",
+    "version": "7.0.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@types/node",
+    "version": "24.19.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": true
+  },
+  {
+    "name": "@typescript-eslint/eslint-plugin",
+    "version": "8.72.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@typescript-eslint/parser",
+    "version": "8.72.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@typescript-eslint/project-service",
+    "version": "8.72.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@typescript-eslint/scope-manager",
+    "version": "8.72.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@typescript-eslint/tsconfig-utils",
+    "version": "8.72.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@typescript-eslint/type-utils",
+    "version": "8.72.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@typescript-eslint/types",
+    "version": "8.72.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@typescript-eslint/typescript-estree",
+    "version": "8.72.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@typescript-eslint/utils",
+    "version": "8.72.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@typescript-eslint/visitor-keys",
+    "version": "8.72.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@vitejs/plugin-vue",
+    "version": "6.0.10",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "@vitest/eslint-plugin",
+    "version": "1.6.28",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "@vitest/expect",
+    "version": "4.1.11",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@vitest/mocker",
+    "version": "4.1.11",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@vitest/pretty-format",
+    "version": "4.1.11",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@vitest/runner",
+    "version": "4.1.11",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@vitest/snapshot",
+    "version": "4.1.11",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@vitest/spy",
+    "version": "4.1.11",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@vitest/utils",
+    "version": "4.1.11",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@volar/language-core",
+    "version": "2.4.28",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@volar/source-map",
+    "version": "2.4.28",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@volar/typescript",
+    "version": "2.4.28",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@vue-macros/common",
+    "version": "3.1.4",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@vue/compiler-core",
+    "version": "3.5.44",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@vue/compiler-dom",
+    "version": "3.5.44",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@vue/compiler-sfc",
+    "version": "3.5.44",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@vue/compiler-ssr",
+    "version": "3.5.44",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@vue/devtools-api",
+    "version": "8.2.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@vue/devtools-kit",
+    "version": "8.2.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@vue/devtools-shared",
+    "version": "8.2.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@vue/eslint-config-typescript",
+    "version": "14.9.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "@vue/language-core",
+    "version": "3.3.13",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "@vue/reactivity",
+    "version": "3.5.44",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@vue/runtime-core",
+    "version": "3.5.44",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@vue/runtime-dom",
+    "version": "3.5.44",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@vue/server-renderer",
+    "version": "3.5.44",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@vue/shared",
+    "version": "3.5.44",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "@vue/test-utils",
+    "version": "2.4.6",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "@vue/tsconfig",
+    "version": "0.9.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "abbrev",
+    "version": "2.0.0",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "acorn",
+    "version": "8.19.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "acorn-jsx",
+    "version": "5.3.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "agent-base",
+    "version": "7.1.4",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "ajv",
+    "version": "6.15.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "alien-signals",
+    "version": "3.2.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "ansi-regex",
+    "version": "5.0.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "ansi-regex",
+    "version": "6.4.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "ansi-styles",
+    "version": "4.3.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "ansi-styles",
+    "version": "6.2.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "assertion-error",
+    "version": "2.0.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "ast-kit",
+    "version": "2.2.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "ast-kit",
+    "version": "3.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "ast-walker-scope",
+    "version": "0.10.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "balanced-match",
+    "version": "1.0.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "balanced-match",
+    "version": "4.0.4",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "birpc",
+    "version": "2.9.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "boolbase",
+    "version": "1.0.0",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "brace-expansion",
+    "version": "2.1.7",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "brace-expansion",
+    "version": "5.0.12",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "braces",
+    "version": "3.0.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "cacheable",
+    "version": "2.5.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "chai",
+    "version": "6.3.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "chokidar",
+    "version": "5.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "color-convert",
+    "version": "2.0.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "color-name",
+    "version": "1.1.4",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "commander",
+    "version": "10.0.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "confbox",
+    "version": "0.1.8",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "confbox",
+    "version": "0.3.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "config-chain",
+    "version": "1.1.13",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "convert-source-map",
+    "version": "2.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "cross-spawn",
+    "version": "7.0.6",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "cssesc",
+    "version": "3.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "cssstyle",
+    "version": "4.6.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "csstype",
+    "version": "3.2.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "data-urls",
+    "version": "5.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "debug",
+    "version": "4.4.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "decimal.js",
+    "version": "10.6.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "deep-is",
+    "version": "0.1.4",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "detect-libc",
+    "version": "2.1.2",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "eastasianwidth",
+    "version": "0.2.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "editorconfig",
+    "version": "1.0.7",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "emoji-regex",
+    "version": "8.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "emoji-regex",
+    "version": "9.2.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "entities",
+    "version": "6.0.1",
+    "license": "BSD-2-Clause",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "entities",
+    "version": "7.0.1",
+    "license": "BSD-2-Clause",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "es-module-lexer",
+    "version": "2.3.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "escape-string-regexp",
+    "version": "4.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "eslint",
+    "version": "10.13.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "eslint-config-prettier",
+    "version": "10.1.8",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "eslint-plugin-oxlint",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "eslint-plugin-vue",
+    "version": "10.11.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "eslint-scope",
+    "version": "9.1.2",
+    "license": "BSD-2-Clause",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "eslint-visitor-keys",
+    "version": "3.4.3",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "eslint-visitor-keys",
+    "version": "5.0.1",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "espree",
+    "version": "11.2.0",
+    "license": "BSD-2-Clause",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "esquery",
+    "version": "1.7.0",
+    "license": "BSD-3-Clause",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "esrecurse",
+    "version": "4.3.0",
+    "license": "BSD-2-Clause",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "estraverse",
+    "version": "5.3.0",
+    "license": "BSD-2-Clause",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "estree-walker",
+    "version": "2.0.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "estree-walker",
+    "version": "3.0.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "esutils",
+    "version": "2.0.3",
+    "license": "BSD-2-Clause",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "expect-type",
+    "version": "1.4.0",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "exsolve",
+    "version": "1.1.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "fast-deep-equal",
+    "version": "3.1.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "fast-glob",
+    "version": "3.3.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "fast-json-stable-stringify",
+    "version": "2.1.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "fast-levenshtein",
+    "version": "2.0.6",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "fastq",
+    "version": "1.20.3",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "fdir",
+    "version": "6.5.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "file-entry-cache",
+    "version": "11.1.5",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "fill-range",
+    "version": "7.1.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "find-up",
+    "version": "5.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "flat-cache",
+    "version": "6.1.23",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "flatted",
+    "version": "3.4.4",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "foreground-child",
+    "version": "3.3.1",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "fsevents",
+    "version": "2.3.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "glob",
+    "version": "10.4.5",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "glob-parent",
+    "version": "5.1.2",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "glob-parent",
+    "version": "6.0.2",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "hashery",
+    "version": "1.5.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "hookable",
+    "version": "5.5.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "hookified",
+    "version": "1.15.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "hookified",
+    "version": "2.2.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "html-encoding-sniffer",
+    "version": "4.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "http-proxy-agent",
+    "version": "7.0.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "https-proxy-agent",
+    "version": "7.0.6",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "iconv-lite",
+    "version": "0.6.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "ignore",
+    "version": "5.3.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "ignore",
+    "version": "7.0.14",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "imurmurhash",
+    "version": "0.1.4",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "ini",
+    "version": "1.3.8",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "is-extglob",
+    "version": "2.1.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "is-fullwidth-code-point",
+    "version": "3.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "is-glob",
+    "version": "4.0.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "is-number",
+    "version": "7.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "is-potential-custom-element-name",
+    "version": "1.0.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "isexe",
+    "version": "2.0.0",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "jackspeak",
+    "version": "3.4.3",
+    "license": "BlueOak-1.0.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "jiti",
+    "version": "2.7.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": true
+  },
+  {
+    "name": "js-beautify",
+    "version": "1.15.4",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "js-cookie",
+    "version": "3.0.8",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "jsdom",
+    "version": "26.1.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "json-schema-traverse",
+    "version": "0.4.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "json-stable-stringify-without-jsonify",
+    "version": "1.0.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "jsonc-parser",
+    "version": "3.3.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "keyv",
+    "version": "5.6.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "levn",
+    "version": "0.4.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "lightningcss",
+    "version": "1.33.0",
+    "license": "MPL-2.0",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "lightningcss-android-arm64",
+    "version": "1.33.0",
+    "license": "MPL-2.0",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "lightningcss-darwin-arm64",
+    "version": "1.33.0",
+    "license": "MPL-2.0",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "lightningcss-darwin-x64",
+    "version": "1.33.0",
+    "license": "MPL-2.0",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "lightningcss-freebsd-x64",
+    "version": "1.33.0",
+    "license": "MPL-2.0",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "lightningcss-linux-arm-gnueabihf",
+    "version": "1.33.0",
+    "license": "MPL-2.0",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "lightningcss-linux-arm64-gnu",
+    "version": "1.33.0",
+    "license": "MPL-2.0",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "lightningcss-linux-arm64-musl",
+    "version": "1.33.0",
+    "license": "MPL-2.0",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "lightningcss-linux-x64-gnu",
+    "version": "1.33.0",
+    "license": "MPL-2.0",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "lightningcss-linux-x64-musl",
+    "version": "1.33.0",
+    "license": "MPL-2.0",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "lightningcss-win32-arm64-msvc",
+    "version": "1.33.0",
+    "license": "MPL-2.0",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "lightningcss-win32-x64-msvc",
+    "version": "1.33.0",
+    "license": "MPL-2.0",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "local-pkg",
+    "version": "1.2.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "locate-path",
+    "version": "6.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "lru-cache",
+    "version": "10.4.3",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "magic-string",
+    "version": "0.30.21",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "magic-string",
+    "version": "1.4.4",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "magic-string-ast",
+    "version": "1.0.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "merge2",
+    "version": "1.4.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "micromatch",
+    "version": "4.0.8",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "minimatch",
+    "version": "10.2.6",
+    "license": "BlueOak-1.0.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "minimatch",
+    "version": "9.0.9",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "minipass",
+    "version": "7.1.3",
+    "license": "BlueOak-1.0.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "mlly",
+    "version": "1.8.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "ms",
+    "version": "2.1.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "muggle-string",
+    "version": "0.4.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "nanoid",
+    "version": "3.3.20",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "natural-compare",
+    "version": "1.4.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "nopt",
+    "version": "7.2.1",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "nostics",
+    "version": "1.3.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "nth-check",
+    "version": "2.1.1",
+    "license": "BSD-2-Clause",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "nwsapi",
+    "version": "2.2.28",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "obug",
+    "version": "2.2.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "optionator",
+    "version": "0.9.4",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "oxlint",
+    "version": "1.82.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "p-limit",
+    "version": "3.1.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "p-locate",
+    "version": "5.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "package-json-from-dist",
+    "version": "1.0.1",
+    "license": "BlueOak-1.0.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "parse5",
+    "version": "7.3.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "path-browserify",
+    "version": "1.0.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "path-exists",
+    "version": "4.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "path-key",
+    "version": "3.1.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "path-scurry",
+    "version": "1.11.1",
+    "license": "BlueOak-1.0.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "pathe",
+    "version": "2.0.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "perfect-debounce",
+    "version": "2.1.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "picocolors",
+    "version": "1.1.1",
+    "license": "ISC",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "picomatch",
+    "version": "2.3.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "picomatch",
+    "version": "4.0.7",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "pkg-types",
+    "version": "1.3.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "pkg-types",
+    "version": "2.4.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "postcss",
+    "version": "8.5.31",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "postcss-selector-parser",
+    "version": "7.1.7",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "prelude-ls",
+    "version": "1.2.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "prettier",
+    "version": "3.9.6",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "proto-list",
+    "version": "1.2.4",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "punycode",
+    "version": "2.3.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "qified",
+    "version": "0.10.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "quansync",
+    "version": "0.2.11",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "queue-microtask",
+    "version": "1.2.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "readdirp",
+    "version": "5.1.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "reusify",
+    "version": "1.1.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "rolldown",
+    "version": "1.2.15",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "rrweb-cssom",
+    "version": "0.8.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "run-parallel",
+    "version": "1.2.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "safer-buffer",
+    "version": "2.1.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "saxes",
+    "version": "6.0.0",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "scule",
+    "version": "1.3.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "semver",
+    "version": "7.8.5",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "shebang-command",
+    "version": "2.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "shebang-regex",
+    "version": "3.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "siginfo",
+    "version": "2.0.0",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "signal-exit",
+    "version": "4.1.0",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "source-map-js",
+    "version": "1.2.2",
+    "license": "BSD-3-Clause",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "stackback",
+    "version": "0.0.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "std-env",
+    "version": "4.3.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "string-width",
+    "version": "4.2.3",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "string-width",
+    "version": "5.1.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "strip-ansi",
+    "version": "6.0.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "strip-ansi",
+    "version": "7.2.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "symbol-tree",
+    "version": "3.2.4",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "tinybench",
+    "version": "2.9.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "tinyexec",
+    "version": "1.3.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "tinyglobby",
+    "version": "0.2.17",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "tinyrainbow",
+    "version": "3.2.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "tldts",
+    "version": "6.1.86",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "tldts-core",
+    "version": "6.1.86",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "to-regex-range",
+    "version": "5.0.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "tough-cookie",
+    "version": "5.1.2",
+    "license": "BSD-3-Clause",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "tr46",
+    "version": "5.1.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "ts-api-utils",
+    "version": "2.5.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "type-check",
+    "version": "0.4.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "typescript",
+    "version": "6.0.3",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": false,
+    "direct": true
+  },
+  {
+    "name": "typescript-eslint",
+    "version": "8.72.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "ufo",
+    "version": "1.6.4",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "undici-types",
+    "version": "7.24.6",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "unplugin",
+    "version": "3.5.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "unplugin-utils",
+    "version": "0.3.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "uri-js",
+    "version": "4.4.1",
+    "license": "BSD-2-Clause",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "util-deprecate",
+    "version": "1.0.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "vite",
+    "version": "8.3.5",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": true
+  },
+  {
+    "name": "vitest",
+    "version": "4.1.11",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "vscode-uri",
+    "version": "3.2.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "vue",
+    "version": "3.5.44",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": true
+  },
+  {
+    "name": "vue-component-type-helpers",
+    "version": "2.2.12",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "vue-eslint-parser",
+    "version": "10.4.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "vue-router",
+    "version": "5.4.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": true
+  },
+  {
+    "name": "vue-tsc",
+    "version": "3.3.13",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": true
+  },
+  {
+    "name": "w3c-xmlserializer",
+    "version": "5.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "webidl-conversions",
+    "version": "7.0.0",
+    "license": "BSD-2-Clause",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "webpack-virtual-modules",
+    "version": "0.6.2",
+    "license": "MIT",
+    "repository": null,
+    "dev": false,
+    "direct": false
+  },
+  {
+    "name": "whatwg-encoding",
+    "version": "3.1.1",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "whatwg-mimetype",
+    "version": "4.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "whatwg-url",
+    "version": "14.2.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "which",
+    "version": "2.0.2",
+    "license": "ISC",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "why-is-node-running",
+    "version": "2.3.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "word-wrap",
+    "version": "1.2.5",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "wrap-ansi",
+    "version": "7.0.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "wrap-ansi",
+    "version": "8.1.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "ws",
+    "version": "8.22.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "xml-name-validator",
+    "version": "5.0.0",
+    "license": "Apache-2.0",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "xmlchars",
+    "version": "2.2.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  },
+  {
+    "name": "yocto-queue",
+    "version": "0.1.0",
+    "license": "MIT",
+    "repository": null,
+    "dev": true,
+    "direct": false
+  }
+]

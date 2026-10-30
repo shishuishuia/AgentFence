@@ -207,7 +207,7 @@ results/member-a/          脱敏验证日志与纯策略样本
 
 ## 第三方依赖
 
-本项目采用 [MIT](LICENSE)。第三方依赖声明与引用/AI 辅助说明见 [来源说明](docs/provenance.md) 和 [依赖许可证索引](docs/dependency-licenses.json)；Rust 依赖由 Cargo.lock 固定，前端依赖由 front/package-lock.json 固定。B 已验证 Node.js 24.14.1、npm 11.11.0、Python 3.12.14；Python 客户端与演示仅用标准库。实验入口见 [HTTP 公平对照入口](docs/http-experiment.md)；代理使用 Python 3.10+ 标准库，本轮实际验证 Python 3.12.14。
+本项目采用 [MIT](LICENSE)。第三方依赖声明与 AI 辅助说明见 [来源说明](docs/provenance.md)；Rust 依赖索引见 [dependency-licenses.json](docs/dependency-licenses.json)，前端依赖索引见 [frontend-dependency-licenses.json](docs/frontend-dependency-licenses.json)。贡献方式见 [CONTRIBUTING.md](CONTRIBUTING.md)，变更见 [CHANGELOG.md](CHANGELOG.md)，安全问题见 [SECURITY.md](SECURITY.md)。Rust 依赖由 Cargo.lock 固定，前端依赖由 front/package-lock.json 固定。B 已验证 Node.js 24.14.1、npm 11.11.0、Python 3.12.14；Python 客户端与演示仅用标准库。实验入口见 [HTTP 公平对照入口](docs/http-experiment.md)；代理使用 Python 3.10+ 标准库，本轮实际验证 Python 3.12.14。
 
 ## 运行前端
 

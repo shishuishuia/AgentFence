@@ -8,6 +8,6 @@ Rust 后端由仓库维护者在 feat/rust-zxy 分支使用 Codex 协助编写�
 
 本仓库自行编写的部分采用根目录 LICENSE 中的 MIT 许可证。第三方库通过 Cargo 下载，原许可证不被替换。dependency-licenses.json 是从锁定的 cargo metadata 中提取的库名、版本、声明许可证和来源索引，包含全部目标平台解析依赖，未必全部在 Linux 中编译。索引只记录声明，不等同于独立法律审查。
 
-主要用途：Axum/Tokio 提供 HTTP 与调度，Serde/serde_json 负责契约，chrono 提供 UTC 表示，getrandom 读取系统随机源，sha2/subtle 用于凭证摘要及固定时间管理员摘要比较，tempfile 完成同目录替换及测试夹具，thiserror 定义安全错误类型，Tower/http-body-util 支持真实路由测试。front/ 使用官方 create-vue 模板及 Vue、Vite、Vue Router 等依赖，由 package-lock.json 固定；Python integrations/、web_proxy/ 与 demo/ 使用标准库。现有 dependency-licenses.json 只索引 Rust 依赖，尚未覆盖前端依赖。当前已接入 DeepSeek 演示与官方 rmcp 3.8.0 Rust MCP stdio 适配器，边界和验证分别见 deepseek-agent.md 与 v2-rust-mcp.md。MCP 使用 reqwest 请求本机 Broker，HMAC 绑定分页游标；没有把 SDK 协议能力宣称为 OS 隔离能力。
+主要用途：Axum/Tokio 提供 HTTP 与调度，Serde/serde_json 负责契约，chrono 提供 UTC 表示，getrandom 读取系统随机源，sha2/subtle 用于凭证摘要及固定时间管理员摘要比较，tempfile 完成同目录替换及测试夹具，thiserror 定义安全错误类型，Tower/http-body-util 支持真实路由测试。front/ 使用官方 create-vue 模板及 Vue、Vite、Vue Router 等依赖，由 package-lock.json 固定；Python integrations/、web_proxy/ 与 demo/ 使用标准库。Rust 依赖索引见 dependency-licenses.json；前端依赖索引见 frontend-dependency-licenses.json（从 front/package-lock.json 提取，记录声明许可证，未做法律审查）。当前已接入 DeepSeek 演示与官方 rmcp 3.8.0 Rust MCP stdio 适配器，边界和验证分别见 deepseek-agent.md 与 v2-rust-mcp.md。MCP 使用 reqwest 请求本机 Broker，HMAC 绑定分页游标；没有把 SDK 协议能力宣称为 OS 隔离能力。
 
 依赖索引可用 `cargo metadata --format-version 1 --locked` 重新核对。若后续复制第三方具体代码，应补充文件、原始链接、版本、改动和许可证；分发编译产物时按实际依赖许可证保留要求的通知。
