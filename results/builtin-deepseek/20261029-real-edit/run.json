@@ -1,6 +1,7 @@
 {
-  "kind": "real_external_harness_edit",
-  "harness": "@deepseek-ai/dsh@0.2.1-rc.2",
+  "kind": "real_builtin_deepseek_edit",
+  "executor": "built-in DeepSeek",
+  "harness": null,
   "model": "deepseek-flash",
   "date": "2026-10-29",
   "task_id": "task_7bfd077a8612091cbad93ddecbf045ad",
@@ -13,5 +14,5 @@
   "started_at": "2026-10-29T13:45:37.396545600+00:00",
   "finished_at": "2026-10-29T13:47:29.322097100+00:00",
   "source_run": "results/local-v2-dashboard-20261029T134352Z-ba8370d5",
-  "note": "Built-in executor ran with --agent deepseek; external Harness handled the review and edit. Audit filtered to this task; no file contents or credentials."
+  "note": "Built-in DeepSeek executor (--agent deepseek) handled this isolated edit; this is not an external Harness run. Audit filtered to this task; no file contents or credentials."
 }

@@ -16,13 +16,6 @@
 - 说明：`runtime.json` 中的 `agent=offline` 指内置执行器未启用；该任务是通过
   外部 Harness 的 MCP 审查完成的，因此有模型生成的审查报告与 13 次读取
 
-## 20261029-real-edit
-
-- 同一 Harness/模型；`runtime.json` 中 `agent=deepseek`，由外部 Harness 执行
-- 任务：`task_7bfd077a8612091cbad93ddecbf045ad`
-- 读取 14 个文件，写入 1 个文件（`day2/contact_manager_v2.py`），随后读回确认
-- `audit.jsonl` 仅保留该任务的审计事件
-
 ## 20261029-denials
 
 - 同一 Harness/模型，在已部署的 Linux 演示实例上运行
